@@ -44,7 +44,7 @@
 
         &__menubar {
             position: absolute;
-            padding:50px 100px;
+            padding:50px 70px;
             z-index: 1;
             top: 0;
             left: 0;
@@ -52,10 +52,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            font-weight: 500;
+            color: rgba(255, 255, 255, .75);
 
             &__brand {
                 width: 100%;
                 text-align: left;
+                cursor: pointer;
+                transition: color .25s ease-in;
+            }
+
+            &__brand:hover {
+                color: rgba(255, 255, 255, 1);
             }
 
             &__menu {
@@ -69,10 +77,19 @@
                         float: left;
                         display: inline;
                         text-decoration: none;
+                        
+                        a {
+                            transition: color .25s ease-in;
+                            cursor: pointer;
+                        }
+                        a:hover {
+                            color: rgba(255, 255, 255, 1);
+                        }
                     }
                     li:not(:first-child) {
                         padding-left: 60px;
                     }
+                    
                 }
             }
         }
@@ -255,8 +272,17 @@
                 li {
                     float: left;
                     display: inline;
-                    text-decoration: none;
+                    text-decoration: none;   
+
+                    a {
+                        cursor: pointer;
+                        transition: color .1s ease-in;
+                    }
+                    a:hover {
+                        color: $secondary;
+                    }
                 }
+
                 li:not(:first-child) {
                     padding-left: 40px;
                 }

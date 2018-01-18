@@ -104,7 +104,7 @@
                 <ul>
                     <li><a>Login</a></li>
                     <li><a>Register</a></li>
-                    <li><a>Back to top</a></li>
+                    <li><a @click="scrollToTop()">Back to top</a></li>
                 </ul>
             </div>
         </div>
@@ -124,6 +124,11 @@
                 slidesToShow: 1,
                 arrows: false
             })
+        },
+        methods: {
+            scrollToTop(){
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+            }
         }
     }
 </script>

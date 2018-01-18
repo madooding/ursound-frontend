@@ -1,0 +1,23 @@
+.button {
+    outline: none;
+    font-family: "Montserrat";
+    font-weight: 600;
+    border-style: none;
+    padding: 10px;
+}
+
+.button--gradient  {
+    background-image: linear-gradient(-233deg, #3F5EFB 0%, #FC466B 51%, #3F5EFB 100%);
+    background-size: 200% auto;
+    border-radius: 100px;
+    padding: 20px 40px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-position 1s, transform .5s;
+}
+
+.button--gradient:hover {
+    transform: scale(1.1);
+    background-position: right center;
+}

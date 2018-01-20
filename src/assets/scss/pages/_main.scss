@@ -38,7 +38,7 @@
         align-items: center;
         flex-direction: column;
         background-image: url(../images/main-section1-bg.jpg);
-        background-position: center;
+        background-position: top center;
         background-size: cover;
         position: relative;
 
@@ -55,7 +55,7 @@
             font-weight: 500;
             color: rgba(255, 255, 255, .75);
 
-            &__brand {
+            &__brand > h4 {
                 width: 100%;
                 text-align: left;
                 cursor: pointer;
@@ -235,8 +235,8 @@
     &__section--5 {
         padding: 90px 100px;
         background-image: url('../images/pre-footer-bg.jpg');
-        background-size: cover;
-        background-position: right;
+        background-size: 100% auto;
+        background-position: bottom right;
         p {
             margin: 40px 0px;
         }

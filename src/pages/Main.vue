@@ -1,6 +1,6 @@
 <template>
     <div class="main">
-        <div class="main__section--full">
+        <div class="main__section--full" ref="section1" id="section1">
             <div class="main__section--full__menubar">
                 <div class="main__section--full__menubar__brand">
                     <h4>UrSound</h4>
@@ -15,7 +15,7 @@
             <h1>You need a song<br>Why not do it yourself ?</h1>
             <button type="button" class="button button--gradient">JOIN US</button>
         </div>
-        <div class="main__section main__section--2">
+        <div class="main__section main__section--2" id="section2">
             <img src="@/assets/images/DAW.png" alt="">
             <div class="main__section main__section--2__content">
                 <h3>Who are we ?</h3>
@@ -90,12 +90,12 @@
                 </div>
             </div>
         </div>
-        <div class="main__section main__section--5">
+        <div class="main__section main__section--5" ref="section5">
             <h3>Let us help you!</h3>
             <p>Forget about complicated music production tools.<br>Let us help you and move on!</p>
             <button type="button" class="button button--gradient">JOIN US</button>
         </div>
-        <div class="main__section main__section--6">
+        <div class="main__section main__section--6" ref="section6">
             <div class="main__section--6__brand">
                 <h4>UrSound <small>Copyright © 2017 UrSound Adhoc Name.</small></h4>
             </div>
@@ -123,6 +123,11 @@
                 cssEase: 'ease-in',
                 slidesToShow: 1,
                 arrows: false
+            })
+
+            $(document).on("scroll", () => {
+                let scrolledPx = $(window).scrollTop()
+                $(this.$refs.section1).css("background-position-y", `${scrolledPx * 0.5}px`)
             })
         },
         methods: {

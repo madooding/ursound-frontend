@@ -1,17 +1,6 @@
 <template>
     <div class="main">
         <div class="main__section--full" ref="section1" id="section1">
-            <div class="main__section--full__menubar">
-                <div class="main__section--full__menubar__brand">
-                    <h4>UrSound</h4>
-                </div>
-                <div class="main__section--full__menubar__menu">
-                    <ul>
-                        <li><a>Home</a></li>
-                        <li><a>Login</a></li>
-                    </ul>
-                </div>
-            </div>
             <h1>You need a song<br>Why not do it yourself ?</h1>
             <button type="button" class="button button--gradient">JOIN US</button>
         </div>
@@ -97,7 +86,7 @@
         </div>
         <div class="main__section main__section--6" ref="section6">
             <div class="main__section--6__brand">
-                <h4>UrSound <small>Copyright © 2017 UrSound Adhoc Name.</small></h4>
+                <h4>UrSound <small>Copyright © {{ currentYear }} UrSound, The Senior project at IT@KMITL#12.</small></h4>
             </div>
 
             <div class="main__section--6__menu">
@@ -112,7 +101,15 @@
 </template>
 
 <script>
+import MenuBarBeforeAuth from '../components/MenuBarBeforeAuth'
+import moment from 'moment'
     export default {
+        components: {
+            MenuBarBeforeAuth
+        },
+        data: () => ({
+            currentYear: moment().format('YYYY')
+        }),
         mounted() {
             $('.main__section--3__slides').slick({
                 dots: true,
@@ -124,7 +121,6 @@
                 slidesToShow: 1,
                 arrows: false
             })
-
             $(document).on("scroll", () => {
                 let scrolledPx = $(window).scrollTop()
                 $(this.$refs.section1).css("background-position-y", `${scrolledPx * 0.5}px`)

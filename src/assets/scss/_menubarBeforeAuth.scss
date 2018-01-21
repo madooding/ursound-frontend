@@ -1,0 +1,62 @@
+.menubarBeforeAuth {
+    position: absolute;
+    padding:50px 70px;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    color: rgba(255, 255, 255, .75);
+    font-family: "Montserrat";
+    font-size: 16pt;
+
+    &__brand > h4 {
+        font-weight: 700;
+        font-size: 28px;
+        margin: 0px;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+        transition: color .25s ease-in;
+        a {
+            color: inherit;
+            text-decoration: unset;
+        }
+    }
+
+    &__brand:hover {
+        color: rgba(255, 255, 255, 1);
+    }
+
+    &__menu {
+        width: 100%;
+        ul {
+            float: right;
+            list-style-type: none;
+            padding: 0px;
+            margin: 0px;
+            li {
+                float: left;
+                display: inline;
+                text-decoration: none;
+                
+                a {
+                    transition: color .25s ease-in;
+                    color: inherit;
+                    text-decoration: unset;
+                    cursor: pointer;
+                }
+                a:hover {
+                    color: rgba(255, 255, 255, 1);
+                }
+            }
+            li:not(:first-child) {
+                padding-left: 60px;
+            }
+            
+        }
+    }
+}

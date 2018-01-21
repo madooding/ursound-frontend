@@ -2,7 +2,7 @@
     <div class="main">
         <div class="main__section--full" ref="section1" id="section1">
             <h1>You need a song<br>Why not do it yourself ?</h1>
-            <button type="button" class="button button--gradient">JOIN US</button>
+            <router-link tag="button" class="button button--gradient" to="/signup">JOIN US</router-link>
         </div>
         <div class="main__section main__section--2" id="section2">
             <img src="@/assets/images/DAW.png" alt="">
@@ -82,7 +82,7 @@
         <div class="main__section main__section--5" ref="section5">
             <h3>Let us help you!</h3>
             <p>Forget about complicated music production tools.<br>Let us help you and move on!</p>
-            <button type="button" class="button button--gradient">JOIN US</button>
+            <router-link tag="button" class="button button--gradient" to="/signup">JOIN US</router-link>
         </div>
         <div class="main__section main__section--6" ref="section6">
             <div class="main__section--6__brand">
@@ -91,8 +91,8 @@
 
             <div class="main__section--6__menu">
                 <ul>
-                    <li><a>Login</a></li>
-                    <li><a>Register</a></li>
+                    <li><router-link to="/login" class="">Login</router-link></li>
+                    <li><router-link to="/signup" class="">Signup</router-link></li>
                     <li><a @click="scrollToTop()">Back to top</a></li>
                 </ul>
             </div>

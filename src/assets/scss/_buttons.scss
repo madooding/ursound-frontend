@@ -4,6 +4,8 @@
     font-weight: 600;
     border-style: none;
     padding: 10px;
+    cursor: pointer;
+    outline: none !important;
 }
 
 .button--gradient  {
@@ -13,8 +15,63 @@
     padding: 20px 40px;
     color: white;
     font-size: 16px;
-    cursor: pointer;
     transition: background-position 1s, transform .5s;
+}
+
+.button--submit {
+    /* Rectangle 4: */
+    background: $secondary;
+    border-radius: 6px;
+    /* Log In!: */
+    font-size: 21px;
+    color: #FFFFFF;
+    height: 60px;
+    width: 100%;
+    font-weight: 400;
+    font-size: 14pt;
+    transition: background-color .2s ease;
+}
+
+.button--facebook {
+    /* Rectangle 4: */
+    background: #4F84C9;
+    border-radius: 6px;
+    /* Log In!: */
+    font-size: 21px;
+    color: #FFFFFF;
+    height: 60px;
+    width: 100%;
+    font-weight: 400;
+    font-size: 14pt;
+    transition: background-color .2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    i {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        background-image: url('../images/facebook-icon.svg');
+        background-position: center;
+        background-repeat: no-repeat;
+        margin-right: 20px;
+    }
+}
+
+.button--submit:hover {
+    background-color: $dark-secondary;
+}
+
+.button--submit:active {
+    background-color: $darker-secondary;
+}
+
+.button--facebook:hover {
+    background-color: #4776B4;
+}
+
+.button--facebook:active {
+    background-color: #3D669B;
 }
 
 .button--gradient:hover {

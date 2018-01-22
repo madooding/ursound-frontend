@@ -1,9 +1,70 @@
-.container#loginSignup {
-    height: 100vh;
+@import "../_colors.scss";
+
+.loginSignup--container#loginSignup {
+    height: auto;
+    padding: 100px 20px 20px 20px;
+    min-height: 100vh;
     width: 100%;
     position: relative;
     background-image: url('../images/loginSignup-bg.jpg');
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat';
+    font-weight: 400;
+    color: $text-color-3;
+    .box {
+        width: 100%;
+        max-width: 500px;
+        background-color: white;
+        height: 0 auto;
+        border-radius: 6px;
+        padding: 30px;
+        transition: height .8s ease;
+        &__footer {
+            width: 100%;
+            padding-top: 20px;
+            p {
+                display: inline-block;
+                margin: 0px;
+            }
+            p:last-child {
+                float: right;
+            }
+        }
+    }
+
+    .box > div {
+        margin: 15px 0px 20px 0px;
+    }
+
+    .box > div:last-child {
+        margin: 0px;
+    }
+
+    .box > hr {
+        margin: 30px 0px;
+    }
+
+    h4 {
+        color: $text-color-1;
+        font-size: 28px;
+        font-weight: 600;
+        width: 100%;
+        padding: 25px 0px 40px 0px;
+        margin: 0px !important;
+        text-align: center;
+    }
+
+    a {
+        color: $link-color-1;
+        text-decoration: unset;
+    }
+
+    a:hover {
+        color: $link-color-1-dark;
+    }
 }

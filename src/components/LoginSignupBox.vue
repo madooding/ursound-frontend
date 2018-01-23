@@ -7,7 +7,10 @@
         <transition name="expand" mode="out-in">
             <div class="inputContainer" v-if="getPath == '/signup'">
                 <span class="inputContainer__prefix inputContainer__prefix--email"></span>
-                <input type="text" placeholder="Email">
+                <input name="email" type="text" placeholder="Email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('email') }" data-vv-name="email">
+                <transition name="expand" mode="out-in">
+                    <span v-if="errors.has('email')" class="inputContainer__message inputContainer__message--error">{{ errors.first('email') }}</span>
+                </transition>
             </div>
         </transition>
         <div class="inputContainer">

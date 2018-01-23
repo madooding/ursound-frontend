@@ -21,6 +21,7 @@
     "script-loader": "^0.7.2",
     "slick-carousel": "^1.8.1",
     "style-loader": "^0.19.1",
+    "vee-validate": "^2.0.3",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },

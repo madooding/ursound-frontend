@@ -17,9 +17,31 @@ import '!style-loader!css-loader!sass-loader!./assets/scss/default.scss'
 
 Vue.use(VeeValidate)
 
+Vue.mixin({
+    methods: {
+        $checkFacebookLoginState: function(){
+            return new Promise((resolve, reject) => {
+                FB.getLoginStatus(function(response) {
+                    resolve(response)
+                });
+            })
+        },
+        $facebookLogin: function(){
+            return new Promise((resolve, reject) => {
+                FB.login(function(response) {
+                    resolve(response)
+                }, {scope: 'public_profile,email'});
+            })
+        }
+    }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
-  render: h => h(App)
+  render: h => h(App),
+  created() {
+    
+  }
 })

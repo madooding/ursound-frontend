@@ -7,7 +7,7 @@
         <transition name="expand" mode="out-in">
             <div class="inputContainer" v-if="getPath == '/signup'">
                 <span class="inputContainer__prefix inputContainer__prefix--email"></span>
-                <input name="email" type="text" placeholder="Email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('email') }" data-vv-name="email">
+                <input name="email" type="text" placeholder="Email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('email') }" data-vv-name="email" data-vv-delay="500">
                 <transition name="expand" mode="out-in">
                     <span v-if="errors.has('email')" class="inputContainer__message inputContainer__message--error">{{ errors.first('email') }}</span>
                 </transition>
@@ -15,22 +15,28 @@
         </transition>
         <div class="inputContainer">
             <span class="inputContainer__prefix inputContainer__prefix--username"></span>
-            <input type="text" placeholder="Username">
+            <input name="username" type="text" placeholder="Username" v-validate="'required|alpha_dash'" :class="{'input': true, 'is-danger': errors.has('email') }" data-vv-name="username" data-vv-delay="500">
+            <transition name="expand" mode="out-in">
+                <span v-if="errors.has('username')" class="inputContainer__message inputContainer__message--error">{{ errors.first('username') }}</span>
+            </transition>
         </div>
         <div class="inputContainer">
             <span class="inputContainer__prefix inputContainer__prefix--lock"></span>
-            <input type="password" placeholder="Password">
+            <input type="password" placeholder="Password" name="password" v-validate="'required|min:6'" :class="{'input': true, 'is-danger': errors.has('email') }" data-vv-name="password" data-vv-delay="500">
+            <transition name="expand" mode="out-in">
+                <span v-if="errors.has('password')" class="inputContainer__message inputContainer__message--error">{{ errors.first('password') }}</span>
+            </transition>
         </div>
-        <transition name="fade" mode="out-in">
+        <transition name="fade" mode="in-out">
             <div class="inputContainer">
-                <button class="button button--submit" v-bind:key="btnTxt">
+                <button class="button button--submit" v-bind:key="btnTxt" :class="{'button': true, 'button--submit': true, 'button--loading': defaultLoginLoading}">
                     {{ btnTxt }}!
                 </button>
             </div>
         </transition>
         <hr class="or">
         <div class="inputContainer">
-            <button class="button button--facebook">
+            <button @click="facebookLoginClick" :class="{'button': true, 'button--facebook': true, 'button--loading': fbloginLoading}">
                 <i></i> {{ btnTxt }} with Facebook
             </button>
         </div>
@@ -45,10 +51,9 @@
 <script>
 export default {
     data: () => ({
+        fbloginLoading: false,
+        defaultLoginLoading: false
     }),
-    created(){
-        this.pageMode = this.whichMode
-    },
     computed: {
         getPath(){
             return this.$route.fullPath
@@ -65,6 +70,22 @@ export default {
                 return "login"
             }
             return "signup"
+        }
+    },
+    methods: {
+        async facebookLoginClick(){
+            try {
+                this.fbloginLoading = true
+                let response = await this.$checkFacebookLoginState()
+                if(response.status === "not_authorized"){
+                    let loginStatus = await this.$facebookLogin()
+                    console.log(loginStatus)
+                }
+            } catch (error){
+                console.log(error)
+            } finally {
+                this.fbloginLoading = false
+            }
         }
     }
 }

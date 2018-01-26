@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App'
-import router from './router'
 import VeeValidate from 'vee-validate'
+import VueLocalStorage from 'vue-localstorage'
 
 Vue.config.productionTip = false
 
@@ -15,7 +15,16 @@ import '!style-loader!css-loader!slick-carousel/slick/slick.css'
 import '!style-loader!css-loader!slick-carousel/slick/slick-theme.css'
 import '!style-loader!css-loader!sass-loader!./assets/scss/default.scss'
 
+process.env.API_SERVER = "http://localhost:9000"
+
+
 Vue.use(VeeValidate)
+Vue.use(VueLocalStorage, {
+    name: 'ls',
+    bind: true
+})
+
+import router from './router'
 
 Vue.mixin({
     methods: {

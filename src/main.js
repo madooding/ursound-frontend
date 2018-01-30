@@ -2,12 +2,13 @@ import Vue from 'vue'
 import App from './App'
 import VeeValidate from 'vee-validate'
 import VueLocalStorage from 'vue-localstorage'
+import router from './router'
 
 Vue.config.productionTip = false
 
 
 import '!script-loader!jquery/dist/jquery.min.js'
-import '!script-loader!popper.js/dist/popper.min.js'
+import '!script-loader!popper.js/dist/umd/popper.js'
 import '!script-loader!bootstrap/dist/js/bootstrap.min.js'
 import '!script-loader!slick-carousel/slick/slick.min.js'
 import '!style-loader!css-loader!sass-loader!bootstrap/scss/bootstrap.scss'
@@ -24,7 +25,8 @@ Vue.use(VueLocalStorage, {
     bind: true
 })
 
-import router from './router'
+
+
 
 Vue.mixin({
     methods: {

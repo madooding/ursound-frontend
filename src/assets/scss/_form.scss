@@ -51,10 +51,17 @@
 
     input:focus {
         background-color: white;
-        border-color: $secondary;
+        border-color: $primary;
         border-style: solid;    
         border-width: thin;
     }
+
+    input.is-error {
+        border-color: $secondary;
+    }
+
+    
+
     &__message {
         display: block;
         width: 100% !important;

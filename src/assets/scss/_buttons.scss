@@ -13,6 +13,10 @@
     position: relative;
 }
 
+.button--disabled {
+    cursor: not-allowed;
+}
+
 .button--loading:after {
     position: absolute;
     content: '';
@@ -86,6 +90,11 @@
 .button--submit:hover {
     background-color: $dark-secondary;
 }
+
+.button--submit.button--disabled:hover {
+    background-color: $secondary;
+}
+
 
 .button--submit:active {
     background-color: $darker-secondary;

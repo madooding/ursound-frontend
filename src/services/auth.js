@@ -11,7 +11,7 @@ const defaultLogin = (username, password) => {
 
 const validateToken = () => {
     let _token = localStorage.getItem("_token")
-    if(_token === null) return Promise.reject({ messages: "Token is not undefined."})
+    if(_token === null) return Promise.reject({ code: "TOKEN_UNDEFINED", messages: "Token is not undefined."})
     return axios.post(`${API_URL}/service/auth/token`, {}, {
         headers: {
             "Authorization": `jwt ${_token}`

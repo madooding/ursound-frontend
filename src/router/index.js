@@ -6,6 +6,7 @@ import ExplorePage from '@/pages/Explore'
 import LocalStorage from 'vue-localstorage'
 
 import { AuthService } from '../services'
+import store from '../store'
 
 Vue.use(Router)
 
@@ -17,25 +18,25 @@ const router = new Router({
             path: '/',
             name: 'MainPage',
             component: MainPage,
-            meta: { showDefaultMenu: true }
+            meta: { beforeAuth: true }
         },
         {
             path: '/login',
             name: 'LoginPage',
             component: LoginSignupPage,
-            meta: { showDefaultMenu: true }
+            meta: { beforeAuth: true }
         },
         {
             path: '/signup',
             name: 'SignupPage',
             component: LoginSignupPage,
-            meta: { showDefaultMenu: true }
+            meta: { beforeAuth: true }
         },
         {
             path: '/signup/facebook',
             name: 'SignupFacebookMethod',
             component: LoginSignupPage,
-            meta: { showDefaultMenu: true, needFacebookAuthorized: true }
+            meta: { needFacebookAuthorized: true, beforeAuth: true }
         },
         {
             path: '/explore',
@@ -48,13 +49,18 @@ const router = new Router({
 
 
 const match = async (to, from, next) => {
-    if (to.matched.some((x) => x.meta.requiredAuth)) {
-        try {
-            let token_res = await AuthService.validateToken()
-        } catch(err) {
-            next({path: '/login'})
-        }
+    console.log("Match function");
+    if (to.matched.some(x => x.meta.beforeAuth)){
+        if(store.getters.isLoggedIn){
+            next({ path: "/explore" })
+        } else next()
     }
+
+    if (to.matched.some((x) => x.meta.requiredAuth)) {
+        if(store.getters.isLoggedIn) next()
+        else next({ path: "/login" })
+    }
+
     if (to.matched.some((x) => x.meta.needFacebookAuthorized)) {
         try {
             const getLoginState = () => new Promise((resolve, reject) => {
@@ -64,15 +70,26 @@ const match = async (to, from, next) => {
             })
             let result = await getLoginState()
             if (result.status !== "connected") next({ path: '/signup' })
+            else next()
         } catch (err){
             next({ path: '/signup' })
         }
     }
-    next()
 }
 
 router.beforeEach((to, from, next) => {
-    match(to, from, next)
+    const _token = localStorage.getItem('_token')
+    if(_token){
+        store.dispatch('VALIDATE_TOKEN')
+            .then(res => { match(to, from, next) })
+            .catch(err => {
+                match(to, from, next)
+                console.log("reset from r");
+            })
+    } else {
+        store.dispatch('RESET_AUTHEN_STATUS')
+        match(to, from, next)
+    }
 })
 
 export default router

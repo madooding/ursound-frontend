@@ -3,6 +3,7 @@ import App from './App'
 import VeeValidate from 'vee-validate'
 import VueLocalStorage from 'vue-localstorage'
 import router from './router'
+import store from './store'
 
 Vue.config.productionTip = false
 
@@ -51,6 +52,7 @@ Vue.mixin({
 new Vue({
   el: '#app',
   router,
+  store,
   render: h => h(App),
   created() {
     

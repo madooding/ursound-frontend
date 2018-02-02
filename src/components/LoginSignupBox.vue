@@ -70,8 +70,8 @@ export default {
         fbloginLoading: false,
         submitBtnLoading: false
     }),
-    mounted(){
-
+    created(){
+        console.log("mounted!");
     },
     computed: {
         getPath(){
@@ -139,6 +139,7 @@ export default {
                     this.$router.push('/explore')                    
                 }
             } catch (error){
+                console.log(error);
                 if(error.response.data.code === 'NEED_SIGNUP'){
                     this.$router.push('/signup/facebook')
                     this.email = error.response.data.user_profile.email

@@ -5,11 +5,9 @@
 </template>
 
 <script>
-import MenuBarBeforeAuth from '../components/MenuBarBeforeAuth'
 import LoginSignupBox from '../components/LoginSignupBox'
     export default {
         components: {
-            MenuBarBeforeAuth,
             LoginSignupBox
         }
     }

@@ -84,7 +84,6 @@ router.beforeEach((to, from, next) => {
             .then(res => { match(to, from, next) })
             .catch(err => {
                 match(to, from, next)
-                console.log("reset from r");
             })
     } else {
         store.dispatch('RESET_AUTHEN_STATUS')

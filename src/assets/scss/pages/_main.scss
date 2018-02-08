@@ -1,12 +1,13 @@
 @import "../_colors.scss";
+@import "../_extentions.scss";
 
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,500,700');
 
 .main {
+    @extend %default-font;
     width: 100%;
     height: auto;
     color: white;
-    font-family: "Montserrat";
     font-weight: 400;
     font-size: 16pt;
 

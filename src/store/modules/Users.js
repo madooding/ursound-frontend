@@ -2,7 +2,18 @@ import { AuthService } from '../../services'
 
 const state = {
     isLoggedIn: false,
-    authorizing: true
+    authorizing: true,
+    userProfile: {
+        "user_id": null,
+        "username": "",
+        "email": "",
+        "first_name": "",
+        "fb_id": "",
+        "profile_img": "",
+        "profile_settings": null,
+        "followers_count": 0,
+        "following_count": 0
+    }
 }
 
 const mutations = {
@@ -11,6 +22,9 @@ const mutations = {
     },
     setAuthorizingState(state, val) {
         state.authorizing = val
+    },
+    setUserProfileData(state, val) {
+        state.userProfile = val
     }
 }
 
@@ -20,6 +34,9 @@ const actions = {
             .then(res => {
                 commit("setLoginState", true)
                 commit('setAuthorizingState', false)
+                commit('setUserProfileData', {
+                    ...res.data.userProfile
+                })
                 return Promise.resolve(res)
             })
             .catch(err => {
@@ -35,7 +52,8 @@ const actions = {
 }
 
 const getters = {
-    isLoggedIn: (state) => state.isLoggedIn
+    isLoggedIn: (state) => state.isLoggedIn,
+    getUserProfileData: state => state.userProfile
 }
 
 export default {

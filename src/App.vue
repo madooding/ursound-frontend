@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-  <MenuBarBeforeAuth></MenuBarBeforeAuth>
+  <MenuBar></MenuBar>
   <transition name="fade" mode="out-in">
     <router-view/>
   </transition>
@@ -8,10 +8,10 @@
 </template>
 
 <script>
-import MenuBarBeforeAuth from './components/MenuBarBeforeAuth'
+import MenuBar from './components/MenuBar'
 export default {
   components:{
-    MenuBarBeforeAuth
+    MenuBar
   },
   name: 'App'
 }

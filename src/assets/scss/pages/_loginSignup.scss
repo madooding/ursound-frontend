@@ -1,6 +1,8 @@
 @import "../_colors.scss";
+@import "../_extentions.scss";
 
 .loginSignup--container#loginSignup {
+    @extend %default-font;
     height: auto;
     padding: 100px 20px 40px 20px;
     min-height: 100vh;
@@ -13,7 +15,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Montserrat';
     font-weight: 400;
     color: $text-color-3;
     .box {

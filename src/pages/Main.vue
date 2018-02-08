@@ -101,12 +101,8 @@
 </template>
 
 <script>
-import MenuBarBeforeAuth from '../components/MenuBarBeforeAuth'
 import moment from 'moment'
     export default {
-        components: {
-            MenuBarBeforeAuth
-        },
         data: () => ({
             currentYear: moment().format('YYYY')
         }),

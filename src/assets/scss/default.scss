@@ -1,14 +1,15 @@
 @import "./pages/_main.scss";
 @import "./pages/_loginSignup.scss";
+@import "./pages/_explore.scss";
 
 @import "_colors.scss";
 @import "_buttons.scss";
 @import "_form.scss";
-@import "_menubarBeforeAuth.scss";
+@import "_menubar.scss";
 
 @import "./_transition.scss";
+@import "./_extentions.scss";
 
-@import url('https://fonts.googleapis.com/css?family=Montserrat:400,500,700');
 
 * {
     outline: none;

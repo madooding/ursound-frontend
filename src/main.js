@@ -12,9 +12,12 @@ import '!script-loader!jquery/dist/jquery.min.js'
 import '!script-loader!popper.js/dist/umd/popper.js'
 import '!script-loader!bootstrap/dist/js/bootstrap.min.js'
 import '!script-loader!slick-carousel/slick/slick.min.js'
+import '!script-loader!wavesurfer.js/dist/wavesurfer.js'
 import '!style-loader!css-loader!sass-loader!bootstrap/scss/bootstrap.scss'
 import '!style-loader!css-loader!slick-carousel/slick/slick.css'
 import '!style-loader!css-loader!slick-carousel/slick/slick-theme.css'
+import '!style-loader!css-loader!./assets/css/ionicons.min.css'
+import '!style-loader!css-loader!./assets/css/styles.css'
 import '!style-loader!css-loader!sass-loader!./assets/scss/default.scss'
 
 process.env.API_SERVER = "http://localhost:9000"

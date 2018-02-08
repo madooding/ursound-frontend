@@ -1,0 +1,149 @@
+@import "_extentions.scss";
+
+.menubar{
+    @extend %default-font;
+    position: absolute;
+    padding:50px 70px;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    color: rgba(255, 255, 255, .75);
+    font-size: 16pt;
+    transition: all .25s ease-in-out ;
+
+    &__brand > h4 {
+        font-weight: 700;
+        font-size: 28px;
+        margin: 0px;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+        transition: color .25s ease-in;
+        a {
+            color: inherit;
+            text-decoration: unset;
+        }
+    }
+
+    &__brand:hover {
+        color: rgba(255, 255, 255, 1);
+    }
+
+    &__menu {
+        width: 100%;
+        ul {
+            float: right;
+            list-style-type: none;
+            padding: 0px;
+            margin: 0px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+
+            li {
+                float: left;
+                display: inline;
+                text-decoration: none;
+                
+                a {
+                    transition: color .25s ease-in;
+                    color: inherit;
+                    text-decoration: unset;
+                    cursor: pointer;
+                }
+                a:hover {
+                    color: rgba(255, 255, 255, 1);
+
+                }
+
+                a.button {
+                    transition: background-color .25s ease !important;
+                    background-color: $secondary;
+                    border-radius: 100px;
+                    font-weight: 500;
+                    padding-left: 25px;
+                    padding-right: 25px;
+                }
+
+                a.button:hover {
+                    color: white !important;
+                    background-color: $dark-secondary;
+                }
+                
+                a.button:active {
+                    background-color: $darker-secondary;
+                }
+
+                i {
+                    position: relative;
+                    font-size: 18pt;
+                    span.count {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        font-family: "Helvetica";
+                        font-style: normal;
+                        font-size: 8pt;
+                        line-height: 10pt;
+                        min-width: 12pt;
+                        min-height: 12pt;
+                        border-radius: 12pt;
+                        text-align: center;
+                        font-weight: 100;
+                        position: absolute;
+                        background-color: $secondary;
+                        left: -30%;
+                        top:0px;
+                        color: white !important;
+                    }
+                }
+            }
+            li:not(:first-child) {
+                padding-left: 60px;
+            }
+            
+        }
+    }
+}
+
+.menubar.afterAuth {
+    position: fixed;
+    padding: 0px 70px;
+    background-color: $dark-primary;
+    max-height: 58px;
+    height: 100%;
+    color: white;
+    box-shadow: 0 1px 5px 0 rgba(0,0,0,0.50);
+    font-size: 12pt;
+    .menubar__brand > h4{
+        font-size: 18pt;
+    }
+    .menubar__brand:hover {
+        color: rgba(252, 70, 107, 1);
+    }
+
+    .menubar__menu {
+        ul {
+            li {
+                a {
+                    transition: color .2s ease-in;
+                    img.profile-img {
+                        height: 40px;
+                        width: 40px;
+                        border-radius: 40px;
+                        border: 2px solid #FFFFFF;
+                        margin-right: 10px;
+                    }
+                }
+                a:hover {
+                    color: $secondary;
+                }
+            }
+        }
+    }
+}

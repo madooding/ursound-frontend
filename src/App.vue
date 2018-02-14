@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-  <MenuBar></MenuBar>
+  <MenuBar/>
+  <PlayerBar v-if="isLoggedIn"/>
   <transition name="fade" mode="out-in">
     <router-view/>
   </transition>
@@ -8,12 +9,19 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import MenuBar from './components/MenuBar'
+import PlayerBar from './components/PlayerBar'
+
 export default {
   components:{
-    MenuBar
+    MenuBar,
+    PlayerBar
   },
-  name: 'App'
+  name: 'App',
+  computed: {
+    ...mapGetters(['isLoggedIn'])
+  }
 }
 </script>
 

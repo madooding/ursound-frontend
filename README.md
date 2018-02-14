@@ -1,6 +1,9 @@
-# ursound
+# Ursound
 
 > This is the senoir project in my university life. Actually, this is the last project while i am studying in university.This project is about tool to create a song. just like garage band which is favorite one but, unlike garage band. our project (I do this with my friend) is more helpful than garage band a little bit. It provides collaboration systems to user to creating a song together with their friends. That's all. I have nothing to say anymore. :P
+
+## UI Design
+![UI Design](https://github.com/madooding/ursound-frontend/blob/master/images/UI-design.png?raw=true)
 
 ## Build Setup
 

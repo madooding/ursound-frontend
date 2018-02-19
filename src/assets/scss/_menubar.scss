@@ -15,6 +15,11 @@
     color: rgba(255, 255, 255, .75);
     font-size: 16pt;
     transition: all .25s ease-in-out ;
+    user-select: none;
+
+    &__brand {
+        position: relative;
+    }
 
     &__brand > h4 {
         font-weight: 700;
@@ -30,12 +35,20 @@
         }
     }
 
+    &__brand.studio-mode > h4:after {
+        position: absolute;
+        content: '•';
+        color: $secondary;
+        top: 0px;
+        right: -13px;
+        line-height: 10px;
+    } 
+
     &__brand:hover {
         color: rgba(255, 255, 255, 1);
     }
-
     &__menu {
-        width: 100%;
+        flex-grow: 1;
         ul {
             float: right;
             list-style-type: none;
@@ -62,7 +75,7 @@
                 }
 
                 a.button {
-                    transition: background-color .25s ease !important;
+                    transition: all .25s ease !important;
                     background-color: $secondary;
                     border-radius: 100px;
                     font-weight: 500;
@@ -77,6 +90,18 @@
                 
                 a.button:active {
                     background-color: $darker-secondary;
+                }
+
+                a.button--outline {
+                    background-color: transparent;
+                    border-style: solid;
+                    border-width: thin;
+                    border-color: white;
+                }
+
+                a.button--outline:hover {
+                    background-color: white;
+                    color: $dark-primary !important;
                 }
 
                 i {
@@ -106,7 +131,30 @@
             li:not(:first-child) {
                 padding-left: 60px;
             }
-            
+        }
+
+        ul.less-padding {
+            li:not(:first-child) {
+                padding-left: 20px;
+            }
+        }
+    }
+
+    &__menu--studio {
+        ul {
+            float: left;
+            list-style-type: none;
+            padding: 0px;
+            margin: 0px 0px 0px 80px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            li {
+                float: left;
+                display: inline;
+                text-decoration: none;
+                cursor: pointer;
+            }
         }
     }
 }

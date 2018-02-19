@@ -1,7 +1,9 @@
 <template>
   <div id="app">
   <MenuBar/>
-  <PlayerBar v-if="isLoggedIn"/>
+  <transition name="bottom-slide" mode="out-in">
+    <PlayerBar v-if="isLoggedIn && !isStudioMode"/>
+  </transition>
   <transition name="fade" mode="out-in">
     <router-view/>
   </transition>
@@ -20,7 +22,13 @@ export default {
   },
   name: 'App',
   computed: {
-    ...mapGetters(['isLoggedIn'])
+    ...mapGetters(['isLoggedIn']),
+    isStudioMode(){
+      if (/\/studio.*/.test(this.$route.path)){
+        return true
+      }
+      return false
+    }
   }
 }
 </script>

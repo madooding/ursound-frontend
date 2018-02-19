@@ -1,8 +1,3 @@
-/* Enter and leave animations can use different */
-
-
-/* durations and timing functions.              */
-
 .fade-enter-active {
   transition: all .2s ease;
 }
@@ -37,4 +32,22 @@
   padding-top: 0px !important;
   padding-bottom: 0px !important;
   max-height: 0px !important;
+}
+
+
+
+.bottom-slide-enter-active {
+  transition: all .5s ease;
+}
+
+.bottom-slide-leave-active {
+  transition: all .5s ease;
+}
+
+.bottom-slide-enter {
+  bottom: -58px;
+}
+.bottom-slide-leave-to
+{
+  bottom: -58px;
 }

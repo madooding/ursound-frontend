@@ -1,4 +1,6 @@
 import Vue from 'vue'
+import VueRx from 'vue-rx'
+import Rx from 'rxjs'
 import App from './App'
 import VeeValidate from 'vee-validate'
 import VueLocalStorage from 'vue-localstorage'
@@ -22,7 +24,7 @@ import '!style-loader!css-loader!sass-loader!./assets/scss/default.scss'
 
 process.env.API_SERVER = "http://localhost:9000"
 
-
+Vue.use(VueRx, Rx)
 Vue.use(VeeValidate)
 Vue.use(VueLocalStorage, {
     name: 'ls',

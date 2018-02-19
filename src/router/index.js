@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import MainPage from '@/pages/Main'
 import LoginSignupPage from '@/pages/LoginSignup'
 import ExplorePage from '@/pages/Explore'
+import StudioPage from '@/pages/Studio'
 import LocalStorage from 'vue-localstorage'
 
 import { AuthService } from '../services'
@@ -42,6 +43,12 @@ const router = new Router({
             path: '/explore',
             name: 'ExplorePage',
             component: ExplorePage,
+            meta: { requiredAuth: true }
+        },
+        {
+            path: '/studio',
+            name: 'StudioMode',
+            component: StudioPage,
             meta: { requiredAuth: true }
         }
     ]

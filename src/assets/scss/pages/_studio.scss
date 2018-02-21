@@ -1,3 +1,137 @@
 @import "../_colors.scss";
 @import "../_extentions.scss";
+$track-panel-bg: #1A1D2E;
+$tracks-bg: #161927;
+$ruler-bg: #181B2A;
 
+$track-panel-width: 280px;
+
+.studio {
+    @extend %default-font;
+    width: 100%;
+    display: flex;
+    height: calc(100vh - 116px);
+    flex-direction: column;
+    margin-top: 58px;
+    box-sizing: content-box;
+    color: white;
+
+    .top-bar {
+        height: 30px;
+        background-color: white;
+        display: flex;
+        .left-side {
+            width: $track-panel-width;
+            height: 100%;
+            background-color: $track-panel-bg;
+            box-shadow: 2px 0px 7px 0px rgba(0, 0, 0, 0.16);
+            z-index: 10;
+        }
+        .beat-ruler {
+            height: 100%;
+            flex-grow: 1;
+            background-color: $ruler-bg;
+        }
+    }
+
+    .track-section {
+        height: calc(100% - 30px);
+        overflow-y: auto;
+        .tracks-panel {
+            float: left;
+            height: 100%;
+            width: $track-panel-width;
+            background-color: $track-panel-bg;
+            box-shadow: 2px 0px 7px 0px rgba(0, 0, 0, 0.16);
+            position: relative;
+            z-index: 10;
+            .track {
+                height: 100px;
+                width: 100%;
+                background-color: $track-panel-bg;
+                border-color: #181A23;
+                border-bottom-style: solid;
+                border-bottom-width: 1.5px;
+                cursor: pointer;
+                transition:  background-color .25s ease;
+                user-select: none;
+                padding: 15px;
+                display: flex;
+                flex: row;
+                &__icon {
+                    fill: white;
+                    height: 67px;
+                    width: 67px;
+                }
+                &__right-side {
+                    flex-grow: 1;
+                    margin-left: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    .name {
+                        font-size: 12pt;
+                        font-weight: 500;
+                    }
+                    .control {
+                        height: 30px;
+                        margin-top: 8px;
+                        display: flex;
+                        .control__section {
+                            width: 25px;
+                            height: 25px;
+                            margin-right: 9px;
+                            button {
+                                width: 25px;
+                                height: 25px;
+                                padding: 0px;
+                                border: none;
+                                outline: none;
+                                background-color: transparent;
+                                cursor: pointer;
+                                svg {
+                                    width: 25px;
+                                    height: 25px;
+                                    fill: white;
+                                }
+                            }
+                            button.active {
+                                svg {
+                                    fill: $secondary;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .track:first-child {
+                border-top-style: solid;
+                border-top-width: 1.5px;
+            }
+            .track--add-new-track {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-weight: 500;
+                color: #555;
+                transition: color .25s ease, background-color .25s ease;
+            }
+            .track--add-new-track:hover {
+                color: white;
+            }
+
+            .track--add-new-track:active {
+                background-color: #2B2E49;
+            }
+        }
+        .tracks {
+            float: left;
+            overflow-x: auto;
+            height: 100%;
+            width: 100%;
+            max-width: calc(100% - 280px);
+            background-color: $tracks-bg;
+        }
+    }
+
+}

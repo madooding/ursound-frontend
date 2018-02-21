@@ -145,7 +145,7 @@
             float: left;
             list-style-type: none;
             padding: 0px;
-            margin: 0px 0px 0px 80px;
+            margin: 0px 0px 0px 100px;
             font-weight: 500;
             display: flex;
             align-items: center;
@@ -159,6 +159,8 @@
     }
 }
 
+
+
 .menubar.afterAuth {
     position: fixed;
     padding: 0px 70px;
@@ -166,7 +168,7 @@
     max-height: 58px;
     height: 100%;
     color: white;
-    box-shadow: 0 1px 5px 0 rgba(0,0,0,0.50);
+    box-shadow: 0 1px 9px 0 rgba(0, 0, 0, 0.25);
     font-size: 12pt;
     .menubar__brand > h4{
         font-size: 18pt;
@@ -194,4 +196,8 @@
             }
         }
     }
+}
+
+.menubar.afterAuth.studio-mode {
+    padding: 0px 20px 0px 70px;
 }

@@ -28,7 +28,10 @@ const state = {
             solo: false,
             muted: true
         }
-    ]
+    ],
+    chat: {
+        show: false
+    }
 }
 
 const mutations = {
@@ -45,6 +48,9 @@ const mutations = {
     updateTrackVolume(state, val){
         let index = _.findIndex(state.tracks, o => o.id == val.id)
         state.tracks[index].volume = val.volume
+    },
+    toggleChatbox(state){
+        state.chat.show = !state.chat.show
     }
 }
 
@@ -57,11 +63,15 @@ const actions = {
     },
     UPDATE_TRACK_VOLUME({commit}, val){
         commit('updateTrackVolume', val)
+    },
+    TOGGLE_CHATBOX({commit}) {
+        commit('toggleChatbox')
     }
 }
 
 const getters = {
-    getTracks: state => state.tracks
+    getTracks: state => state.tracks,
+    isChatboxShow: state => state.chat.show
 }
 
 export default {

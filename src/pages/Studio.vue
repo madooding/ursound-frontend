@@ -14,16 +14,19 @@
             <div class="tracks">
             </div>
         </div>
+        <ChatBox></ChatBox>
     </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import TrackControl from '../components/Studio/TrackControl'
+import ChatBox from '../components/Studio/ChatBox'
 
 export default {
     components: {
-        TrackControl
+        TrackControl,
+        ChatBox
     },
     data: () => ({}),
     computed: {
@@ -32,3 +35,9 @@ export default {
 }
 
 </script>
+
+<style scoped>
+body {
+    overflow-x: hidden;
+}
+</style>

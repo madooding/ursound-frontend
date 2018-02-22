@@ -71,10 +71,29 @@
                 </svg>
             </button>
         </div>
-        <div class="controlbar__option">110</div>
-        <div class="controlbar__option">4/4</div>
-        <div class="controlbar__option"></div>
-        <div class="controlbar__messages"></div>
+        <div class="controlbar__options">
+            <div class="option">110</div>
+            <div class="option">4/4</div>
+            <div class="option">
+                <button> 
+                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
+                        <g>
+                            <path d="M20,23.9c-0.4,0-0.8-0.4-0.8-0.8V5.7c0-0.4,0.4-0.8,0.8-0.8s0.8,0.4,0.8,0.8v17.4C20.8,23.6,20.4,23.9,20,23.9z"/>
+                        </g>
+                        <path d="M37.9,9.3c-0.4-0.4-1.1-0.4-1.6,0L19.1,26.6H19h-1.1H9.5L17,6c0.7-2,2.5-2.2,3-2.2c0.5,0,2.3,0.2,3,2.2l4.1,11.2l1.9-1.9
+                            L25.3,5.1c-0.9-2.5-3.1-3.8-5.3-3.8c-2.2,0-4.4,1.3-5.3,3.8L6.9,26.6L5.3,31c-1.3,3.7,1.2,7.7,4.9,7.7h19.6c3.7,0,6.3-4,4.9-7.7
+                            l-1.6-4.5l-2.5-6.8l-1.9,1.9l1.8,4.9h-6.6h-1.3h-0.3l15.6-15.6C38.3,10.5,38.3,9.8,37.9,9.3z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="controlbar__messages">
+            <button @click="showChatBox">
+                <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23">
+                    <path id="message" class="cls-1" d="M1523,168l-5.89-1.473a11.5,11.5,0,1,1,4.42-4.419Zm-4.79-18.245a9.516,9.516,0,1,0-1,14.314L1520,165l-0.93-2.792A9.507,9.507,0,0,0,1518.21,149.755ZM1516.5,158a1.5,1.5,0,1,1,1.5-1.5A1.5,1.5,0,0,1,1516.5,158Zm-5,0a1.5,1.5,0,1,1,1.5-1.5A1.5,1.5,0,0,1,1511.5,158Zm-5,0a1.5,1.5,0,1,1,1.5-1.5A1.5,1.5,0,0,1,1506.5,158Z" transform="translate(-1500 -145)"/>
+                </svg>
+            </button>
+        </div>
     </div>
 </template>
 
@@ -84,6 +103,11 @@ import vueSlider from 'vue-slider-component'
 export default {
     components: {
         vueSlider
+    },
+    methods: {
+        showChatBox(){
+            this.$store.dispatch('TOGGLE_CHATBOX')
+        }
     }
 }
 </script>

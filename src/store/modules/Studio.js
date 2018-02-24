@@ -5,8 +5,9 @@ const state = {
         name: "Untitled-2",
         cover: "",
         genre: "",
-        bpm: 70,
-        time_signature: "",
+        bpm: 80,
+        time_signature: 4,
+        bars: 12,
         isMetronomeOn: false,
         key: "C",
         description: ""
@@ -71,7 +72,8 @@ const actions = {
 
 const getters = {
     getTracks: state => state.tracks,
-    isChatboxShow: state => state.chat.show
+    isChatboxShow: state => state.chat.show,
+    getStudioDetails: state => state.details
 }
 
 export default {

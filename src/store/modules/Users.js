@@ -29,7 +29,7 @@ const mutations = {
 }
 
 const actions = {
-    VALIDATE_TOKEN({commit, dispatch}, token){
+    VALIDATE_TOKEN({commit, dispatch}){
         return AuthService.validateToken()
             .then(res => {
                 commit("setLoginState", true)

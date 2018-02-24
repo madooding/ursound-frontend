@@ -2,7 +2,7 @@
     <div class="studio">
         <div class="top-bar">
             <div class="left-side"></div>
-            <div class="beat-ruler"></div>
+            <beat-ruler></beat-ruler>
         </div>
         <div class="track-section">
             <div class="tracks-panel">
@@ -12,6 +12,7 @@
                 </div>
             </div>
             <div class="tracks">
+                <TrackLane v-for="track in tracks" :key="track.id" v-bind:track_data="track"></TrackLane>
             </div>
         </div>
         <ChatBox></ChatBox>
@@ -22,11 +23,15 @@
 import { mapGetters } from 'vuex';
 import TrackControl from '../components/Studio/TrackControl'
 import ChatBox from '../components/Studio/ChatBox'
+import BeatRuler from '../components/Studio/BeatRuler'
+import TrackLane from '../components/Studio/TrackLane'
 
 export default {
     components: {
         TrackControl,
-        ChatBox
+        ChatBox,
+        BeatRuler,
+        TrackLane
     },
     data: () => ({}),
     computed: {

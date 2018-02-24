@@ -72,6 +72,7 @@
             </button>
         </div>
         <div class="controlbar__options">
+            <div class="option">Key : C</div>
             <div class="option">110</div>
             <div class="option">4/4</div>
             <div class="option">

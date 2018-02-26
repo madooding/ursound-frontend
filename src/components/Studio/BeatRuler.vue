@@ -16,13 +16,7 @@ export default {
     }),
     mounted() {
         this.container = $(this.$refs.beatRulerContainer)
-        // Should be width of audio stage
-        $(this.$refs.beatRuler).attr('width', (this.stageWidth) * 2)
-        $(this.$refs.beatRuler).attr('height', this.container.height() * 2)
-        // Should be width of audio stage
-        $(this.$refs.beatRuler).css('width', this.stageWidth)
-        $(this.$refs.beatRuler).css('height', this.container.height())
-        this.renderRuler()
+        this.onStageWidthChange()
     },
     methods: {
         renderRuler() {
@@ -54,13 +48,8 @@ export default {
                     ctx.stroke();
                 }
             }
-        }
-    },
-    computed: {
-        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth'})
-    },
-    watch: {
-        stageWidth() {
+        },
+        onStageWidthChange() {
             this.container.css('width', this.stageWidth)
             // Should be width of audio stage
             $(this.$refs.beatRuler).attr('width', (this.stageWidth * 2))
@@ -69,6 +58,14 @@ export default {
             $(this.$refs.beatRuler).css('width', this.stageWidth)
             $(this.$refs.beatRuler).css('height', this.container.height())
             this.renderRuler()
+        }
+    },
+    computed: {
+        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth'})
+    },
+    watch: {
+        stageWidth() {
+            this.onStageWidthChange()
         },
         scrollX() {
             this.container.animate({'scrollLeft': this.scrollX}, 0)

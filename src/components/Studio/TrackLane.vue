@@ -16,15 +16,7 @@ export default {
     }),
     mounted() {
         this.container = $(this.$refs.trackLaneContainer)
-        let canvas = $(this.$refs.trackLane)
-        this.container.css('width', this.stageWidth)
-        // Should be width of audio stage
-        canvas.attr('width', (this.container.width()) * 2)
-        canvas.attr('height', this.container.height() * 2)
-        // Should be width of audio stage
-        canvas.css('width', this.container.width())
-        canvas.css('height', this.container.height())
-        this.renderRuler()
+        this.onStageWidthChange()
     },
     methods: {
         renderRuler() {
@@ -47,13 +39,8 @@ export default {
                     ctx.stroke();
                 }
             }
-        }
-    },
-    computed: {
-        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth'})
-    },
-    watch: {
-        stageWidth() {
+        },
+        onStageWidthChange() {
             let canvas = $(this.$refs.trackLane)
             this.container.css('width', this.stageWidth)
             // Should be width of audio stage
@@ -63,6 +50,14 @@ export default {
             canvas.css('width', this.container.width())
             canvas.css('height', this.container.height())
             this.renderRuler()
+        }
+    },
+    computed: {
+        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth'})
+    },
+    watch: {
+        stageWidth() {
+            this.onStageWidthChange()
         }
     }
 }

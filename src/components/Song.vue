@@ -18,8 +18,6 @@
                     </g>
                     </svg>
                     <svg v-else version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
-                        <title>play btn</title>
-                        <desc>Created with Sketch.</desc>
                         <g id="Oval-3">
                             <path id="XMLID_4_" d="M50,100C22.5,100,0,77.5,0,50S22.3,0,50,0s50,22.5,50,50C100,77.7,77.5,100,50,100z M50,2
                                 C23.5,2,2,23.5,2,50s21.5,48,48,48s48-21.5,48-48S76.5,2,50,2z"/>

@@ -9,17 +9,19 @@
 import { mapGetters } from 'vuex'
 
 export default {
+    props: ['scrollX'],
     data: () => ({
-        stagePosition: 0
+        stagePosition: 0,
+        container: null
     }),
     mounted() {
-        let rulerContainer = $(this.$refs.beatRulerContainer)
+        this.container = $(this.$refs.beatRulerContainer)
         // Should be width of audio stage
-        $(this.$refs.beatRuler).attr('width', (rulerContainer.width()) * 2)
-        $(this.$refs.beatRuler).attr('height', rulerContainer.height() * 2)
+        $(this.$refs.beatRuler).attr('width', (this.stageWidth) * 2)
+        $(this.$refs.beatRuler).attr('height', this.container.height() * 2)
         // Should be width of audio stage
-        $(this.$refs.beatRuler).css('width', rulerContainer.width())
-        $(this.$refs.beatRuler).css('height', rulerContainer.height())
+        $(this.$refs.beatRuler).css('width', this.stageWidth)
+        $(this.$refs.beatRuler).css('height', this.container.height())
         this.renderRuler()
     },
     methods: {
@@ -33,7 +35,8 @@ export default {
             let perBeat = perBar / this.details.time_signature
             if (canvas.getContext) {
                 let ctx = canvas.getContext('2d')
-                ctx.scale(2, 2)
+                ctx.scale(2, 2);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 for(let beat = 1; beat <= this.details.bars * this.details.time_signature; beat++){
                     if(beat % this.details.time_signature == 1){
                         ctx.font = "9pt Helvetica";
@@ -54,7 +57,22 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({details: 'getStudioDetails'})
+        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth'})
+    },
+    watch: {
+        stageWidth() {
+            this.container.css('width', this.stageWidth)
+            // Should be width of audio stage
+            $(this.$refs.beatRuler).attr('width', (this.stageWidth * 2))
+            $(this.$refs.beatRuler).attr('height', this.container.height() * 2)
+            // Should be width of audio stage
+            $(this.$refs.beatRuler).css('width', this.stageWidth)
+            $(this.$refs.beatRuler).css('height', this.container.height())
+            this.renderRuler()
+        },
+        scrollX() {
+            this.container.animate({'scrollLeft': this.scrollX}, 0)
+        }
     }
 }
 

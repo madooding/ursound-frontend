@@ -17,6 +17,7 @@ export default {
     mounted() {
         this.container = $(this.$refs.trackLaneContainer)
         let canvas = $(this.$refs.trackLane)
+        this.container.css('width', this.stageWidth)
         // Should be width of audio stage
         canvas.attr('width', (this.container.width()) * 2)
         canvas.attr('height', this.container.height() * 2)
@@ -36,6 +37,7 @@ export default {
             if (canvas.getContext) {
                 let ctx = canvas.getContext('2d')
                 ctx.scale(2, 2)
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
                 for(let beat = 1; beat <= this.details.bars * this.details.time_signature; beat++){
                     if(beat == 1) continue
                     ctx.beginPath();
@@ -48,7 +50,20 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({details: 'getStudioDetails'})
+        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth'})
+    },
+    watch: {
+        stageWidth() {
+            let canvas = $(this.$refs.trackLane)
+            this.container.css('width', this.stageWidth)
+            // Should be width of audio stage
+            canvas.attr('width', (this.container.width()) * 2)
+            canvas.attr('height', this.container.height() * 2)
+            // Should be width of audio stage
+            canvas.css('width', this.container.width())
+            canvas.css('height', this.container.height())
+            this.renderRuler()
+        }
     }
 }
 </script>

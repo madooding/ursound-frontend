@@ -7,10 +7,12 @@ const state = {
         genre: "",
         bpm: 80,
         time_signature: 4,
-        bars: 12,
+        bars: 8,
         isMetronomeOn: false,
         key: "C",
-        description: ""
+        description: "",
+        zoomLevel: 100,
+        stage_width: 0
     },
     tracks: [
         {   
@@ -27,7 +29,23 @@ const state = {
             type: 'AUDIO',
             volume: 80,
             solo: false,
-            muted: true
+            muted: true 
+        },
+        {
+            id: 3,
+            name: "Voice",
+            type: 'AUDIO',
+            volume: 80,
+            solo: false,
+            muted: true 
+        },
+        {
+            id: 4,
+            name: "Voice",
+            type: 'AUDIO',
+            volume: 80,
+            solo: false,
+            muted: true 
         }
     ],
     chat: {
@@ -52,6 +70,12 @@ const mutations = {
     },
     toggleChatbox(state){
         state.chat.show = !state.chat.show
+    },
+    zoom(state, val) {
+        state.details.zoomLevel = val
+    },
+    setStageWidth(state, val) {
+        state.details.stage_width = val
     }
 }
 
@@ -67,13 +91,21 @@ const actions = {
     },
     TOGGLE_CHATBOX({commit}) {
         commit('toggleChatbox')
+    },
+    ZOOM({commit}, val){
+        commit('zoom', val)
+    },
+    SET_STAGE_WIDTH({commit}, val){
+        commit('setStageWidth', val)
     }
 }
 
 const getters = {
     getTracks: state => state.tracks,
     isChatboxShow: state => state.chat.show,
-    getStudioDetails: state => state.details
+    getStudioDetails: state => state.details,
+    getStageWidth: state => state.details.stage_width,
+    getZoomLevel: state => state.details.zoomLevel
 }
 
 export default {

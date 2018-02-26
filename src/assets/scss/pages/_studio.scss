@@ -19,7 +19,7 @@ $track-panel-width: 280px;
     color: white;
 
     .top-bar {
-        height: 30px;
+        height: 30px !important;
         background-color: white;
         display: flex;
         .left-side {
@@ -45,7 +45,7 @@ $track-panel-width: 280px;
 
     .track-section {
         height: calc(100% - 30px);
-        overflow-y: auto;
+        overflow-y: overlay;
         .tracks-panel {
             float: left;
             height: 100%;
@@ -135,13 +135,16 @@ $track-panel-width: 280px;
         }
         .tracks {
             float: left;
-            overflow-x: auto;
-            height: 100%;
+            overflow-x: overlay;
+            overflow-y: hidden;
+            min-height: 100%;
+            height: auto;
             width: 100%;
             max-width: calc(100% - 280px);
-            background-color: $tracks-bg;
+            background-color: rgb(22, 25, 39) !important;
             display: flex;
             flex-direction: column;
+            padding-bottom: 100px;
             .track-lane {
                 height: 100px;
                 border-bottom-color: #282A3A;
@@ -154,6 +157,7 @@ $track-panel-width: 280px;
                     height: 100px;
                     top: 0;
                     left: 0;
+                    padding: 1.5px 0px;
                 }
             }
         }

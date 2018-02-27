@@ -9,7 +9,6 @@
 import { mapGetters } from 'vuex'
 
 export default {
-    props: ['scrollX'],
     data: () => ({
         stagePosition: 0,
         container: null
@@ -61,7 +60,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth'})
+        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth', scrollX: 'getCurrentScrollXPosition'})
     },
     watch: {
         stageWidth() {

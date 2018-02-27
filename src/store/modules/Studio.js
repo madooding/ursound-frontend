@@ -1,18 +1,21 @@
 import _ from 'lodash'
 
 const state = {
+    env: {
+        zoomLevel: 100,
+        stage_width: 0,
+        currentScrollXPos: 0
+    },
     details: {
         name: "Untitled-2",
         cover: "",
         genre: "",
         bpm: 80,
         time_signature: 4,
-        bars: 8,
+        bars: 12,
         isMetronomeOn: false,
         key: "C",
-        description: "",
-        zoomLevel: 100,
-        stage_width: 0
+        description: ""
     },
     tracks: [
         {   
@@ -72,10 +75,13 @@ const mutations = {
         state.chat.show = !state.chat.show
     },
     zoom(state, val) {
-        state.details.zoomLevel = val
+        state.env.zoomLevel = val
     },
     setStageWidth(state, val) {
-        state.details.stage_width = val
+        state.env.stage_width = val
+    },
+    setCurrentScrollXPosition(state, val){
+        state.env.currentScrollXPos = val
     }
 }
 
@@ -97,6 +103,9 @@ const actions = {
     },
     SET_STAGE_WIDTH({commit}, val){
         commit('setStageWidth', val)
+    },
+    SCROLL_X_POSITION({commit}, val){
+        commit('setCurrentScrollXPosition', val)
     }
 }
 
@@ -104,8 +113,9 @@ const getters = {
     getTracks: state => state.tracks,
     isChatboxShow: state => state.chat.show,
     getStudioDetails: state => state.details,
-    getStageWidth: state => state.details.stage_width,
-    getZoomLevel: state => state.details.zoomLevel
+    getStageWidth: state => state.env.stage_width,
+    getZoomLevel: state => state.env.zoomLevel,
+    getCurrentScrollXPosition: state => state.env.currentScrollXPos
 }
 
 export default {

@@ -46,9 +46,11 @@ $track-panel-width: 280px;
     .track-section {
         height: calc(100% - 30px);
         overflow-y: overlay;
+        overflow-x: hidden;
         .tracks-panel {
             float: left;
-            height: 100%;
+            min-height: 100%;
+            height: auto;
             width: $track-panel-width;
             background-color: $track-panel-bg;
             box-shadow: 2px 0px 7px 0px rgba(0, 0, 0, 0.16);

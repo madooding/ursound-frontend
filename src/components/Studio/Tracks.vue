@@ -23,20 +23,20 @@ export default {
                 let beats = (this.details.bars * this.details.time_signature)
                 e.preventDefault()
                 if(e.originalEvent.wheelDelta /120 > 0) {
-                    this.zoom += 5
+                    this.zoom += 3
                     this.zoom = Math.min(this.zoom, 200)
                     this.$store.dispatch('ZOOM', this.zoom)
                     this.$store.dispatch('SET_STAGE_WIDTH', Math.max(tracks.width(), (29 * beats)*(this.zoom/100)))
                 }
                 else{
                     if(((29 * beats) * ((this.zoom-5)/100)) > tracks.width()){
-                        this.zoom -= 5
+                        this.zoom -= 3
                         let beats = (this.details.bars * this.details.time_signature)
                         this.zoom = Math.max(5, this.zoom)
                         this.$store.dispatch('ZOOM', this.zoom)
                         this.$store.dispatch('SET_STAGE_WIDTH', Math.max(tracks.width(), (29 * beats)*(this.zoom/100)))
                     } else if(this.stageWidth > tracks.width()){
-                        this.zoom -= 5
+                        this.zoom -= 3
                         this.$store.dispatch('SET_STAGE_WIDTH', tracks.width())
                     }
                 }

@@ -30,19 +30,19 @@ export default {
             let height = this.container.height()
             let perBar = width / this.details.bars
             let perBeat = perBar / this.details.time_signature
-            let avoid = Math.round(Math.sqrt(21/perBeat)) - 1
+            let avoid = Math.round(14/perBeat) * 2
             if (canvas.getContext) {
                 let ctx = canvas.getContext('2d')
                 ctx.scale(2, 2)
                 ctx.clearRect(0, 0, canvas.width, canvas.height)
                 for(let beat = 1; beat <= this.details.bars * this.details.time_signature; beat++){
-                    if(beat == 1) continue
-                    if(avoid === 0 || (avoid === 1 && beat % this.details.time_signature == 1 && ((Math.ceil(beat/this.details.time_signature) % (avoid + 1) == 1) || avoid === 0))){
+                    if (avoid === 0 || (beat % avoid === 1 && avoid > 0)) {
                         ctx.beginPath();
                         ctx.moveTo((beat - 1) * perBeat, 0);
                         ctx.lineTo((beat - 1) * perBeat, height);
                         ctx.strokeStyle = '#292B3B';
                         ctx.stroke();
+                        ctx.closePath();
                     }
                 }
             }

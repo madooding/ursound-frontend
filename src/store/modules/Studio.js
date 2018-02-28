@@ -5,7 +5,7 @@ const state = {
         zoomLevel: 100,
         stage_width: 0,
         currentScrollXPos: 0,
-        currentTimePercent: 20
+        currentTimePercent: 15
     },
     details: {
         name: "Untitled-2",
@@ -116,11 +116,17 @@ const getters = {
     getStudioDetails: state => state.details,
     getStageWidth: state => state.env.stage_width,
     getZoomLevel: state => state.env.zoomLevel,
+    getStudioSnapGrid: state => {
+        let perBar = state.env.stage_width / state.details.bars
+        let perBeat = perBar / state.details.time_signature
+        let avoid = Math.round(14/perBeat) * 2
+        return perBeat * Math.max(1, avoid)
+    },
     getStudioCurrentScrollXPosition: state => state.env.currentScrollXPos,
     getStudioCurrentTimePixel: state => (state.env.currentTimePercent/100) * state.env.stage_width,
     getStudioCurrentTime: state => {
         let beats = state.details.bars * state.details.time_signature
-        return ((state.env.currentTimePercent/100) * beats)/state.details.bpm*60
+        return ((state.env.currentTimePercent/100) * beats) / state.details.bpm * 60
     }
 
 }

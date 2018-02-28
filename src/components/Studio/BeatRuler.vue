@@ -33,28 +33,31 @@ export default {
             let rulerHeight = beatRuler.height()
             let perBar = rulerWidth / this.details.bars
             let perBeat = perBar / this.details.time_signature
-            let avoid = Math.round(Math.sqrt(21/perBeat)) - 1
+            let avoid = Math.round(14/perBeat) * 2
             if (canvas.getContext) {
                 let ctx = canvas.getContext('2d')
                 ctx.scale(2, 2);
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 for(let beat = 1; beat <= this.details.bars * this.details.time_signature; beat++){
-                    //  && ((Math.ceil(beat/this.details.time_signature) % (avoid + 1) == 1) || avoid === 0)
-                    if(beat % this.details.time_signature == 1 && ((Math.ceil(beat/this.details.time_signature) % (avoid + 1) == 1) || avoid === 0)){
-                        ctx.font = "9pt Helvetica";
-                        ctx.fillStyle = '#979797';
-                        ctx.fillText(Math.ceil(beat/this.details.time_signature), (beat-1) * perBeat + 4, 17);
+                    if(avoid === 0 || (beat % avoid === 1 && avoid > 0)){
+                        if(beat > 1){
+                            ctx.beginPath();
+                            if(beat % this.details.time_signature == 1){
+                                ctx.moveTo((beat-1) * perBeat, 8);
+                            } else {
+                                ctx.moveTo((beat-1) * perBeat, 21);
+                            }
+                            ctx.lineTo((beat-1) * perBeat, rulerHeight);
+                            ctx.strokeStyle = '#979797';
+                            ctx.stroke();
+                            ctx.closePath();    
+                        }
+                        if(beat % this.details.time_signature == 1) {
+                            ctx.font = "9pt Helvetica";
+                            ctx.fillStyle = '#979797';
+                            ctx.fillText(Math.ceil(beat/this.details.time_signature), (beat-1) * perBeat + 4, 17);
+                        }
                     }
-                    ctx.fillText
-                    if(beat == 1) continue
-                    ctx.beginPath();
-                    if (beat % this.details.time_signature == 1 && ((Math.ceil(beat/this.details.time_signature) % (avoid + 1) == 1) || avoid === 0))
-                        ctx.moveTo((beat-1) * perBeat, 8);
-                    else if(avoid === 0) ctx.moveTo((beat-1) * perBeat, 21);
-                    ctx.lineTo((beat-1) * perBeat, rulerHeight);
-                    ctx.strokeStyle = '#979797';
-                    ctx.stroke();
-                    ctx.closePath();
                 }
             }
         },

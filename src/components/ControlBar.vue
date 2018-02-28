@@ -3,7 +3,7 @@
         <div class="controlbar__volume">
             <vue-slider ref="volume" :tooltip="false" :dot-size="14" width="100%" :max="100" :interval="1" :speed="0.5" :bgStyle="{'background-color': '#9397B0', 'height': '3px', 'border': '3px', 'cursor': 'pointer'}" :processStyle="{'background-color': '#9397B0'}" :sliderStyle="{'margin-top': '-1.7px'}"></vue-slider>
         </div>
-        <div class="controlbar__current-time">00:40.5</div>
+        <div class="controlbar__current-time">{{ currentTimeFormatted }}</div>
         <div class="controlbar__control">
             <button class="record-btn">
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
@@ -99,7 +99,9 @@
 </template>
 
 <script>
+import moment from 'moment'
 import vueSlider from 'vue-slider-component'
+import { mapGetters } from 'vuex'
 
 export default {
     components: {
@@ -108,6 +110,12 @@ export default {
     methods: {
         showChatBox(){
             this.$store.dispatch('TOGGLE_CHATBOX')
+        }
+    },
+    computed: {
+        ...mapGetters({'currentTime': 'getStudioCurrentTime'}),
+        currentTimeFormatted(){
+            return `${moment('2000-01-01 00:00:00').add(moment.duration(this.currentTime, 'seconds')).format("mm:ss")}.${Math.round((this.currentTime - Math.floor(this.currentTime)) * 10)}`
         }
     }
 }

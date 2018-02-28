@@ -54,6 +54,7 @@
 <script>
 import SoloBtn from './SoloBtn.vue'
 import MuteBtn from './MuteBtn.vue'
+import { mapGetters } from 'vuex'
 
 export default {
     props: ['track_data'],
@@ -84,6 +85,12 @@ export default {
                 id: this.track_data.id,
                 volume: val
             })
+        }
+    },
+    computed: {
+        ...mapGetters({'currentTime': 'getStudioCurrentTime'}),
+        currentTimeFormatted(){
+            return `${moment('2000-01-01 00:00:00').add(moment.duration(this.currentTime, 'seconds')).format("mm:ss")}.${this.currentTime - Math.floor(this.currentTime)}`
         }
     }
     

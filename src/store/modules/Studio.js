@@ -83,6 +83,9 @@ const mutations = {
     },
     setCurrentScrollXPosition(state, val){
         state.env.currentScrollXPos = val
+    },
+    setStudioCurrentTimePercent(state, val){
+        state.env.currentTimePercent = val
     }
 }
 
@@ -107,6 +110,9 @@ const actions = {
     },
     SCROLL_X_POSITION({commit}, val){
         commit('setCurrentScrollXPosition', val)
+    },
+    SET_STUDIO_CURRENT_TIME({commit}, val){
+        commit('setStudioCurrentTimePercent', val)
     }
 }
 
@@ -123,6 +129,7 @@ const getters = {
         return perBeat * Math.max(1, avoid)
     },
     getStudioCurrentScrollXPosition: state => state.env.currentScrollXPos,
+    getStudioCurrentTimePercent: state => state.env.currentTimePercent,
     getStudioCurrentTimePixel: state => (state.env.currentTimePercent/100) * state.env.stage_width,
     getStudioCurrentTime: state => {
         let beats = state.details.bars * state.details.time_signature

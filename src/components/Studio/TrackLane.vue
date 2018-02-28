@@ -50,6 +50,7 @@ export default {
         onStageWidthChange() {
             let canvas = $(this.$refs.trackLane)
             this.container.css('width', this.stageWidth)
+            this.container.css('max-width', this.stageWidth)
             // Should be width of audio stage
             canvas.attr('width', (this.container.width()) * 2)
             canvas.attr('height', this.container.height() * 2)

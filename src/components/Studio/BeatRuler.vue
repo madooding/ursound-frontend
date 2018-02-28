@@ -13,16 +13,34 @@
 <script>
 
 import { mapGetters } from 'vuex'
+import interact from 'interactjs'
+import _ from 'lodash'
+
 
 export default {
     data: () => ({
         stagePosition: 0,
-        container: null
+        container: null,
     }),
     mounted() {
         this.container = $(this.$refs.beatRulerContainer)
+        this.container.css('max-width', this.stageWidth)
         this.onStageWidthChange()
         this.renderIndicator()
+        interact('.indicator')
+            .draggable({
+                restrict: {
+                    restriction: '.beat-ruler',
+                    elementRect: { top: 0, left: 1, bottom: 0, right: 0}
+                },
+                onmove: (e) => {
+                    let target = e.target, x = Math.min(this.stageWidth, Math.max(0, parseFloat(_.replace(target.style.left, 'px', '')) + e.dx))
+                    let offsetX = Math.min(this.stageWidth, Math.max(0, e.pageX - $(this.$refs.beatRulerContainer).offset().left) + this.scrollX)
+                    let offsetXtail = offsetX % this.snapGrid
+                    this.$store.dispatch('SET_STUDIO_CURRENT_TIME', (offsetX - offsetXtail + (Math.round(offsetXtail / this.snapGrid) * this.snapGrid))/this.stageWidth * 100)
+                }
+            })
+                            
     },
     methods: {
         renderRuler() {
@@ -63,6 +81,7 @@ export default {
         },
         onStageWidthChange() {
             this.container.css('width', this.stageWidth)
+            this.container.css('max-width', this.stageWidth)
             // Should be width of audio stage
             $(this.$refs.beatRuler).attr('width', (this.stageWidth * 2))
             $(this.$refs.beatRuler).attr('height', this.container.height() * 2)
@@ -77,7 +96,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth', scrollX: 'getStudioCurrentScrollXPosition', indicatorPos: 'getStudioCurrentTimePixel'})
+        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth', scrollX: 'getStudioCurrentScrollXPosition', indicatorPos: 'getStudioCurrentTimePixel', currentTimePercent: 'getStudioCurrentTimePercent', snapGrid: 'getStudioSnapGrid'})
     },
     watch: {
         stageWidth() {

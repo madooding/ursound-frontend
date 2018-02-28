@@ -4,7 +4,8 @@ const state = {
     env: {
         zoomLevel: 100,
         stage_width: 0,
-        currentScrollXPos: 0
+        currentScrollXPos: 0,
+        currentTimePercent: 20
     },
     details: {
         name: "Untitled-2",
@@ -12,7 +13,7 @@ const state = {
         genre: "",
         bpm: 80,
         time_signature: 4,
-        bars: 12,
+        bars: 32,
         isMetronomeOn: false,
         key: "C",
         description: ""
@@ -115,7 +116,13 @@ const getters = {
     getStudioDetails: state => state.details,
     getStageWidth: state => state.env.stage_width,
     getZoomLevel: state => state.env.zoomLevel,
-    getCurrentScrollXPosition: state => state.env.currentScrollXPos
+    getStudioCurrentScrollXPosition: state => state.env.currentScrollXPos,
+    getStudioCurrentTimePixel: state => (state.env.currentTimePercent/100) * state.env.stage_width,
+    getStudioCurrentTime: state => {
+        let beats = state.details.bars * state.details.time_signature
+        return ((state.env.currentTimePercent/100) * beats)/state.details.bpm*60
+    }
+
 }
 
 export default {

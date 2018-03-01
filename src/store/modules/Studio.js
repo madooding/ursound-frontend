@@ -82,7 +82,7 @@ const mutations = {
         state.env.stage_width = val
     },
     setCurrentScrollXPosition(state, val){
-        state.env.currentScrollXPos = val
+        state.env.currentScrollXPos = Math.min(state.env.stage_width, Math.max(0, val))
     },
     setStudioCurrentTimePercent(state, val){
         state.env.currentTimePercent = val

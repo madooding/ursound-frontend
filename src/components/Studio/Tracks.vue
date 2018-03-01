@@ -17,6 +17,7 @@ export default {
     }),
     mounted() {
         let tracks = $(this.$refs.tracks)
+        
         this.$store.dispatch('SET_STAGE_WIDTH', (29 * (this.details.bars * this.details.time_signature))*(this.zoom/100))
         tracks.on('mousewheel', e => {
             if (e.altKey){
@@ -49,8 +50,13 @@ export default {
             this.$store.dispatch('SET_STAGE_WIDTH', Math.max((29 * (this.details.bars * this.details.time_signature)) * (this.zoomLevel/100), $(this.$refs.tracks).width()))
         })
     },
+    watch: {
+        scrollX() {
+            $(this.$refs.tracks).scrollLeft(this.scrollX)
+        }
+    },
     computed: {
-        ...mapGetters({'tracks': 'getTracks', 'stageWidth': 'getStageWidth', details: 'getStudioDetails', zoomLevel: 'getZoomLevel'})
+        ...mapGetters({'tracks': 'getTracks', 'stageWidth': 'getStageWidth', details: 'getStudioDetails', zoomLevel: 'getZoomLevel', scrollX: 'getStudioCurrentScrollXPosition'})
     }
 }
 </script>

@@ -24,7 +24,6 @@ export default {
     }),
     mounted() {
         this.container = $(this.$refs.beatRulerContainer)
-        this.container.css('max-width', this.stageWidth)
         this.onStageWidthChange()
         this.renderIndicator()
         interact('.indicator')
@@ -34,10 +33,13 @@ export default {
                     elementRect: { top: 0, left: 1, bottom: 0, right: 0}
                 },
                 onmove: (e) => {
-                    let target = e.target, x = Math.min(this.stageWidth, Math.max(0, parseFloat(_.replace(target.style.left, 'px', '')) + e.dx))
+                    let containerOffset = Math.max(0, Math.min(this.container.width(), e.pageX - $(this.$refs.beatRulerContainer).offset().left))
                     let offsetX = Math.min(this.stageWidth, Math.max(0, e.pageX - $(this.$refs.beatRulerContainer).offset().left) + this.scrollX)
                     let offsetXtail = offsetX % this.snapGrid
                     this.$store.dispatch('SET_STUDIO_CURRENT_TIME', (offsetX - offsetXtail + (Math.round(offsetXtail / this.snapGrid) * this.snapGrid))/this.stageWidth * 100)
+
+                    if(containerOffset <= 29) this.$store.dispatch('SCROLL_X_POSITION', this.scrollX - (29))
+                    else if(containerOffset >= this.container.width() - 29) this.$store.dispatch('SCROLL_X_POSITION', Math.min(this.stageWidth - this.container.width(), (this.scrollX + (29))))
                 }
             })
                             
@@ -80,8 +82,6 @@ export default {
             }
         },
         onStageWidthChange() {
-            this.container.css('width', this.stageWidth)
-            this.container.css('max-width', this.stageWidth)
             // Should be width of audio stage
             $(this.$refs.beatRuler).attr('width', (this.stageWidth * 2))
             $(this.$refs.beatRuler).attr('height', this.container.height() * 2)

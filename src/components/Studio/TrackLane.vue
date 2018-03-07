@@ -1,7 +1,12 @@
 <template>
     <div class="track-lane" ref="trackLaneContainer">
         <canvas ref="trackLane"></canvas>
-        <div class="regions"></div>
+        <div class="regions">
+            <div class="audio-region" :class="{'audio-region--piano': track_data.type === 'PIANO', 'audio-region--audio': track_data.type === 'AUDIO'}">
+                <div class="chord-name">Am</div>
+                <div class="time-signature">4/4</div>
+            </div>
+        </div>
         <svg version="1.1" ref="indicator" class="indicator-line" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 3 100" style="enable-background:new 0 0 3 100;" xml:space="preserve">
             <line id="XMLID_1_" class="st0" x1="1.5" y1="0" x2="1.5" y2="100"/>
         </svg>
@@ -13,7 +18,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-    props: ['track'],
+    props: ['track_data'],
     data: () => ({
         container: null
     }),

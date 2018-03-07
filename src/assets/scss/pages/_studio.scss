@@ -181,6 +181,50 @@ $track-panel-width: 280px;
                     top: 0;
                     left: 0;
                     padding: 1.5px 0px;
+                    .audio-region {
+                        height: 100%;
+                        border-radius: 8px;
+                        width: 100px;
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-width: 1px;
+                        border-style: solid;
+                        cursor: pointer;
+                        user-select: none;
+                    }
+                    .audio-region--piano {
+                        background-color: #DDE986;
+                        border-color: #91AF73;
+                        color: #91AF73;
+                        .chord-name {
+                            font-size: 20pt;
+                            font-weight: 600
+                        }
+                        .time-signature {
+                            position: absolute;
+                            font-size: 10pt;
+                            right: 6px;
+                            top: 6px;
+                        }
+                    }
+                    .audio-region--audio {
+                        background-color: #F7B5FF;
+                        color: #9959A1;
+                        border-color: #F38FFF;
+
+                        .chord-name {
+                            font-size: 20pt;
+                            font-weight: 600
+                        }
+                        .time-signature {
+                            position: absolute;
+                            font-size: 10pt;
+                            right: 6px;
+                            top: 6px;
+                        }
+                    }
                 }
                 svg.indicator-line {
                     position: absolute;

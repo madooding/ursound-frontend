@@ -9,7 +9,6 @@ import store from './store'
 
 Vue.config.productionTip = false
 
-
 import '!script-loader!jquery/dist/jquery.min.js'
 import '!script-loader!popper.js/dist/umd/popper.js'
 import '!script-loader!bootstrap/dist/js/bootstrap.min.js'

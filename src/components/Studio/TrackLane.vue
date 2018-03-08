@@ -2,10 +2,7 @@
     <div class="track-lane" ref="trackLaneContainer">
         <canvas ref="trackLane"></canvas>
         <div class="regions">
-            <div class="audio-region" :class="{'audio-region--piano': track_data.type === 'PIANO', 'audio-region--audio': track_data.type === 'AUDIO'}">
-                <div class="chord-name">Am</div>
-                <div class="time-signature">4/4</div>
-            </div>
+            <AudioRegion v-for="region in track_data.sequences" v-bind:key="region.id" class="audio-region" :class="{'audio-region--piano': track_data.type === 'PIANO', 'audio-region--audio': track_data.type === 'AUDIO'}" v-bind:track_data="track_data" v-bind:region_data="region"></AudioRegion>
         </div>
         <svg version="1.1" ref="indicator" class="indicator-line" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 3 100" style="enable-background:new 0 0 3 100;" xml:space="preserve">
             <line id="XMLID_1_" class="st0" x1="1.5" y1="0" x2="1.5" y2="100"/>
@@ -15,6 +12,7 @@
 
 <script>
 
+import AudioRegion from './AudioRegion'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -22,6 +20,9 @@ export default {
     data: () => ({
         container: null
     }),
+    components: {
+        AudioRegion
+    },
     mounted() {
         this.container = $(this.$refs.trackLaneContainer)
         this.onStageWidthChange()

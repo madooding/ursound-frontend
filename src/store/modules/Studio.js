@@ -20,15 +20,26 @@ const state = {
     },
     tracks: [
         {   
-            id: 1,
+            id: '5aa18167142a86f9a1bed5c6',
+            modified_time: '1520534666935',
             name: "Smart Piano",
             type: 'PIANO',
             volume: 60,
             solo: false,
-            muted: false
+            muted: false,
+            sequences: [
+                {
+                    id: '5aa18432096b49808d94365b',
+                    modified_time: '1520534640605',
+                    chord: 'C',
+                    beat: 4,
+                    start_beat: 0
+                }
+            ]
         },
         {
-            id: 2,
+            id: '5aa1818f0fd5c9c6999c3e91',
+            modified_time: '1520534696744',
             name: "Voice",
             type: 'AUDIO',
             volume: 80,
@@ -36,7 +47,8 @@ const state = {
             muted: true 
         },
         {
-            id: 3,
+            id: '5aa1819c4b1d20827767759a',
+            modified_time: '1520534710381',
             name: "Voice",
             type: 'AUDIO',
             volume: 80,
@@ -44,7 +56,8 @@ const state = {
             muted: true 
         },
         {
-            id: 4,
+            id: '5aa18257e1d9d93db99ba4ba',
+            modified_time: '1520534736609',
             name: "Voice",
             type: 'AUDIO',
             volume: 80,

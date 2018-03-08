@@ -86,12 +86,6 @@ export default {
                 volume: val
             })
         }
-    },
-    computed: {
-        ...mapGetters({'currentTime': 'getStudioCurrentTime'}),
-        currentTimeFormatted(){
-            return `${moment('2000-01-01 00:00:00').add(moment.duration(this.currentTime, 'seconds')).format("mm:ss")}.${this.currentTime - Math.floor(this.currentTime)}`
-        }
     }
     
 }

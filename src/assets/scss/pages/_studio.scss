@@ -87,6 +87,7 @@ $track-panel-width: 280px;
                 cursor: pointer;
                 transition:  background-color .25s ease;
                 user-select: none;
+
                 padding: 15px;
                 display: flex;
                 flex: row;
@@ -180,7 +181,7 @@ $track-panel-width: 280px;
                     height: 100px;
                     top: 0;
                     left: 0;
-                    padding: 1.5px 0px;
+                    padding: .5px 0px 3.5px 0px;
                     .audio-region {
                         height: 100%;
                         border-radius: 8px;

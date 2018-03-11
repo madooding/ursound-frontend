@@ -17,7 +17,6 @@ export default {
     mounted(){
         this.container = $(this.$refs.region)
         this.renderRegion()
-        $(window).on('resize', this.renderRegion())
     },
     methods: {
         renderRegion() {

@@ -34,7 +34,28 @@ const state = {
                     chord: 'C',
                     beat: 4,
                     start_beat: 0
-                }
+                },
+                {
+                    id: '5aa58510ffd1c66bd284692c',
+                    modified_time: '1520796970421',
+                    chord: 'Am',
+                    beat: 4,
+                    start_beat: 4
+                },
+                {
+                    id: '5aa5879529e4861250e3b7ad',
+                    modified_time: '1520797602077',
+                    chord: 'F',
+                    beat: 4,
+                    start_beat: 8
+                },
+                {
+                    id: '5aa587cdfd959911fc2e570c',
+                    modified_time: '1520797657368',
+                    chord: 'G',
+                    beat: 4,
+                    start_beat: 16
+                },
             ]
         },
         {

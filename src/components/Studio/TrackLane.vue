@@ -71,7 +71,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel'})
+        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel' })
     },
     watch: {
         stageWidth() {

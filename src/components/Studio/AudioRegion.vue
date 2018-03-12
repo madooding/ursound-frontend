@@ -21,6 +21,7 @@ export default {
     methods: {
         renderRegion() {
             this.container.css('width', this.region_data.beat * this.beatWidth)
+            this.container.css('left', this.beatWidth * this.region_data.start_beat)
         }
     },
     computed: {

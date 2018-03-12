@@ -11,14 +11,15 @@
 </template>
 
 <script>
-
+import interact from 'interactjs'
 import AudioRegion from './AudioRegion'
 import { mapGetters } from 'vuex'
 
 export default {
     props: ['track_data'],
     data: () => ({
-        container: null
+        container: null,
+        elemOffset: 0
     }),
     components: {
         AudioRegion
@@ -27,6 +28,19 @@ export default {
         this.container = $(this.$refs.trackLaneContainer)
         this.onStageWidthChange()
         this.renderIndicator()
+        interact('.audio-region')
+            .draggable({
+                restrict: {
+                    restriction: '.regions'
+                },
+                onstart: e => {
+                    this.elemOffset = Math.max(0, Math.min(e.pageX - $(e.target).offset().left, $(e.target).width()))  
+                },
+                onmove: e => {
+                    let containerOffset = Math.max(0, Math.min(this.container.width(), e.pageX - this.container.offset().left))                  
+                    $(e.target).css('left', containerOffset - this.elemOffset)
+                }
+            })
     },
     methods: {
         renderRuler() {
@@ -71,7 +85,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel' })
+        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel', scrollX: 'getStudioCurrentScrollXPosition' })
     },
     watch: {
         stageWidth() {

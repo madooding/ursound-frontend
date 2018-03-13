@@ -36,7 +36,7 @@ export default {
         scrollX: 0
     }),
     computed: {
-        ...mapGetters({'tracks': 'getTracks'})
+        ...mapGetters({'tracks': 'getStudioTracks'})
     }
 }
 

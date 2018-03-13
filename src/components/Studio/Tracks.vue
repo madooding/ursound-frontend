@@ -56,7 +56,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({'tracks': 'getTracks', 'stageWidth': 'getStageWidth', details: 'getStudioDetails', zoomLevel: 'getZoomLevel', scrollX: 'getStudioCurrentScrollXPosition'})
+        ...mapGetters({'tracks': 'getStudioTracks', 'stageWidth': 'getStageWidth', details: 'getStudioDetails', zoomLevel: 'getZoomLevel', scrollX: 'getStudioCurrentScrollXPosition'})
     }
 }
 </script>

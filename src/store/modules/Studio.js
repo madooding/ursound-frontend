@@ -1,5 +1,12 @@
 import _ from 'lodash'
 
+const findTrackIndex = (id) => {
+   return _.findIndex(state.tracks, each => each.id === id)
+}
+const findRegionIndex = (trackIndex, regionId) => {
+    return _.findIndex(state.tracks[trackIndex].sequences, each => each.id === regionId)
+}
+
 const state = {
     env: {
         zoomLevel: 100,
@@ -33,28 +40,28 @@ const state = {
                     modified_time: '1520534640605',
                     chord: 'C',
                     beat: 4,
-                    start_beat: 0
+                    start_beat: 1
                 },
                 {
                     id: '5aa58510ffd1c66bd284692c',
                     modified_time: '1520796970421',
                     chord: 'Am',
                     beat: 4,
-                    start_beat: 4
+                    start_beat: 5
                 },
                 {
                     id: '5aa5879529e4861250e3b7ad',
                     modified_time: '1520797602077',
                     chord: 'F',
                     beat: 4,
-                    start_beat: 8
+                    start_beat: 9
                 },
                 {
                     id: '5aa587cdfd959911fc2e570c',
                     modified_time: '1520797657368',
                     chord: 'G',
                     beat: 4,
-                    start_beat: 16
+                    start_beat: 13
                 },
             ]
         },
@@ -65,7 +72,8 @@ const state = {
             type: 'AUDIO',
             volume: 80,
             solo: false,
-            muted: true 
+            muted: true,
+            sequences: []
         },
         {
             id: '5aa1819c4b1d20827767759a',
@@ -74,7 +82,8 @@ const state = {
             type: 'AUDIO',
             volume: 80,
             solo: false,
-            muted: true 
+            muted: true,
+            sequences: [] 
         },
         {
             id: '5aa18257e1d9d93db99ba4ba',
@@ -83,7 +92,8 @@ const state = {
             type: 'AUDIO',
             volume: 80,
             solo: false,
-            muted: true 
+            muted: true,
+            sequences: [] 
         }
     ],
     chat: {
@@ -120,6 +130,15 @@ const mutations = {
     },
     setStudioCurrentTimePercent(state, val){
         state.env.currentTimePercent = val
+    },
+    moveAudioRegion(state, val){
+        let regionData = state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex]
+        let modified_time = Date.now()
+        regionData.start_beat = val.moveTo.startBeat
+        regionData.modified_time = modified_time
+        state.tracks[val.moveTo.trackIndex].sequences.push(regionData)
+        state.tracks[val.moveTo.trackIndex].modified_time = modified_time
+        state.tracks[val.currentIndex.trackIndex].sequences.splice(val.currentIndex.regionIndex, 1)
     }
 }
 
@@ -147,11 +166,22 @@ const actions = {
     },
     SET_STUDIO_CURRENT_TIME({commit}, val){
         commit('setStudioCurrentTimePercent', val)
+    },
+    MOVE_AUDIO_REGION({ commit }, val) {
+        let trackIndex = findTrackIndex(val.track_id)
+        let regionIndex = findRegionIndex(trackIndex, val.region_id)
+        commit('moveAudioRegion', {
+            currentIndex: {
+                'trackIndex': trackIndex,
+                'regionIndex': regionIndex
+            },
+            moveTo: val.moveTo
+        })
     }
 }
 
 const getters = {
-    getTracks: state => state.tracks,
+    getStudioTracks: state => state.tracks,
     isChatboxShow: state => state.chat.show,
     getStudioDetails: state => state.details,
     getStageWidth: state => state.env.stage_width,

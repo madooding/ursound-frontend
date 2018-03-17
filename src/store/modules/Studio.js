@@ -221,8 +221,10 @@ const actions = {
                     let a = lastedRegion.start_beat, b = lastedRegion.start_beat+lastedRegion.beat - 1
                     let x = each.start_beat, y = each.start_beat+each.beat - 1
                     if (a <= x && b >= y){
+                        each.modified_time = Date.now()
                         each.beat = 0
                     } else if(a > x && b < y){
+                        each.modified_time = Date.now()
                         each.beat = a - x
                         let newRegion = {
                             id: objectId(),
@@ -233,8 +235,10 @@ const actions = {
                         }
                         return [each, newRegion]
                     } else if(a <= y && a > x) {
+                        each.modified_time = Date.now()
                         each.beat = a - x
                     } else if(b >= x && b < y) {
+                        each.modified_time = Date.now()
                         each.start_beat = b + 1
                         each.beat = y - b
                     }

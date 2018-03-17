@@ -1,7 +1,9 @@
 <template>
     <div ref="region">
+        <div class="resize-left"></div>
         <div class="chord-name" v-if="track_data.type === 'PIANO'">{{ region_data.chord }}</div>
         <div class="time-signature" v-if="track_data.type === 'PIANO'">{{ time_signature }}</div>
+        <div class="resize-right"></div>
     </div>  
 </template>
 
@@ -36,6 +38,9 @@ export default {
     },
     watch: {
         stageWidth(){
+            this.renderRegion()
+        },
+        time_signature(){
             this.renderRegion()
         }
     }

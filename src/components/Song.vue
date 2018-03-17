@@ -37,8 +37,7 @@
                 <button class="ion-share">share</button>
                 <button class="ion-android-download">download</button>
             </div>
-            <button class="song__more-btn ion-more">
-            </button>
+            <button class="song__more-btn ion-more"></button>
         </div>
     </div>
 </template>

@@ -56,7 +56,6 @@ const router = new Router({
 
 
 const match = async (to, from, next) => {
-    console.log('match');
     if (to.matched.some(x => x.meta.beforeAuth)){
         if(store.getters.isLoggedIn){
             next({ path: "/explore" })

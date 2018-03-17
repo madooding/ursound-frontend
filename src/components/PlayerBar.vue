@@ -122,6 +122,10 @@ export default {
                 this.$store.dispatch('CHANGE_SONG_WHILE_PLAYING', false)
             }
         }
+    },
+    beforeDestroy () {
+        this.PAUSE_SONG()
+        cancelAnimationFrame(this.timeUtil)
     }
 }
 </script>

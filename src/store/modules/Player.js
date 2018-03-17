@@ -57,6 +57,10 @@ const actions = {
     },
     CHANGE_SONG_WHILE_PLAYING({commit}, val){
         commit('setChangeSongWhilePlayingSignal', val)
+    },
+    RESET_PLAYER ({ dispatch, commit }) {
+        dispatch('PAUSE_SONG')
+        // dispatch('UPDATE_CURRENT_TIME', 0)
     }
 }
 

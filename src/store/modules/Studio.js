@@ -1,10 +1,18 @@
 import _ from 'lodash'
+import { Observable } from 'rxjs'
 
 const findTrackIndex = (id) => {
    return _.findIndex(state.tracks, each => each.id === id)
 }
 const findRegionIndex = (trackIndex, regionId) => {
     return _.findIndex(state.tracks[trackIndex].sequences, each => each.id === regionId)
+}
+
+const objectId = () => {
+    var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
+        return (Math.random() * 16 | 0).toString(16);
+    }).toLowerCase();
 }
 
 const state = {
@@ -139,6 +147,17 @@ const mutations = {
         state.tracks[val.moveTo.trackIndex].sequences.push(regionData)
         state.tracks[val.moveTo.trackIndex].modified_time = modified_time
         state.tracks[val.currentIndex.trackIndex].sequences.splice(val.currentIndex.regionIndex, 1)
+    },
+    resizeAudioRegion (state, val) {
+        let regionData = state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex]
+        let modified_time = Date.now()
+        regionData.start_beat = val.payload.startBeat
+        regionData.beat = val.payload.duration
+        regionData.modified_time = modified_time
+        state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex] = regionData
+    },
+    updateTrackSequences (state, val) {
+        state.tracks[val.trackIndex].sequences = val.payload
     }
 }
 
@@ -167,7 +186,7 @@ const actions = {
     SET_STUDIO_CURRENT_TIME({commit}, val){
         commit('setStudioCurrentTimePercent', val)
     },
-    MOVE_AUDIO_REGION({ commit }, val) {
+    MOVE_AUDIO_REGION({ dispatch, commit }, val) {
         let trackIndex = findTrackIndex(val.track_id)
         let regionIndex = findRegionIndex(trackIndex, val.region_id)
         commit('moveAudioRegion', {
@@ -177,6 +196,66 @@ const actions = {
             },
             moveTo: val.moveTo
         })
+        dispatch('CHECK_REGION_OVERLAPPING', { track_id: val.moveTo.trackIndex, region_id: val.region_id })
+    },
+    RESIZE_AUDIO_REGION ({ dispatch, commit }, val) {
+        let trackIndex = findTrackIndex(val.track_id)
+        let regionIndex = findRegionIndex(trackIndex, val.region_id)
+        commit('resizeAudioRegion', {
+            currentIndex: {
+                'trackIndex': trackIndex,
+                'regionIndex': regionIndex
+            },
+            payload: val.payload
+        })
+        dispatch('CHECK_REGION_OVERLAPPING', { track_id: trackIndex, region_id: val.region_id})
+    },
+    CHECK_REGION_OVERLAPPING ({ dispatch, commit }, val) {
+        let trackIndex = val.track_id
+        let regionIndex = findRegionIndex(trackIndex, val.region_id)
+        let lastedRegion = state.tracks[trackIndex].sequences[regionIndex]
+        Observable.of(state.tracks[trackIndex].sequences)
+            .map(seq => {
+                return _.map(seq, (each, i) => {
+                    if(i === regionIndex) return each
+                    let a = lastedRegion.start_beat, b = lastedRegion.start_beat+lastedRegion.beat - 1
+                    let x = each.start_beat, y = each.start_beat+each.beat - 1
+                    if (a <= x && b >= y){
+                        each.beat = 0
+                    } else if(a > x && b < y){
+                        each.beat = a - x
+                        let newRegion = {
+                            id: objectId(),
+                            chord: each.chord,
+                            modified_time: Date.now(),
+                            start_beat: b + 1,
+                            beat: y - b
+                        }
+                        return [each, newRegion]
+                    } else if(a <= y && a > x) {
+                        each.beat = a - x
+                    } else if(b >= x && b < y) {
+                        each.start_beat = b + 1
+                        each.beat = y - b
+                    }
+                    return each
+                })
+            })
+            .map(seq => _.flattenDeep(seq))
+            .map(seq => _.filter(seq, each => each.beat > 0))
+            .subscribe(seq => {
+                dispatch('UPDATE_TRACK_SEQUENCES', {
+                    track_id: val.track_id,
+                    payload: seq
+                })
+            })
+    },
+    UPDATE_TRACK_SEQUENCES ({ commit }, val) {
+        let trackIndex = val.track_id
+        commit('updateTrackSequences', {
+            trackIndex,
+            payload: val.payload
+        })   
     }
 }
 

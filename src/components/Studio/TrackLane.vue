@@ -13,6 +13,7 @@
 <script>
 import interact from 'interactjs'
 import AudioRegion from './AudioRegion'
+import { Observable } from 'rxjs'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -32,36 +33,12 @@ export default {
         this.tracksContainer = $('.tracks')
         this.onStageWidthChange()
         this.renderIndicator()
-        interact('.audio-region')
-            .draggable({
-                restrict: {
-                    restriction: '.tracks'
-                },
-                onstart: e => {
-                    this.elemOffsetX = Math.max(0, Math.min(e.pageX - $(e.target).offset().left, $(e.target).width()))
-                    this.elemOffsetY = Math.max(0, Math.min(e.pageY - $(e.target).offset().top, $(e.target).height()))
-                    this.offsetTop = $(e.target).offset().top - this.tracksContainer.offset().top
-                },
-                onmove: e => {
-                    this.moveAudioRegion(e)
-                    $(e.target).css('z-index', 1)
-                },
-                onend: e => {
-                    let target = $(e.target)
-                    target.css('z-index', 0)
-                    let perBeat = this.stageWidth / (this.details.time_signature * this.details.bars)
-                    let startBeat = Math.round(parseInt(_.replace(target.css('left'), 'px', '')) / perBeat + 1)
-                    let trackIndex = Math.max(0, Math.min((this.getTracks.length) * 100, target.offset().top - this.tracksContainer.offset().top)) / 100
-                    this.$store.dispatch('MOVE_AUDIO_REGION', {
-                        region_id: target.attr('region_id'),
-                        track_id: target.attr('track_id'),
-                        moveTo: {
-                            'startBeat': startBeat,
-                            'trackIndex': trackIndex
-                        }
-                    })
-                }
-            })
+        this.$nextTick(() => {
+            this.addInteractionListener()
+        })
+    },
+    beforeDestroy () {
+        interact('.audio-region').unset()
     },
     methods: {
         renderRuler() {
@@ -99,6 +76,8 @@ export default {
             canvas.css('width', this.container.width())
             canvas.css('height', this.container.height())
             this.renderRuler()
+            interact('.audio-region').unset()
+            this.addInteractionListener()
         },
         renderIndicator() {
             let indicator = $(this.$refs.indicator)
@@ -113,10 +92,127 @@ export default {
             let offsetYtail = offsetY % 100
             $(e.target).css('left', (offsetX - offsetXtail) + Math.round(offsetXtail/this.snapGrid) * this.snapGrid)
             $(e.target).css('top', ((offsetY - offsetYtail) + Math.round(offsetYtail/100) * 100) - this.offsetTop)
+        },
+        addInteractionListener () {
+            interact('.audio-region')
+                .draggable({
+                    restrict: {
+                        restriction: '.tracks'
+                    },
+                    onstart: e => {
+                        this.elemOffsetX = Math.max(0, Math.min(e.pageX - $(e.target).offset().left, $(e.target).width()))
+                        this.elemOffsetY = Math.max(0, Math.min(e.pageY - $(e.target).offset().top, $(e.target).height()))
+                        this.offsetTop = $(e.target).offset().top - this.tracksContainer.offset().top
+                    },
+                    onmove: e => {
+                        this.moveAudioRegion(e)
+                        $(e.target).css('z-index', 1)
+                    },
+                    onend: e => {
+                        let target = $(e.target)
+                        target.css('z-index', 0)
+                        let perBeat = this.stageWidth / (this.details.time_signature * this.details.bars)
+                        let startBeat = Math.round(parseInt(_.replace(target.css('left'), 'px', '')) / perBeat + 1)
+                        let trackIndex = Math.max(0, Math.min((this.getTracks.length) * 100, target.offset().top - this.tracksContainer.offset().top)) / 100
+                        this.$store.dispatch('MOVE_AUDIO_REGION', {
+                            region_id: target.attr('region_id'),
+                            track_id: target.attr('track_id'),
+                            moveTo: {
+                                'startBeat': startBeat,
+                                'trackIndex': trackIndex
+                            }
+                        })
+                    }
+                })
+                .resizable({
+                    edges: { left: '.resize-left', right: '.resize-right', bottom: false, top: false },
+                    restrictSize: {
+                        min: { width: this.beatWidth, height: 100 },
+                        max: { width: this.beatWidth * 4, height: 100 }
+                    },
+                    onstart: (e) => {
+                        this.elemOffsetX = parseFloat(_.replace($(e.target).css('left'), 'px', ''))
+                    },
+                    onmove: (e) => {
+                        let target = e.target;
+                        $(target).css('z-index', 1)
+                        target.style.width  = e.rect.width + 'px';
+                        this.elemOffsetX += e.deltaRect.left;
+                        let elemOffsetZtail = this.elemOffsetX % this.snapGrid
+                        let width = e.rect.width
+                        let widthTail = width % this.snapGrid
+                        // Shift left when resizing and shrink region size
+                        $(target).css('left', (this.elemOffsetX - elemOffsetZtail) + Math.round(elemOffsetZtail / this.snapGrid) * this.snapGrid)
+                        $(target).width(((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2)
+                    },
+                    onend: e => {
+                        let target = e.target
+                        $(target).css('z-index', 0)
+                        // Update region data in store
+                        let perBeat = this.stageWidth / (this.details.time_signature * this.details.bars)
+                        let startBeat = Math.round(parseInt(_.replace($(target).css('left'), 'px', '')) / perBeat + 1)
+                        let duration = Math.floor(this.removePx($(target).width()) / this.beatWidth + 1)
+                        this.$store.dispatch('RESIZE_AUDIO_REGION', {
+                            region_id: $(target).attr('region_id'),
+                            track_id: $(target).attr('track_id'),
+                            payload: {
+                                startBeat,
+                                duration
+                            }
+                        })
+                    },
+                    restrictEdges: {
+                        outer: '.tracks',
+                        endOnly: true
+                    },
+                    inertia: false
+                })
+        },
+        checkRegionOverlapping () {
+            let lastedRegion = _.maxBy(this.track_data.sequences, 'modified_time')
+            if(lastedRegion == null) return
+            let lastedRegionIndex = _.findIndex(this.track_data.sequences, { 'id': lastedRegion.id })
+            Observable.of(this.track_data.sequences)
+                .map(seq => {
+                    return _.map(seq, (each, i) => {
+                        if(i === lastedRegionIndex) return each
+                        let a = lastedRegion.start_beat, b = lastedRegion.start_beat+lastedRegion.beat - 1
+                        let x = each.start_beat, y = each.start_beat+each.beat - 1
+                        if(a > x && b < y){
+                            each.beat = a - x
+                            let newRegion = {
+                                id: this.objectId(),
+                                chord: each.chord,
+                                modified_time: Date.now(),
+                                start_beat: b + 1,
+                                beat: y - b
+                            }
+                            return [each, newRegion]
+                        }
+                        return each
+                    })
+                })
+                .map(seq => _.flattenDeep(seq))
+                .subscribe(seq => {
+
+                })
+        },
+        removePx(text) {
+            return parseFloat(_.replace(text, 'px', ''))
+        },
+        objectId () {
+            var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+            return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
+                return (Math.random() * 16 | 0).toString(16);
+            }).toLowerCase();
         }
     },
     computed: {
-        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel', scrollX: 'getStudioCurrentScrollXPosition', snapGrid: 'getStudioSnapGrid', getTracks: 'getStudioTracks'})
+        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel', scrollX: 'getStudioCurrentScrollXPosition', snapGrid: 'getStudioSnapGrid', getTracks: 'getStudioTracks'}),
+        beatWidth() {
+            let beats = this.details.bars * this.details.time_signature
+            return this.stageWidth / beats
+        }
     },
     watch: {
         stageWidth() {
@@ -124,6 +220,9 @@ export default {
         },
         indicatorPos() {
             this.renderIndicator()
+        },
+        'track_data.sequences' () {
+            // this.checkRegionOverlapping()
         }
     }
 }

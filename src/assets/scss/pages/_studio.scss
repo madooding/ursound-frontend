@@ -137,6 +137,10 @@ $track-panel-width: 280px;
                     }
                 }
             }
+            .track.active {
+                background-color: #2B2E49;
+            }
+
             .track:first-child {
                 border-top-style: solid;
                 border-top-width: 1.5px;
@@ -175,6 +179,7 @@ $track-panel-width: 280px;
                 border-bottom-style: solid;
                 border-bottom-width: 1.5px;
                 position: relative;
+                cursor: pointer;
                 .regions {
                     position: absolute;
                     display: flex;
@@ -229,6 +234,11 @@ $track-panel-width: 280px;
                             right: 6px;
                             top: 6px;
                         }
+                    }
+                    .audio-region--piano.active {
+                        background-color: #D8E85E;
+                        border-color: #77B13C;
+                        color: #7EA457;
                     }
                     .audio-region--audio {
                         background-color: #F7B5FF;

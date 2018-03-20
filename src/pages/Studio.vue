@@ -6,7 +6,7 @@
         </div>
         <div class="track-section">
             <div class="tracks-panel">
-                <TrackControl v-for="track in tracks" :key="track.id" v-bind:track_data="track"></TrackControl>
+                <TrackControl v-for="track in tracks" :key="track.id" v-bind:track_data="track" @click.native="setActive(track.id)" :class="{'active': track.active}"></TrackControl>
                 <div class="track track--add-new-track">
                     + Add New Track
                 </div>
@@ -35,6 +35,11 @@ export default {
         zoom: 100,
         scrollX: 0
     }),
+    methods: {
+        setActive (id) {
+            this.$store.dispatch('SET_STUDIO_ACTIVE_TRACK', id)
+        }
+    },
     computed: {
         ...mapGetters({'tracks': 'getStudioTracks'})
     }

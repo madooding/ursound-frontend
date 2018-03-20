@@ -42,34 +42,39 @@ const state = {
             volume: 60,
             solo: false,
             muted: false,
+            active: false,
             sequences: [
                 {
                     id: '5aa18432096b49808d94365b',
                     modified_time: '1520534640605',
                     chord: 'C',
                     beat: 4,
-                    start_beat: 1
+                    start_beat: 1,
+                    active: false
                 },
                 {
                     id: '5aa58510ffd1c66bd284692c',
                     modified_time: '1520796970421',
                     chord: 'Am',
                     beat: 4,
-                    start_beat: 5
+                    start_beat: 5,
+                    active: false
                 },
                 {
                     id: '5aa5879529e4861250e3b7ad',
                     modified_time: '1520797602077',
                     chord: 'F',
                     beat: 4,
-                    start_beat: 9
+                    start_beat: 9,
+                    active: false
                 },
                 {
                     id: '5aa587cdfd959911fc2e570c',
                     modified_time: '1520797657368',
                     chord: 'G',
                     beat: 4,
-                    start_beat: 13
+                    start_beat: 13,
+                    active: false
                 },
             ]
         },
@@ -81,6 +86,7 @@ const state = {
             volume: 80,
             solo: false,
             muted: true,
+            active: false,
             sequences: []
         },
         {
@@ -91,6 +97,7 @@ const state = {
             volume: 80,
             solo: false,
             muted: true,
+            active: false,
             sequences: [] 
         },
         {
@@ -101,6 +108,7 @@ const state = {
             volume: 80,
             solo: false,
             muted: true,
+            active: false,
             sequences: [] 
         }
     ],
@@ -139,6 +147,13 @@ const mutations = {
     setStudioCurrentTimePercent(state, val){
         state.env.currentTimePercent = val
     },
+    setStudioActiveTrack(state, val) {
+        state.tracks = _.map(state.tracks, each => {
+            if (each.id == val) each.active = true
+            else each.active = false
+            return each
+        })
+    },
     moveAudioRegion(state, val){
         let regionData = state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex]
         let modified_time = Date.now()
@@ -158,6 +173,12 @@ const mutations = {
     },
     updateTrackSequences (state, val) {
         state.tracks[val.trackIndex].sequences = val.payload
+    },
+    setActiveRegion (state, val) {
+        state.tracks[val.trackIndex].sequences[val.regionIndex].active = val.payload
+    },
+    deleteRegion (state, val) {
+        state.tracks[val.trackIndex].sequences.splice(val.regionIndex, 1)
     }
 }
 
@@ -185,6 +206,9 @@ const actions = {
     },
     SET_STUDIO_CURRENT_TIME({commit}, val){
         commit('setStudioCurrentTimePercent', val)
+    },
+    SET_STUDIO_ACTIVE_TRACK ({ commit }, val) {
+        commit('setStudioActiveTrack', val)
     },
     MOVE_AUDIO_REGION({ dispatch, commit }, val) {
         let trackIndex = findTrackIndex(val.track_id)
@@ -260,6 +284,55 @@ const actions = {
             trackIndex,
             payload: val.payload
         })   
+    },
+    SELECT_REGION ({ commit }, val) {
+        let trackIndex = findTrackIndex(val.track_id)
+        let regionIndex = findRegionIndex(trackIndex, val.region_id)
+        commit('setActiveRegion', {
+            trackIndex,
+            regionIndex,
+            payload: true
+        })
+    },
+    UNSELECT_REGION ({ commit }, val) {
+        let trackIndex = findTrackIndex(val.track_id)
+        let regionIndex = findRegionIndex(trackIndex, val.region_id)
+        commit('setActiveRegion', {
+            trackIndex,
+            regionIndex,
+            payload: false
+        })
+    },
+    CLEAR_SELECTED_REGION ({ commit }) {
+        state.tracks.forEach((track, trackIndex) => {
+            track.sequences.forEach((region, regionIndex) => {
+                if(region.active === true) commit('setActiveRegion', {
+                    trackIndex,
+                    regionIndex,
+                    payload: false
+                })
+            })
+        })
+    },
+    CLEAR_SELECTED_TRACK_REGION ({ commit }, val) {
+        let trackIndex = findTrackIndex(val.track_id)
+        state.tracks[trackIndex].sequences.forEach((region, regionIndex) => {
+            if(region.active === true) commit('setActiveRegion', {
+                trackIndex,
+                regionIndex,
+                payload: false
+            })
+        })
+    },
+    DELETE_SELECTED_REGION ({ commit }) {
+        state.tracks.forEach((track, trackIndex) => {
+            track.sequences.forEach((region, regionIndex) => {
+                if(region.active === true) commit('deleteRegion', {
+                    trackIndex,
+                    regionIndex,
+                })
+            })
+        })
     }
 }
 

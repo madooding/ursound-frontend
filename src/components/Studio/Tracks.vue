@@ -1,6 +1,6 @@
 <template>
     <div class="tracks" ref="tracks">
-        <TrackLane v-for="track in tracks" :key="track.id" v-bind:track_data="track"></TrackLane>
+        <TrackLane v-for="track in tracks" :key="track.id" v-bind:track_data="track" @click.native="setActive(track.id)"></TrackLane>
     </div>
 </template>
 
@@ -49,6 +49,11 @@ export default {
         $(window).on('resize', () => {
             this.$store.dispatch('SET_STAGE_WIDTH', Math.max((29 * (this.details.bars * this.details.time_signature)) * (this.zoomLevel/100), $(this.$refs.tracks).width()))
         })
+    },
+    methods: {
+        setActive (id) {
+            this.$store.dispatch('SET_STUDIO_ACTIVE_TRACK', id)
+        }
     },
     watch: {
         scrollX() {

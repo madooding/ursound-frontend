@@ -63,7 +63,7 @@ export default {
             waveColor: '#959494',
             progressColor: '#F9496D',
             barWidth: 2,
-            barHeight: 30,
+            barHeight: 2,
             cursorColor: "#565656",
             height: 67,
             responsive: true,

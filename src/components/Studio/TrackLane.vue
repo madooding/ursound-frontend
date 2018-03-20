@@ -36,6 +36,9 @@ export default {
         this.$nextTick(() => {
             this.addInteractionListener()
         })
+        $('body').keydown(e => {
+            if(e.which == 8) this.$store.dispatch('DELETE_SELECTED_REGION')
+        })
     },
     beforeDestroy () {
         interact('.audio-region').unset()
@@ -223,6 +226,11 @@ export default {
         },
         'track_data.sequences' () {
             // this.checkRegionOverlapping()
+        },
+        'track_data.active' () {
+            if(this.track_data.active == false) {
+                this.$store.dispatch('CLEAR_SELECTED_TRACK_REGION', { track_id: this.track_data.id })
+            }
         }
     }
 }

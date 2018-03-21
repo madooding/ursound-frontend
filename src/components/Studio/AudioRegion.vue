@@ -19,6 +19,9 @@ export default {
     mounted(){
         this.container = $(this.$refs.region)
         this.renderRegion()
+        $(this.$refs.region.parentNode).on('click', e => {
+            if(e.target === this.$refs.region.parentNode) this.$store.dispatch('CLEAR_SELECTED_REGION')
+        })
     },
     methods: {
         renderRegion() {

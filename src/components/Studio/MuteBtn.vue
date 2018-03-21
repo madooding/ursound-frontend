@@ -2,7 +2,6 @@
     <button @click="setActive()">
         <svg v-if="!active" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 25 25" style="enable-background:new 0 0 25 25;" xml:space="preserve">
             <title>Play Btn</title>
-            <desc>Created with Sketch.</desc>
             <g id="Layer_1_1_">
                 <title>Play Btn</title>
                 <desc>Created with Sketch.</desc>
@@ -20,9 +19,7 @@
         </svg>
         <svg v-else version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 25 25" style="enable-background:new 0 0 25 25;" xml:space="preserve">
             <title>Play Btn</title>
-            <desc>Created with Sketch.</desc>
             <title>Play Btn</title>
-            <desc>Created with Sketch.</desc>
             <path id="XMLID_7_" d="M12.5,0C5.6,0,0,5.6,0,12.5S5.6,25,12.5,25c0,0,0.1,0,0.1,0c7-0.1,12.4-5.7,12.4-12.5C25,5.6,19.4,0,12.5,0z
                 M20.6,14l-1.1,1.1l-1.7-1.7l-2,1.7L14.7,14l2-1.7l-2-2l1.1-1.1l2,2l1.7-2l1.1,1.1l-2,2L20.6,14z M12.4,7.5v9.4
                 c0,0.6-0.6,0.6-0.9,0.3l-2-1.7h-4c-0.6,0-0.9-0.3-0.9-0.9v-4c0-0.6,0.3-0.9,0.9-0.9H9l2.6-2.6C12.1,6.9,12.4,6.9,12.4,7.5z"/>

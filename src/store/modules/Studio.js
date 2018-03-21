@@ -255,7 +255,8 @@ const actions = {
                             chord: each.chord,
                             modified_time: Date.now(),
                             start_beat: b + 1,
-                            beat: y - b
+                            beat: y - b,
+                            active: false
                         }
                         return [each, newRegion]
                     } else if(a <= y && a > x) {

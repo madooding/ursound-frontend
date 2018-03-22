@@ -93,7 +93,7 @@ const state = {
             id: '5aa1819c4b1d20827767759a',
             modified_time: '1520534710381',
             name: "Voice",
-            type: 'AUDIO',
+            type: 'PIANO',
             volume: 80,
             solo: false,
             muted: true,
@@ -221,6 +221,7 @@ const actions = {
             moveTo: val.moveTo
         })
         dispatch('CHECK_REGION_OVERLAPPING', { track_id: val.moveTo.trackIndex, region_id: val.region_id })
+        dispatch('SET_STUDIO_ACTIVE_TRACK', state.tracks[val.moveTo.trackIndex].id)
     },
     RESIZE_AUDIO_REGION ({ dispatch, commit }, val) {
         let trackIndex = findTrackIndex(val.track_id)
@@ -355,6 +356,9 @@ const getters = {
     getStudioCurrentTime: state => {
         let beats = state.details.bars * state.details.time_signature
         return ((state.env.currentTimePercent/100) * beats) / state.details.bpm * 60
+    },
+    getStudioActiveTrack: state => {
+        return _.find(state.tracks, (track) => track.active)
     }
 
 }

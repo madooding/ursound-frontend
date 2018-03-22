@@ -13,6 +13,7 @@
             </div>
             <tracks-component></tracks-component>
         </div>
+        <ChordSuggestions></ChordSuggestions>
         <ChatBox></ChatBox>
     </div>
 </template>
@@ -23,13 +24,15 @@ import TrackControl from '../components/Studio/TrackControl'
 import ChatBox from '../components/Studio/ChatBox'
 import BeatRuler from '../components/Studio/BeatRuler'
 import TracksComponent from '../components/Studio/Tracks'
+import ChordSuggestions from '../components/Studio/ChordSuggestions'
 
 export default {
     components: {
         TrackControl,
         ChatBox,
         BeatRuler,
-        TracksComponent
+        TracksComponent,
+        ChordSuggestions
     },
     data: () => ({
         zoom: 100,

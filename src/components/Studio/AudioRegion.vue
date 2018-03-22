@@ -1,5 +1,5 @@
 <template>
-    <div ref="region" @click="setActive()" :class="{ 'active': region_data.active }"> 
+    <div ref="region" @mousedown="setActive()" :class="{ 'active': region_data.active }"> 
         <div class="resize-left"></div>
         <div class="chord-name" v-if="track_data.type === 'PIANO'">{{ region_data.chord }}</div>
         <div class="time-signature" v-if="track_data.type === 'PIANO'">{{ time_signature }}</div>
@@ -19,8 +19,9 @@ export default {
     mounted(){
         this.container = $(this.$refs.region)
         this.renderRegion()
-        $(this.$refs.region.parentNode).on('click', e => {
-            if(e.target === this.$refs.region.parentNode) this.$store.dispatch('CLEAR_SELECTED_REGION')
+        let parentNode = this.$refs.region.parentNode
+        $(parentNode).on('click', e => {
+            if(e.target === parentNode) this.$store.dispatch('CLEAR_SELECTED_REGION')
         })
     },
     methods: {
@@ -36,10 +37,10 @@ export default {
                     region_id: this.region_data.id
                 })
             } else {
-                this.$store.dispatch('UNSELECT_REGION', {
-                    track_id: this.track_data.id,
-                    region_id: this.region_data.id
-                })
+                // this.$store.dispatch('UNSELECT_REGION', {
+                //     track_id: this.track_data.id,
+                //     region_id: this.region_data.id
+                // })
             }
         }
     },

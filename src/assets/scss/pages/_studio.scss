@@ -13,6 +13,7 @@ $track-panel-width: 280px;
     width: 100%;
     display: flex;
     height: calc(100vh - 116px);
+    overflow: hidden;
     flex-direction: column;
     margin-top: 58px;
     box-sizing: content-box;
@@ -276,12 +277,44 @@ $track-panel-width: 280px;
             }
         }
     }
+    .track-options {
+        background-color: $dark-primary;
+        box-shadow: 0px -1px 9px 0 rgba(0, 0, 0, 0.25);
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        width: 100%;
+        height: 35%;
+        z-index: 10;
+
+        .close-btn {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            cursor: pointer;
+            top: 20px;
+            left: 20px;
+            font-size: 16pt;
+            height: 26px;
+            color: rgba($color: #FFF, $alpha: .6);
+            transition: color .25s ease;
+        }
+        .close-btn:hover {
+            color: rgba($color: #FFF, $alpha: 1);
+        }
+    }
+
+    .track-options.chord-suggestions {
+        display: flex;
+    }
+
     .chat-box {
         position: absolute;
         height: 100%;
         width: 280px;
         background-color: white;
-        z-index: 5;
+        z-index: 10;
         right: -280px;
         box-shadow: unset;
         transition: right .5s ease;

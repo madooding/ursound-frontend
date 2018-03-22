@@ -51,3 +51,19 @@
 {
   bottom: -58px;
 }
+
+
+.track-options-enter-active {
+  transition: all .25s ease-in-out;
+}
+
+.track-options-leave-active {
+  transition: all .25s ease-in-out;
+}
+
+.track-options-enter,
+.track-options-leave-to
+{
+  opacity: 0;
+  bottom: -35% !important;
+}

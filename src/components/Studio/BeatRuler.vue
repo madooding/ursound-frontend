@@ -48,6 +48,9 @@ export default {
         })
                             
     },
+    beforeDestroy () {
+        interact('.indicator').unset()
+    },
     methods: {
         renderRuler() {
             const canvas = this.$refs.beatRuler

@@ -287,7 +287,7 @@ $track-panel-width: 280px;
         width: 100%;
         height: 35%;
         z-index: 10;
-
+        user-select: none;
         .close-btn {
             display: flex;
             align-items: center;
@@ -306,7 +306,84 @@ $track-panel-width: 280px;
     }
 
     .track-options.chord-suggestions {
-        display: flex;
+        height: 157px;
+        .options-container {
+            display: grid;
+            grid-template-columns: 70% 30%;
+            padding: 20px 80px;
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            div {
+                .topic {
+                    color: white;
+                    font-size: 14pt;
+                    font-weight: 500;
+                    margin-bottom: 20px;
+                }
+                .group-btn {
+                    display: flex;
+                    flex-wrap: wrap;
+                }
+                .group-btn > div {
+                    cursor: pointer;
+                    border-radius: 8px;
+                    border-style: solid;
+                    border-width: 1px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
+            .chord-section {
+                display: flex;
+                flex-direction: column;
+                margin-right: 20px;
+                .group-btn {
+                    flex-grow: 1;
+                    .chord {
+                        font-size: 16pt;
+                        font-weight: 600;
+                        width: 12%;
+                        margin-right: 0.5%;
+                        height: 60px;
+                        background-color: #DDE986;
+                        border-color: #91AF73;
+                        color: #91AF73;
+                        transition: all .25s ease-in-out;
+                    }
+                    .chord:last-of-type {
+                        margin-right: 0px;
+                    }
+                    .chord:active {
+                        background-color: #D8E85E;
+                        border-color: #77B13C;
+                        color: #7EA457;
+                    }
+                }
+            }
+            .duration-section {
+                margin-left: 20px;
+                .group-btn {
+                    flex-grow: 1;
+                    .duration {
+                        width: 70px;
+                        height: 40px;
+                        border-color: white;
+                        color: white;
+                        transition: all .25s ease;
+                    }
+                    .duration:not(:last-child) {
+                        margin-right: 5px;
+                    }
+
+                    .duration:hover, .duration.active {
+                        background-color: white;
+                        color: $dark-primary;
+                    }
+                }
+            }
+        }
     }
 
     .chat-box {

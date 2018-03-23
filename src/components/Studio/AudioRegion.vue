@@ -1,7 +1,7 @@
 <template>
     <div ref="region" @mousedown="setActive()" :class="{ 'active': region_data.active }"> 
         <div class="resize-left"></div>
-        <div class="chord-name" v-if="track_data.type === 'PIANO'">{{ region_data.chord }}</div>
+        <div class="chord-name" v-if="track_data.type === 'PIANO'">{{ currentChord }}</div>
         <div class="time-signature" v-if="track_data.type === 'PIANO'">{{ time_signature }}</div>
         <div class="resize-right"></div>
     </div>  
@@ -10,6 +10,7 @@
 <script>
 
 import { mapGetters } from 'vuex'
+import { StudioService } from '../../services'
 
 export default {
     props: ['track_data', 'region_data'],
@@ -45,6 +46,9 @@ export default {
         }
     },
     computed: {
+        currentChord () {
+            return StudioService.mapChord(this.currentKey, this.region_data.chord)
+        },
         time_signature() {
             return `${this.region_data.beat}/${this.details.time_signature}`
         },
@@ -52,7 +56,7 @@ export default {
             let beats = this.details.bars * this.details.time_signature
             return this.stageWidth / beats
         },
-        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth' })
+        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', currentKey: 'getStudioCurrentKey' })
     },
     watch: {
         stageWidth () {

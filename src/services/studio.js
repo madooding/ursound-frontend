@@ -1,4 +1,8 @@
+import { Observable } from 'rxjs'
+import axios from 'axios'
 import _ from 'lodash'
+
+const API_URL = 'http://localhost:9000'
 
 const keyMap = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B']
 const chordMap = ['', 'm', 'm', '', '', 'm', 'dim']
@@ -10,6 +14,7 @@ const scaleMap = (key) => {
     return scale
 }
 
+ 
 const mapChord = (key, n) => {
     if (/(^[1-7]{1}$)/.test(n)) {
         n = parseInt(n)
@@ -24,8 +29,27 @@ const mapChord = (key, n) => {
     }
 }
 
+/** @description Get suggested chords from previous chords   
+ * @param {array<string>} sequences sequences of chord progression
+ * @return {Observable} this function will return observable object  
+ */ 
+const getSuggestedChords = (sequences) => {
+    return Observable.of(sequences)
+        .flatMap((seq) => {
+            let cp = _.join(seq, ',')
+            return axios.get(`${API_URL}/trends/nodes?cp=${cp}`)
+        }, (seq, res) => ({ res: res.data.suggestions }))
+        .flatMap(seq => {
+            return _.filter(seq.res, each => /(^[1-7]{1}$)|(^[1-7]{1}\/[1-7]{1}$)|(^b[1-7]{1}$)/.test(each.chord_ID))
+        }, (seq, res) => res)
+        .take(7)
+        .toArray()
+        .delay(1000)
+}
+
 export default {
     keyMap,
     scaleMap,
-    mapChord
+    mapChord,
+    getSuggestedChords
 }

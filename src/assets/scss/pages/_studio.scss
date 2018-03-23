@@ -362,6 +362,13 @@ $track-panel-width: 280px;
                         color: #7EA457;
                     }
                 }
+                .loading {
+                    flex-grow: 1;
+                    background-image: url('../svg/loading-spinner-white.svg');
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    background-size: contain;
+                }
             }
             .duration-section {
                 display: flex;

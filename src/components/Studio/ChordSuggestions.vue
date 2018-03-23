@@ -5,16 +5,13 @@
             <div class="options-container">
                 <div class="chord-section">
                     <div class="topic">Suggested Chords</div>
-                    <div class="group-btn">
-                        <div class="chord">Silence</div>
-                        <div class="chord">Dm</div>
-                        <div class="chord">Em</div>
-                        <div class="chord">F</div>
-                        <div class="chord">G</div>
-                        <div class="chord">Am</div>
-                        <div class="chord">Bdim</div>
-                        <div class="chord">Bb</div>
-                    </div>
+                    <transition name="fade" mode="in-out">
+                        <div class="loading" v-if="loading" :key="false"></div>
+                        <div class="group-btn" v-if="!loading" :key="true">
+                            <div class="chord" v-for="(chord, i) in suggestedChords" :key="i">{{ mapChord(chord.chord_ID) }}</div>
+                            <div class="chord">Silence</div>
+                        </div>
+                    </transition>
                 </div>
                 <div class="duration-section">
                     <div class="topic">Duration</div>
@@ -28,28 +25,53 @@
 </template>
 
 <script>
+import _ from 'lodash'
+import { StudioService } from '../../services'
 import { mapGetters } from 'vuex'
 
 export default {
     data: () => ({
         show: false,
-        activeDuration: 4
+        suggestedChords: [],
+        activeDuration: 4,
+        loading: false
     }),
+    mounted () {
+        this.getSuggestedChords()
+    },
     methods: {
         toggle () {
             this.show = !this.show
         },
         setActiveDuration (n) {
             this.activeDuration = n
-        }
+        },
+        getSuggestedChords () {
+            if (!this.show) return
+            this.loading = true
+            let sequences = _.takeRight(_.map(_.sortBy(this.getActiveTrack.sequences, ['start_beat']), each => each.chord), 4)
+            StudioService.getSuggestedChords(sequences)
+                .finally(() => {
+                    this.loading = false
+                })
+                .subscribe(res => {
+                    this.suggestedChords = res
+                }, err => {
+                    console.log(err);
+                })
+        },
+        mapChord: (chord) => StudioService.mapChord(this.currentKey, chord)
     },
     computed: {
-        ...mapGetters({ "getActiveTrack": "getStudioActiveTrack", 'details':  'getStudioDetails' })
+        ...mapGetters({ "getActiveTrack": "getStudioActiveTrack", 'details':  'getStudioDetails', currentKey: 'getStudioCurrentKey' })
     },
     watch: {
         'getActiveTrack.id' () {
             if(this.getActiveTrack && this.getActiveTrack.type == 'PIANO') this.show = true
             else this.show = false
+        },
+        'getActiveTrack.sequences' () {
+            this.getSuggestedChords()
         }
     }
 }

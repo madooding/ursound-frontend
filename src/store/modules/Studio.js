@@ -1,4 +1,4 @@
-import { StudioService } from '../../services'
+import studio, { StudioService } from '../../services'
 import _ from 'lodash'
 import { Observable } from 'rxjs'
 
@@ -48,7 +48,7 @@ const state = {
                 {
                     id: '5aa18432096b49808d94365b',
                     modified_time: '1520534640605',
-                    chord: 'C',
+                    chord: '1',
                     beat: 4,
                     start_beat: 1,
                     active: false
@@ -56,7 +56,7 @@ const state = {
                 {
                     id: '5aa58510ffd1c66bd284692c',
                     modified_time: '1520796970421',
-                    chord: 'Am',
+                    chord: '6',
                     beat: 4,
                     start_beat: 5,
                     active: false
@@ -64,7 +64,7 @@ const state = {
                 {
                     id: '5aa5879529e4861250e3b7ad',
                     modified_time: '1520797602077',
-                    chord: 'F',
+                    chord: '4',
                     beat: 4,
                     start_beat: 9,
                     active: false
@@ -72,7 +72,7 @@ const state = {
                 {
                     id: '5aa587cdfd959911fc2e570c',
                     modified_time: '1520797657368',
-                    chord: 'G',
+                    chord: '5',
                     beat: 4,
                     start_beat: 13,
                     active: false

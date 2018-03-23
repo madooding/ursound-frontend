@@ -72,7 +72,7 @@
             </button>
         </div>
         <div class="controlbar__options">
-            <div class="option">Key : C</div>
+            <div class="option">Key : {{ currentKey }}</div>
             <div class="option">110</div>
             <div class="option">4/4</div>
             <div class="option">
@@ -113,7 +113,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({'currentTime': 'getStudioCurrentTime'}),
+        ...mapGetters({'currentTime': 'getStudioCurrentTime', 'currentKey': 'getStudioCurrentKey' }),
         currentTimeFormatted(){
             return `${moment('2000-01-01 00:00:00').add(moment.duration(this.currentTime, 'seconds')).format("mm:ss")}.${Math.round((this.currentTime - Math.floor(this.currentTime)) * 10)}`
         }

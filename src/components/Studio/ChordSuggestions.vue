@@ -19,10 +19,7 @@
                 <div class="duration-section">
                     <div class="topic">Duration</div>
                     <div class="group-btn">
-                        <div class="duration active">4/4</div>
-                        <div class="duration">3/4</div>
-                        <div class="duration">2/4</div>
-                        <div class="duration">1/4</div>
+                        <div class="duration" v-for="n in details.time_signature" :key="n" :class="{ 'active': activeDuration == n }" @click="setActiveDuration(n)">{{ n }}/{{ details.time_signature }}</div>
                     </div>
                 </div>
             </div>
@@ -35,15 +32,19 @@ import { mapGetters } from 'vuex'
 
 export default {
     data: () => ({
-        show: false
+        show: false,
+        activeDuration: 4
     }),
     methods: {
-        toggle() {
+        toggle () {
             this.show = !this.show
+        },
+        setActiveDuration (n) {
+            this.activeDuration = n
         }
     },
     computed: {
-        ...mapGetters({ "getActiveTrack": "getStudioActiveTrack" })
+        ...mapGetters({ "getActiveTrack": "getStudioActiveTrack", 'details':  'getStudioDetails' })
     },
     watch: {
         'getActiveTrack.id' () {

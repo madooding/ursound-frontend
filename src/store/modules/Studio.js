@@ -1,3 +1,4 @@
+import { StudioService } from '../../services'
 import _ from 'lodash'
 import { Observable } from 'rxjs'
 
@@ -30,7 +31,7 @@ const state = {
         time_signature: 4,
         bars: 32,
         isMetronomeOn: false,
-        key: "C",
+        key: 1,
         description: ""
     },
     tracks: [
@@ -342,6 +343,7 @@ const getters = {
     getStudioTracks: state => state.tracks,
     isChatboxShow: state => state.chat.show,
     getStudioDetails: state => state.details,
+    getStudioCurrentKey: state => StudioService.keyMap[state.details.key - 1],
     getStageWidth: state => state.env.stage_width,
     getZoomLevel: state => state.env.zoomLevel,
     getStudioSnapGrid: state => {

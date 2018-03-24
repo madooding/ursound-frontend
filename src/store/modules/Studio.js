@@ -183,14 +183,7 @@ const mutations = {
     },
     addChordRegion (state, val) {
         let activeTrack = getters.getStudioActiveTrack(state)
-        activeTrack.sequences.push({
-            id: objectId(),
-            modified_time: Date.now(),
-            chord: val.chord_id,
-            beat: val.chord_duration,
-            start_beat: getters.getStudioCurrentTimeBeats(state),
-            active: false
-        })
+        activeTrack.sequences.push(val)
     }
 }
 
@@ -242,7 +235,7 @@ const actions = {
             },
             moveTo: val.moveTo
         })
-        dispatch('CHECK_REGION_OVERLAPPING', { track_id: val.moveTo.trackIndex, region_id: val.region_id })
+        dispatch('CHECK_CHORD_REGION_OVERLAPPING', { track_id: val.moveTo.trackIndex, region_id: val.region_id })
         dispatch('SET_STUDIO_ACTIVE_TRACK', state.tracks[val.moveTo.trackIndex].id)
     },
     RESIZE_AUDIO_REGION ({ dispatch, commit }, val) {
@@ -255,9 +248,9 @@ const actions = {
             },
             payload: val.payload
         })
-        dispatch('CHECK_REGION_OVERLAPPING', { track_id: trackIndex, region_id: val.region_id})
+        dispatch('CHECK_CHORD_REGION_OVERLAPPING', { track_id: trackIndex, region_id: val.region_id})
     },
-    CHECK_REGION_OVERLAPPING ({ dispatch, commit }, val) {
+    CHECK_CHORD_REGION_OVERLAPPING ({ dispatch }, val) {
         let trackIndex = val.track_id
         let regionIndex = findRegionIndex(trackIndex, val.region_id)
         let lastedRegion = state.tracks[trackIndex].sequences[regionIndex]
@@ -364,8 +357,20 @@ const actions = {
         let currentTimeBeatsSimplify = currentTimeBeatsFloor + Math.round(currentTimeBeats - currentTimeBeatsFloor) - 1
         let beats = state.details.bars * state.details.time_signature
         dispatch('SET_STUDIO_CURRENT_TIME', (currentTimeBeatsSimplify/beats) * 100)
-        commit('addChordRegion', val)
+        let newChord = {
+            id: objectId(),
+            modified_time: Date.now(),
+            chord: val.chord_id,
+            beat: val.chord_duration,
+            start_beat: getters.getStudioCurrentTimeBeats(state),
+            active: false
+        }
+        commit('addChordRegion', newChord)
         dispatch('STUDIO_BEAT_FORWARD', val.chord_duration)
+        dispatch('CHECK_CHORD_REGION_OVERLAPPING', {
+            track_id: _.findIndex(state.tracks, (track) => track.active),
+            region_id: newChord.id
+        })
     }
 }
 

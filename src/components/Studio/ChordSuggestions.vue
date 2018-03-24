@@ -8,8 +8,8 @@
                     <transition name="fade" mode="in-out">
                         <div class="loading" v-if="loading" :key="false"></div>
                         <div class="group-btn" v-if="!loading" :key="true">
-                            <div class="chord" v-for="(chord, i) in suggestedChords" :key="i">{{ mapChord(chord.chord_ID) }}</div>
-                            <div class="chord">Silence</div>
+                            <div class="chord" v-for="(chord, i) in suggestedChords" :key="i" @click="addChord(chord.chord_ID)">{{ mapChord(chord.chord_ID) }}</div>
+                            <div class="chord" @click="addSilence()">Silence</div>
                         </div>
                     </transition>
                 </div>
@@ -60,7 +60,16 @@ export default {
                     console.log(err);
                 })
         },
-        mapChord: (chord) => StudioService.mapChord(this.currentKey, chord)
+        mapChord: (chord) => StudioService.mapChord(this.currentKey, chord),
+        addChord (chord_id) {
+            this.$store.dispatch('ADD_CHORD_REGION', {
+                chord_id,
+                chord_duration: this.activeDuration
+            })
+        },
+        addSilence () {
+            this.$store.dispatch('STUDIO_BEAT_FORWARD', this.activeDuration)
+        }
     },
     computed: {
         ...mapGetters({ "getActiveTrack": "getStudioActiveTrack", 'details':  'getStudioDetails', currentKey: 'getStudioCurrentKey' })

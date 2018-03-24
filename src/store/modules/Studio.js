@@ -180,6 +180,17 @@ const mutations = {
     },
     deleteRegion (state, val) {
         state.tracks[val.trackIndex].sequences.splice(val.regionIndex, 1)
+    },
+    addChordRegion (state, val) {
+        let activeTrack = getters.getStudioActiveTrack(state)
+        activeTrack.sequences.push({
+            id: objectId(),
+            modified_time: Date.now(),
+            chord: val.chord_id,
+            beat: val.chord_duration,
+            start_beat: getters.getStudioCurrentTimeBeats(state),
+            active: false
+        })
     }
 }
 
@@ -206,7 +217,17 @@ const actions = {
         commit('setCurrentScrollXPosition', val)
     },
     SET_STUDIO_CURRENT_TIME({commit}, val){
-        commit('setStudioCurrentTimePercent', val)
+        commit('setStudioCurrentTimePercent', Math.max(0, Math.min(100, val)))
+    },
+    STUDIO_BEAT_FORWARD ({ dispatch }, val) {
+        let beats = state.details.bars * state.details.time_signature
+        let forwardPercent = val/beats
+        dispatch('SET_STUDIO_CURRENT_TIME', state.env.currentTimePercent + forwardPercent * 100)
+    },
+    STUDIO_BEAT_BACKWARD ({ dispatch }, val) {
+        let beats = state.details.bars * state.details.time_signature
+        let backwardPercent = val/beats
+        dispatch('SET_STUDIO_CURRENT_TIME', state.env.currentTimePercent - backwardPercent * 100)
     },
     SET_STUDIO_ACTIVE_TRACK ({ commit }, val) {
         commit('setStudioActiveTrack', val)
@@ -336,6 +357,15 @@ const actions = {
                 })
             })
         })
+    },
+    ADD_CHORD_REGION ({ commit, dispatch }, val) {
+        let currentTimeBeats = getters.getStudioCurrentTimeBeats(state)
+        let currentTimeBeatsFloor = Math.floor(currentTimeBeats)
+        let currentTimeBeatsSimplify = currentTimeBeatsFloor + Math.round(currentTimeBeats - currentTimeBeatsFloor) - 1
+        let beats = state.details.bars * state.details.time_signature
+        dispatch('SET_STUDIO_CURRENT_TIME', (currentTimeBeatsSimplify/beats) * 100)
+        commit('addChordRegion', val)
+        dispatch('STUDIO_BEAT_FORWARD', val.chord_duration)
     }
 }
 
@@ -355,6 +385,7 @@ const getters = {
     getStudioCurrentScrollXPosition: state => state.env.currentScrollXPos,
     getStudioCurrentTimePercent: state => state.env.currentTimePercent,
     getStudioCurrentTimePixel: state => (state.env.currentTimePercent/100) * state.env.stage_width,
+    getStudioCurrentTimeBeats: state => (state.env.currentTimePercent/100) * (state.details.bars * state.details.time_signature) + 1,
     getStudioCurrentTime: state => {
         let beats = state.details.bars * state.details.time_signature
         return ((state.env.currentTimePercent/100) * beats) / state.details.bpm * 60

@@ -18,46 +18,46 @@
                     </g>
                 </svg>
             </button>
-            <button>
-            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
-                <g id="Layer_1_2_">
-                    <g id="XMLID_8_">
-                        <g id="Oval-9-Copy">
-                            <path id="XMLID_11_" d="M20,40C9.1,40,0,30.9,0,20S9.1,0,20,0s20,9.1,20,20S30.9,40,20,40z M20,1.4C10,1.4,1.4,9.5,1.4,20
-                                c0,10,8.2,18.6,18.6,18.6c10,0,18.6-8.2,18.6-18.6C38.6,10,30,1.4,20,1.4z"/>
-                        </g>
-                        <path id="Fill-2" d="M12.7,12.7H15v14.5h-2.3V12.7z M16.8,20l10.5,7.3V12.7L16.8,20z"/>
-                    </g>
-                </g>
-            </svg>
-            </button>
-            <button>
-            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
-                <g id="Layer_1_1_">
-                    <g id="XMLID_2_">
-                        <g id="Oval-9-Copy-2">
-                            <path id="XMLID_5_" d="M20,40C9.1,40,0,30.9,0,20S9.1,0,20,0s20,9.1,20,20S30.9,40,20,40z M20,1.4C10,1.4,1.4,9.5,1.4,20
-                                c0,10,8.2,18.6,18.6,18.6c10,0,18.6-8.2,18.6-18.6C38.6,10,30,1.4,20,1.4z"/>
-                        </g>
-                        <path id="Fill-2_1_" d="M18.6,27.3V12.7L8.6,20L18.6,27.3z M19.5,20l10,7.3V12.7L19.5,20z"/>
-                    </g>
-                </g>
-            </svg>
-            </button>
-            <button>
-            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
-                <g id="Layer_1_2_">
-                    <g id="XMLID_8_">
-                        <polygon id="Fill-2" points="15.9,12.3 15.9,28.6 28.6,20.5 		"/>
-                        <g id="Oval-9-Copy-3">
-                            <path id="XMLID_9_" d="M20,40C9.1,40,0,30.9,0,20S9.1,0,20,0s20,9.1,20,20S30.9,40,20,40z M20,1.4C10,1.4,1.4,9.5,1.4,20
-                                c0,10,8.2,18.6,18.6,18.6c10,0,18.6-8.2,18.6-18.6C38.6,10,30,1.4,20,1.4z"/>
+            <button @click="previous()">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
+                    <g id="Layer_1_2_">
+                        <g id="XMLID_8_">
+                            <g id="Oval-9-Copy">
+                                <path id="XMLID_11_" d="M20,40C9.1,40,0,30.9,0,20S9.1,0,20,0s20,9.1,20,20S30.9,40,20,40z M20,1.4C10,1.4,1.4,9.5,1.4,20
+                                    c0,10,8.2,18.6,18.6,18.6c10,0,18.6-8.2,18.6-18.6C38.6,10,30,1.4,20,1.4z"/>
+                            </g>
+                            <path id="Fill-2" d="M12.7,12.7H15v14.5h-2.3V12.7z M16.8,20l10.5,7.3V12.7L16.8,20z"/>
                         </g>
                     </g>
-                </g>
-            </svg>
+                </svg>
             </button>
-            <button>
+            <button id="backward-btn" @click="backward()">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
+                    <g id="Layer_1_1_">
+                        <g id="XMLID_2_">
+                            <g id="Oval-9-Copy-2">
+                                <path id="XMLID_5_" d="M20,40C9.1,40,0,30.9,0,20S9.1,0,20,0s20,9.1,20,20S30.9,40,20,40z M20,1.4C10,1.4,1.4,9.5,1.4,20
+                                    c0,10,8.2,18.6,18.6,18.6c10,0,18.6-8.2,18.6-18.6C38.6,10,30,1.4,20,1.4z"/>
+                            </g>
+                            <path id="Fill-2_1_" d="M18.6,27.3V12.7L8.6,20L18.6,27.3z M19.5,20l10,7.3V12.7L19.5,20z"/>
+                        </g>
+                    </g>
+                </svg>
+            </button>
+            <button id="play-btn">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
+                    <g id="Layer_1_2_">
+                        <g id="XMLID_8_">
+                            <polygon id="Fill-2" points="15.9,12.3 15.9,28.6 28.6,20.5 		"/>
+                            <g id="Oval-9-Copy-3">
+                                <path id="XMLID_9_" d="M20,40C9.1,40,0,30.9,0,20S9.1,0,20,0s20,9.1,20,20S30.9,40,20,40z M20,1.4C10,1.4,1.4,9.5,1.4,20
+                                    c0,10,8.2,18.6,18.6,18.6c10,0,18.6-8.2,18.6-18.6C38.6,10,30,1.4,20,1.4z"/>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </button>
+            <button @click="forward()">
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_1_">
                         <g id="XMLID_2_">
@@ -110,6 +110,15 @@ export default {
     methods: {
         showChatBox(){
             this.$store.dispatch('TOGGLE_CHATBOX')
+        },
+        forward () {
+            this.$store.dispatch('STUDIO_BEAT_FORWARD', 4)
+        },
+        backward () {
+            this.$store.dispatch('STUDIO_BEAT_BACKWARD', 4)
+        },
+        previous () {
+            this.$store.dispatch('SET_STUDIO_CURRENT_TIME', 0)
         }
     },
     computed: {

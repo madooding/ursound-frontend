@@ -44,7 +44,6 @@ const getSuggestedChords = (sequences) => {
         }, (seq, res) => res)
         .take(7)
         .toArray()
-        .delay(1000)
 }
 
 export default {

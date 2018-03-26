@@ -44,8 +44,8 @@
                     </g>
                 </svg>
             </button>
-            <button id="play-btn">
-                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
+            <button id="play-btn" @click="playPause()">
+                <svg v-if="!studioEnv.isPlaying" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_2_">
                         <g id="XMLID_8_">
                             <polygon id="Fill-2" points="15.9,12.3 15.9,28.6 28.6,20.5 		"/>
@@ -54,6 +54,17 @@
                                     c0,10,8.2,18.6,18.6,18.6c10,0,18.6-8.2,18.6-18.6C38.6,10,30,1.4,20,1.4z"/>
                             </g>
                         </g>
+                    </g>
+                </svg>
+                <svg v-else version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-449 451 100 100">
+                    <title>Pause btn</title>
+                    <g>
+                        <rect x="-418.7" y="478" width="13.1" height="45.9"/>
+                        <rect x="-392.4" y="478" width="13.1" height="45.9"/>
+                    </g>
+                    <g id="Oval-9-Copy-3">
+                        <path id="XMLID_9_" d="M-399,551c-27.25,0-50-22.75-50-50s22.75-50,50-50s50,22.75,50,50S-371.75,551-399,551z M-399,454.5
+                            c-25,0-46.5,20.25-46.5,46.5c0,25,20.5,46.5,46.5,46.5c25,0,46.5-20.5,46.5-46.5C-352.5,476-374,454.5-399,454.5z"/>
                     </g>
                 </svg>
             </button>
@@ -104,6 +115,10 @@ import vueSlider from 'vue-slider-component'
 import { mapGetters } from 'vuex'
 
 export default {
+    data: () => ({
+        timeutil: undefined,
+        timeDiff: null
+    }),
     components: {
         vueSlider
     },
@@ -119,12 +134,46 @@ export default {
         },
         previous () {
             this.$store.dispatch('SET_STUDIO_CURRENT_TIME', 0)
+        },
+        playPause() {
+            if(!this.studioEnv.isPlaying && this.currentTimePercent < 100){
+                this.$store.dispatch('STUDIO_PLAY')
+            } else this.$store.dispatch('STUDIO_PAUSE')
+        },
+        counter(){
+            this.timeutil = requestAnimationFrame(this.counter)
+            let now = Date.now()
+            let delta = now - this.timeDiff
+            if(delta > 1000/60){
+                this.timeDiff = now - (delta % 1000/60)
+                let percent = (delta/1000)/this.duration*100
+                this.$store.dispatch('SET_STUDIO_CURRENT_TIME', this.currentTimePercent + percent)
+            }
         }
     },
     computed: {
-        ...mapGetters({'currentTime': 'getStudioCurrentTime', 'currentKey': 'getStudioCurrentKey' }),
+        ...mapGetters({ 'studioEnv': 'getStudioEnv', 'currentTime': 'getStudioCurrentTime', 'currentKey': 'getStudioCurrentKey', 'duration': 'getStudioWholeDuration', 'currentTimePercent': 'getStudioCurrentTimePercent' }),
         currentTimeFormatted(){
             return `${moment('2000-01-01 00:00:00').add(moment.duration(this.currentTime, 'seconds')).format("mm:ss")}.${Math.round((this.currentTime - Math.floor(this.currentTime)) * 10)}`
+        }
+    },
+    beforeDestroy() {
+        cancelAnimationFrame(this.timeutil)
+    },
+    watch: {
+        'studioEnv.isPlaying': function() {
+            if(this.studioEnv.isPlaying){
+                this.timeDiff = Date.now()
+                this.counter()
+            }
+            else {
+                cancelAnimationFrame(this.timeutil)
+                this.timeutil = null
+                this.timeDiff = null
+            }
+        },
+        'currentTimePercent': function() {
+            if(this.currentTimePercent == 100) this.playPause()
         }
     }
 }

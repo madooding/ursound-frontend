@@ -6,7 +6,12 @@ const API_URL = 'http://localhost:9000'
 
 const keyMap = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B']
 const chordMap = ['', 'm', 'm', '', '', 'm', 'dim']
-
+/**
+ * 
+ * 
+ * @param {number} key 
+ * @returns {array<string>}
+ */
 const scaleMap = (key) => {
     let keyMapShifted = _.concat(keyMap.slice(key, keyMap.length), keyMap.slice(0, key))
     let majorIndex = [1, 3, 5, 6, 8, 10, 12]
@@ -14,7 +19,13 @@ const scaleMap = (key) => {
     return scale
 }
 
- 
+/**
+ * 
+ * 
+ * @param {number} key 
+ * @param {string} n 
+ * @returns {array<string>} return chord in major scale
+ */
 const mapChord = (key, n) => {
     if (/(^[1-7]{1}$)/.test(n)) {
         n = parseInt(n)
@@ -29,7 +40,7 @@ const mapChord = (key, n) => {
     }
 }
 
-/** @description Get suggested chords from previous chords   
+/** @description (Get suggested chords from previous chords)   
  * @param {array<string>} sequences sequences of chord progression
  * @return {Observable} this function will return observable object  
  */ 

@@ -2,13 +2,35 @@ import studio, { StudioService } from '../../services'
 import _ from 'lodash'
 import { Observable } from 'rxjs'
 
+
+/**
+ * 
+ * 
+ * @param {string} id objectID of track
+ * @returns {integer} index number of track
+ */
 const findTrackIndex = (id) => {
    return _.findIndex(state.tracks, each => each.id === id)
 }
+
+
+/**
+ * 
+ * 
+ * @param {integer} trackIndex track index
+ * @param {string} regionId objectID of region in sequences
+ * @returns {integer} index number of region
+ */
 const findRegionIndex = (trackIndex, regionId) => {
     return _.findIndex(state.tracks[trackIndex].sequences, each => each.id === regionId)
 }
 
+
+/**
+ * 
+ * 
+ * @returns {string} return an objectID
+ */
 const objectId = () => {
     var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
     return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
@@ -16,12 +38,14 @@ const objectId = () => {
     }).toLowerCase();
 }
 
+
 const state = {
     env: {
         zoomLevel: 100,
         stage_width: 0,
         currentScrollXPos: 0,
-        currentTimePercent: 15
+        currentTimePercent: 15,
+        isPlaying: false
     },
     details: {
         name: "Untitled-2",
@@ -184,10 +208,19 @@ const mutations = {
     addChordRegion (state, val) {
         let activeTrack = getters.getStudioActiveTrack(state)
         activeTrack.sequences.push(val)
+    },
+    setStudioPlayingState (state, val) {
+        state.env.isPlaying = val
     }
 }
 
 const actions = {
+    STUDIO_PLAY({commit}){
+        commit('setStudioPlayingState', true)
+    },
+    STUDIO_PAUSE({ commit }){
+        commit('setStudioPlayingState', false)
+    },
     MUTE_TRACK({commit}, val){
         commit('muteTrackById', val)
     },
@@ -378,6 +411,7 @@ const getters = {
     getStudioTracks: state => state.tracks,
     isChatboxShow: state => state.chat.show,
     getStudioDetails: state => state.details,
+    getStudioEnv: state => state.env,
     getStudioCurrentKey: state => StudioService.keyMap[state.details.key - 1],
     getStageWidth: state => state.env.stage_width,
     getZoomLevel: state => state.env.zoomLevel,
@@ -388,6 +422,10 @@ const getters = {
         return perBeat * Math.max(1, avoid)
     },
     getStudioCurrentScrollXPosition: state => state.env.currentScrollXPos,
+    getStudioWholeDuration: state => {
+        let beats = state.details.bars * state.details.time_signature
+        return (beats/state.details.bpm*60)
+    },
     getStudioCurrentTimePercent: state => state.env.currentTimePercent,
     getStudioCurrentTimePixel: state => (state.env.currentTimePercent/100) * state.env.stage_width,
     getStudioCurrentTimeBeats: state => (state.env.currentTimePercent/100) * (state.details.bars * state.details.time_signature) + 1,

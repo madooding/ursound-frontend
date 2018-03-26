@@ -29,6 +29,7 @@ import _ from 'lodash'
 import { StudioService } from '../../services'
 import { mapGetters } from 'vuex'
 
+
 export default {
     data: () => ({
         show: false,

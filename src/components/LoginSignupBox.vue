@@ -59,7 +59,8 @@
 
 <script>
 import _ from 'lodash'
-import { AuthService, UserService } from '../services'
+import { AuthService, UserService, StudioService } from '../services'
+
 export default {
     props: ['facebookMode'],
     data: () => ({

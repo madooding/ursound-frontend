@@ -23,6 +23,7 @@
     "sass-loader": "^6.0.7",
     "script-loader": "^0.7.2",
     "slick-carousel": "^1.8.1",
+    "soundfont-player": "^0.10.6",
     "style-loader": "^0.19.1",
     "vee-validate": "^2.0.5",
     "vue": "^2.5.16",
@@ -69,7 +70,8 @@
     "webpack": "^3.11.0",
     "webpack-bundle-analyzer": "^2.11.1",
     "webpack-dev-server": "^2.11.2",
-    "webpack-merge": "^4.1.2"
+    "webpack-merge": "^4.1.2",
+    "worker-loader": "^1.1.1"
   },
   "engines": {
     "node": ">= 6.0.0",

@@ -11,10 +11,12 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import interact from 'interactjs'
 import AudioRegion from './AudioRegion'
 import { Observable } from 'rxjs'
 import { mapGetters } from 'vuex'
+import StudioSoundPlayerWorker from 'worker-loader!../../workers/StudioSoundPlayer.js'
 
 export default {
     props: ['track_data'],
@@ -23,12 +25,14 @@ export default {
         tracksContainer: null,
         elemOffsetX: 0,
         elemOffsetY: 0,
-        offsetTop: 0
+        offsetTop: 0,
+        SoundPlayerWorker: null
     }),
     components: {
         AudioRegion
     },
     mounted() {
+        this.SoundPlayerWorker = new StudioSoundPlayerWorker();
         this.container = $(`.track-lane[track_id="${this.track_data.id}"]`)
         this.tracksContainer = $('.tracks')
         this.onStageWidthChange()
@@ -208,14 +212,28 @@ export default {
             return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
                 return (Math.random() * 16 | 0).toString(16);
             }).toLowerCase();
+        },
+        playChordOnBeat (beat) {
+            let region = _.find(this.track_data.sequences, each => each.start_beat == beat)
+            if(region){
+                // console.log('Playing chord normally');
+                this.SoundPlayerWorker.postMessage({ 'play': 'chord', 'chord': region.chord, 'key': this.details.key - 1 })
+            }
         }
     },
     computed: {
-        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel', scrollX: 'getStudioCurrentScrollXPosition', snapGrid: 'getStudioSnapGrid', getTracks: 'getStudioTracks'}),
+        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel', scrollX: 'getStudioCurrentScrollXPosition', snapGrid: 'getStudioSnapGrid', getTracks: 'getStudioTracks', currentTimeBeats: 'getStudioCurrentTimeBeats', studioEnv: 'getStudioEnv' }),
         beatWidth() {
             let beats = this.details.bars * this.details.time_signature
             return this.stageWidth / beats
+        },
+        currentTimeBeatsFloor () {
+            return Math.floor(this.currentTimeBeats)
         }
+    },
+    beforeDestroy () {
+        this.SoundPlayerWorker.close
+        this.SoundPlayerWorker = null
     },
     watch: {
         stageWidth() {
@@ -224,8 +242,15 @@ export default {
         indicatorPos() {
             this.renderIndicator()
         },
-        'track_data.sequences' () {
-            // this.checkRegionOverlapping()
+        currentTimeBeatsFloor () {
+            if(this.studioEnv.isPlaying){
+                if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
+            }
+        },
+        'studioEnv.isPlaying' () {
+            if(this.studioEnv.isPlaying) {
+                if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
+            }
         },
         'track_data.active' () {
             if(this.track_data.active == false) {

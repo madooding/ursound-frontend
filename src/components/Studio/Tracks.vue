@@ -7,17 +7,22 @@
 <script>
 import { mapGetters } from 'vuex';
 import TrackLane from './TrackLane'
-
+import { StudioService } from '../../services'
+import { Observable } from 'rxjs'
 export default {
     components: {
         TrackLane
     },
     data: () => ({
-        zoom: 100
+        zoom: 100,
+        loading: true
     }),
     mounted() {
         let tracks = $(this.$refs.tracks)
-        
+        StudioService.defineInstrument()
+            .subscribe(res => {
+                this.loading = false
+            })
         this.$store.dispatch('SET_STAGE_WIDTH', (29 * (this.details.bars * this.details.time_signature))*(this.zoom/100))
         tracks.on('mousewheel', e => {
             if (e.altKey){

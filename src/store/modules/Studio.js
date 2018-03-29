@@ -45,7 +45,8 @@ const state = {
         stage_width: 0,
         currentScrollXPos: 0,
         currentTimePercent: 15,
-        isPlaying: false
+        isPlaying: false,
+        piano: null
     },
     details: {
         name: "Untitled-2",
@@ -143,6 +144,9 @@ const state = {
 }
 
 const mutations = {
+    setPianoInstrument (state, val) {
+        state.env.piano = val
+    },
     muteTrackById(state, val){
         let index = _.findIndex(state.tracks, o => o.id == val)
         state.tracks[index].muted = !state.tracks[index].muted
@@ -215,6 +219,9 @@ const mutations = {
 }
 
 const actions = {
+    SET_PIANO_INSTRUMENT ({commit}, val) {
+        commit('setPianoInstrument', val)
+    },
     STUDIO_PLAY({commit}){
         commit('setStudioPlayingState', true)
     },

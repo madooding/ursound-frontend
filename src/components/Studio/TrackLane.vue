@@ -16,7 +16,7 @@ import interact from 'interactjs'
 import AudioRegion from './AudioRegion'
 import { Observable } from 'rxjs'
 import { mapGetters } from 'vuex'
-import StudioSoundPlayerWorker from 'worker-loader!../../workers/StudioSoundPlayer.js'
+import { StudioService } from '../../services'
 
 export default {
     props: ['track_data'],
@@ -26,13 +26,11 @@ export default {
         elemOffsetX: 0,
         elemOffsetY: 0,
         offsetTop: 0,
-        SoundPlayerWorker: null
     }),
     components: {
         AudioRegion
     },
     mounted() {
-        this.SoundPlayerWorker = new StudioSoundPlayerWorker();
         this.container = $(`.track-lane[track_id="${this.track_data.id}"]`)
         this.tracksContainer = $('.tracks')
         this.onStageWidthChange()
@@ -216,24 +214,24 @@ export default {
         playChordOnBeat (beat) {
             let region = _.find(this.track_data.sequences, each => each.start_beat == beat)
             if(region){
-                // console.log('Playing chord normally');
-                this.SoundPlayerWorker.postMessage({ 'play': 'chord', 'chord': region.chord, 'key': this.details.key - 1 })
+                let chord = StudioService.mapChord(this.details.key - 1, region.chord)
+                StudioService.playChord(chord, region.beat, this.beatDuration)
             }
         }
     },
     computed: {
-        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel', scrollX: 'getStudioCurrentScrollXPosition', snapGrid: 'getStudioSnapGrid', getTracks: 'getStudioTracks', currentTimeBeats: 'getStudioCurrentTimeBeats', studioEnv: 'getStudioEnv' }),
+        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel', scrollX: 'getStudioCurrentScrollXPosition', snapGrid: 'getStudioSnapGrid', getTracks: 'getStudioTracks', currentTimeBeats: 'getStudioCurrentTimeBeats', studioEnv: 'getStudioEnv', wholeDuration: 'getStudioWholeDuration' }),
         beatWidth() {
             let beats = this.details.bars * this.details.time_signature
             return this.stageWidth / beats
         },
         currentTimeBeatsFloor () {
             return Math.floor(this.currentTimeBeats)
+        },
+        beatDuration () {
+            let beats = this.details.bars * this.details.time_signature
+            return this.wholeDuration / beats
         }
-    },
-    beforeDestroy () {
-        this.SoundPlayerWorker.close
-        this.SoundPlayerWorker = null
     },
     watch: {
         stageWidth() {

@@ -138,7 +138,10 @@ export default {
         playPause() {
             if(!this.studioEnv.isPlaying && this.currentTimePercent < 100){
                 this.$store.dispatch('STUDIO_PLAY')
-            } else this.$store.dispatch('STUDIO_PAUSE')
+            } else {
+                this.$store.dispatch('STUDIO_PAUSE')
+                this.studioEnv.piano.stop()
+            }
         },
         counter(){
             this.timeutil = requestAnimationFrame(this.counter)

@@ -1,11 +1,18 @@
+import Soundfont from 'soundfont-player'
 import { Observable } from 'rxjs'
+import store from '../store'
 import axios from 'axios'
 import _ from 'lodash'
 
 const API_URL = 'http://localhost:9000'
 
+const AudioContext = window.AudioContext || window.webkitAudioContext
+const ac = new AudioContext()
+
 const keyMap = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B']
 const chordMap = ['', 'm', 'm', '', '', 'm', 'dim']
+
+const chordType = { 'major': [48, 52, 55], 'minor': [48, 51, 55], 'diminished': [48, 51, 54] }
 /**
  * 
  * 
@@ -57,9 +64,48 @@ const getSuggestedChords = (sequences) => {
         .toArray()
 }
 
+/**
+ * 
+ * 
+ * @returns {Observable} return observable that contains piano instrument soundfont object
+ */
+const defineInstrument = () => {
+    return Observable.fromPromise(Soundfont.instrument(ac, 'acoustic_grand_piano'))
+        .do(piano => {
+            store.dispatch('SET_PIANO_INSTRUMENT', piano)
+        })
+}
+
+/**
+ * 
+ * 
+ * @param {string} chord chord
+ * @param {number} beat how many time of repeating playing that chord
+ * @param {number} timer duration
+ */
+const playChord = (chord, beat, timer) => {
+    let piano = store.getters.getStudioEnv.piano
+    let shiftedKey = _.findIndex(keyMap, key => key === chord[0] || key === chord[0]+chord[1])
+    shiftedKey = shiftedKey > 5 ? shiftedKey - 12 : shiftedKey
+    let chordStruct
+    if (/^[A-G][#b]?$/.test(chord)){
+        chordStruct = _.map(chordType.major, note => note + shiftedKey)
+    } else if (/^[A-G][#b]?m$/.test(chord)){
+        chordStruct = _.map(chordType.minor, note => note + shiftedKey)
+    } else if (/^[A-G][#b]?dim$/.test(chord)){
+        chordStruct = _.map(chordType.diminished, note => note + shiftedKey)
+    }
+    let scheduleNotes = _.concat(_.map(_.range(beat), each => (_.map(chordStruct, note => ({ time: each * timer, 'note': note, duration: timer})))))
+    scheduleNotes = _.flatten(scheduleNotes)
+
+    piano.schedule(ac.currentTime, scheduleNotes)
+}
+
 export default {
+    defineInstrument,
     keyMap,
     scaleMap,
     mapChord,
-    getSuggestedChords
+    getSuggestedChords,
+    playChord
 }

@@ -1,4 +1,6 @@
 import { StudioService } from '../services'
+import Soundfont from 'soundfont-player'
+
 
 
 self.addEventListener('message', function (e) {

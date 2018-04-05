@@ -45,8 +45,9 @@ const state = {
         stage_width: 0,
         currentScrollXPos: 0,
         currentTimePercent: 15,
-        isPlaying: false,
-        piano: null
+        mode: 'EDIT',
+        piano: null,
+        isMetronomeOn: false,
     },
     details: {
         name: "Untitled-2",
@@ -55,7 +56,6 @@ const state = {
         bpm: 80,
         time_signature: 4,
         bars: 32,
-        isMetronomeOn: false,
         key: 1,
         description: ""
     },
@@ -164,6 +164,9 @@ const mutations = {
     toggleChatbox(state){
         state.chat.show = !state.chat.show
     },
+    toggleMetronome(state){
+        state.env.isMetronomeOn = !state.env.isMetronomeOn
+    },
     zoom(state, val) {
         state.env.zoomLevel = val
     },
@@ -214,7 +217,7 @@ const mutations = {
         activeTrack.sequences.push(val)
     },
     setStudioPlayingState (state, val) {
-        state.env.isPlaying = val
+        state.env.mode = val ? 'PLAYBACK' : 'EDIT'
     }
 }
 
@@ -239,6 +242,9 @@ const actions = {
     },
     TOGGLE_CHATBOX({commit}) {
         commit('toggleChatbox')
+    },
+    TOGGLE_METRONOME ({commit}) {
+        commit('toggleMetronome')
     },
     ZOOM({commit}, val){
         commit('zoom', val)

@@ -45,7 +45,7 @@
                 </svg>
             </button>
             <button id="play-btn" @click="playPause()">
-                <svg v-if="!studioEnv.isPlaying" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
+                <svg v-if="studioEnv.mode !== 'PLAYBACK'" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_2_">
                         <g id="XMLID_8_">
                             <polygon id="Fill-2" points="15.9,12.3 15.9,28.6 28.6,20.5 		"/>
@@ -86,7 +86,7 @@
             <div class="option">Key : {{ currentKey }}</div>
             <div class="option">110</div>
             <div class="option">4/4</div>
-            <div class="option">
+            <div class="option" :class="{'active': studioEnv.isMetronomeOn }" @click="toggleMetronome()">
                 <button> 
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                         <g>
@@ -113,11 +113,20 @@
 import moment from 'moment'
 import vueSlider from 'vue-slider-component'
 import { mapGetters } from 'vuex'
+import { Howl } from 'howler'
 
 export default {
     data: () => ({
         timeutil: undefined,
-        timeDiff: null
+        timeDiff: null,
+        metronome: {
+            up: new Howl({
+                src: ['static/audio/metronomeup.wav']
+            }),
+            down: new Howl({
+                src: ['static/audio/metronomedown.wav']
+            })
+        }
     }),
     components: {
         vueSlider
@@ -128,15 +137,21 @@ export default {
         },
         forward () {
             this.$store.dispatch('STUDIO_BEAT_FORWARD', 4)
+            this.studioEnv.piano.stop()
         },
         backward () {
             this.$store.dispatch('STUDIO_BEAT_BACKWARD', 4)
+            this.studioEnv.piano.stop()
         },
         previous () {
             this.$store.dispatch('SET_STUDIO_CURRENT_TIME', 0)
+            this.studioEnv.piano.stop()
+        },
+        toggleMetronome () {
+            this.$store.dispatch('TOGGLE_METRONOME')
         },
         playPause() {
-            if(!this.studioEnv.isPlaying && this.currentTimePercent < 100){
+            if(this.studioEnv.mode !== 'PLAYBACK' && this.currentTimePercent < 100){
                 this.$store.dispatch('STUDIO_PLAY')
             } else {
                 this.$store.dispatch('STUDIO_PAUSE')
@@ -155,17 +170,26 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({ 'studioEnv': 'getStudioEnv', 'currentTime': 'getStudioCurrentTime', 'currentKey': 'getStudioCurrentKey', 'duration': 'getStudioWholeDuration', 'currentTimePercent': 'getStudioCurrentTimePercent' }),
+        ...mapGetters({ details: 'getStudioDetails', 'studioEnv': 'getStudioEnv', 'currentTime': 'getStudioCurrentTime', 'currentKey': 'getStudioCurrentKey', 'duration': 'getStudioWholeDuration', 'currentTimePercent': 'getStudioCurrentTimePercent', currentTimeBeats: 'getStudioCurrentTimeBeats', }),
         currentTimeFormatted(){
             return `${moment('2000-01-01 00:00:00').add(moment.duration(this.currentTime, 'seconds')).format("mm:ss")}.${Math.round((this.currentTime - Math.floor(this.currentTime)) * 10)}`
+        },
+        currentTimeBeatsFloor () {
+            return Math.floor(this.currentTimeBeats)
         }
     },
     beforeDestroy() {
         cancelAnimationFrame(this.timeutil)
     },
     watch: {
-        'studioEnv.isPlaying': function() {
-            if(this.studioEnv.isPlaying){
+        currentTimeBeatsFloor () {
+            if(this.studioEnv.mode === 'PLAYBACK' && this.studioEnv.isMetronomeOn){
+                if(this.currentTimeBeatsFloor % this.details.time_signature == 1) this.metronome.up.play()
+                else this.metronome.down.play()
+            }
+        },
+        'studioEnv.mode': function() {
+            if(this.studioEnv.mode === 'PLAYBACK'){
                 this.timeDiff = Date.now()
                 this.counter()
             }

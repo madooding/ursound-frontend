@@ -86,7 +86,7 @@ const defineInstrument = () => {
 const playChord = (chord, beat, timer) => {
     let piano = store.getters.getStudioEnv.piano
     let shiftedKey = _.findIndex(keyMap, key => key === chord[0] || key === chord[0]+chord[1])
-    shiftedKey = shiftedKey > 5 ? shiftedKey - 12 : shiftedKey
+    shiftedKey = shiftedKey > 7 ? shiftedKey - 12 : shiftedKey
     let chordStruct
     if (/^[A-G][#b]?$/.test(chord)){
         chordStruct = _.map(chordType.major, note => note + shiftedKey)

@@ -241,12 +241,12 @@ export default {
             this.renderIndicator()
         },
         currentTimeBeatsFloor () {
-            if(this.studioEnv.isPlaying){
+            if(this.studioEnv.mode === 'PLAYBACK'){
                 if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
             }
         },
-        'studioEnv.isPlaying' () {
-            if(this.studioEnv.isPlaying) {
+        'studioEnv.mode' () {
+            if(this.studioEnv.mode === 'PLAYBACK') {
                 if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
             }
         },

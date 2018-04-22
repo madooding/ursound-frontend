@@ -38,14 +38,13 @@ const objectId = () => {
     }).toLowerCase();
 }
 
-
 const state = {
     env: {
         zoomLevel: 100,
         stage_width: 0,
         currentScrollXPos: 0,
         currentTimePercent: 15,
-        mode: 'EDIT',
+        mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING
         piano: null,
         isMetronomeOn: false,
     },
@@ -113,7 +112,28 @@ const state = {
             solo: false,
             muted: true,
             active: false,
-            sequences: []
+            sequences: [
+                {
+                    id: '5adb81146096afad2126a0a0',
+                    modified_time: '1524334905576',
+                    url: 'https://wavesurfer-js.org/example/media/small-demo.wav',
+                    start_beat: 1,
+                    original_length: 21000,
+                    trim_left: 0,
+                    trim_right: 0,
+                    active: false
+                },
+                {
+                    id: '5aa1819c4b1d20827767759a',
+                    modified_time: '1524407577443',
+                    url: 'https://wavesurfer-js.org/example/media/small-demo.wav',
+                    start_beat: 29,
+                    original_length: 21000,
+                    trim_left: 0,
+                    trim_right: 0,
+                    active: false
+                }
+            ]
         },
         {
             id: '5aa1819c4b1d20827767759a',
@@ -186,7 +206,7 @@ const mutations = {
             return each
         })
     },
-    moveAudioRegion(state, val){
+    moveChordRegion(state, val){
         let regionData = state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex]
         let modified_time = Date.now()
         regionData.start_beat = val.moveTo.startBeat
@@ -195,12 +215,35 @@ const mutations = {
         state.tracks[val.moveTo.trackIndex].modified_time = modified_time
         state.tracks[val.currentIndex.trackIndex].sequences.splice(val.currentIndex.regionIndex, 1)
     },
-    resizeAudioRegion (state, val) {
+    moveAudioRegion(state, val) {
+        let regionData = state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex]
+        let modified_time = Date.now()
+        regionData.start_beat = val.moveTo.startBeat
+        regionData.modified_time = modified_time
+        state.tracks[val.moveTo.trackIndex].sequences.push(regionData)
+        state.tracks[val.moveTo.trackIndex].modified_time = modified_time
+        state.tracks[val.currentIndex.trackIndex].sequences.splice(val.currentIndex.regionIndex, 1)
+    },
+    resizeChordRegion (state, val) {
         let regionData = state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex]
         let modified_time = Date.now()
         regionData.start_beat = val.payload.startBeat
         regionData.beat = val.payload.duration
         regionData.modified_time = modified_time
+        state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex] = regionData
+    },
+    resizeAudioRegion (state, val) {
+        let bpm = state.details.bpm
+        let regionData = state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex]
+        let modified_time = Date.now()
+        let diff =  (regionData.original_length - (regionData.trim_left + regionData.trim_right)) - StudioService.beats2milliseconds(bpm, val.payload.duration)
+        // console.log(diff);
+        if (val.payload.trim_direction === 'left') {
+            regionData.start_beat += StudioService.milliseconds2beats(bpm, diff)
+            regionData.trim_left += diff
+        } else {
+            regionData.trim_right += diff
+        }
         state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex] = regionData
     },
     updateTrackSequences (state, val) {
@@ -218,6 +261,9 @@ const mutations = {
     },
     setStudioPlayingState (state, val) {
         state.env.mode = val ? 'PLAYBACK' : 'EDIT'
+    },
+    setStudioMode (state, val) {
+        state.env.mode = val
     }
 }
 
@@ -230,6 +276,12 @@ const actions = {
     },
     STUDIO_PAUSE({ commit }){
         commit('setStudioPlayingState', false)
+    },
+    STUDIO_COUNTDOWN({ commit }){
+        commit('setStudioMode', 'COUNTDOWN')
+    },
+    STUDIO_RECORD ({ commit }) {
+        commit('setStudioMode', 'RECORD')
     },
     MUTE_TRACK({commit}, val){
         commit('muteTrackById', val)
@@ -271,7 +323,20 @@ const actions = {
     SET_STUDIO_ACTIVE_TRACK ({ commit }, val) {
         commit('setStudioActiveTrack', val)
     },
-    MOVE_AUDIO_REGION({ dispatch, commit }, val) {
+    MOVE_CHORD_REGION({ dispatch, commit }, val) {
+        let trackIndex = findTrackIndex(val.track_id)
+        let regionIndex = findRegionIndex(trackIndex, val.region_id)
+        commit('moveChordRegion', {
+            currentIndex: {
+                'trackIndex': trackIndex,
+                'regionIndex': regionIndex
+            },
+            moveTo: val.moveTo
+        })
+        dispatch('CHECK_REGION_OVERLAPPING', { track_id: val.moveTo.trackIndex, region_id: val.region_id })
+        dispatch('SET_STUDIO_ACTIVE_TRACK', state.tracks[val.moveTo.trackIndex].id)
+    },
+    MOVE_AUDIO_REGION ({ dispatch, commit }, val) {
         let trackIndex = findTrackIndex(val.track_id)
         let regionIndex = findRegionIndex(trackIndex, val.region_id)
         commit('moveAudioRegion', {
@@ -281,8 +346,20 @@ const actions = {
             },
             moveTo: val.moveTo
         })
-        dispatch('CHECK_CHORD_REGION_OVERLAPPING', { track_id: val.moveTo.trackIndex, region_id: val.region_id })
+        dispatch('CHECK_REGION_OVERLAPPING', { track_id: val.moveTo.trackIndex, region_id: val.region_id })
         dispatch('SET_STUDIO_ACTIVE_TRACK', state.tracks[val.moveTo.trackIndex].id)
+    },
+    RESIZE_CHORD_REGION ({ dispatch, commit }, val) {
+        let trackIndex = findTrackIndex(val.track_id)
+        let regionIndex = findRegionIndex(trackIndex, val.region_id)
+        commit('resizeChordRegion', {
+            currentIndex: {
+                'trackIndex': trackIndex,
+                'regionIndex': regionIndex
+            },
+            payload: val.payload
+        })
+        dispatch('CHECK_REGION_OVERLAPPING', { track_id: trackIndex, region_id: val.region_id })
     },
     RESIZE_AUDIO_REGION ({ dispatch, commit }, val) {
         let trackIndex = findTrackIndex(val.track_id)
@@ -294,46 +371,82 @@ const actions = {
             },
             payload: val.payload
         })
-        dispatch('CHECK_CHORD_REGION_OVERLAPPING', { track_id: trackIndex, region_id: val.region_id})
+        dispatch('CHECK_REGION_OVERLAPPING', { track_id: trackIndex, region_id: val.region_id })
     },
-    CHECK_CHORD_REGION_OVERLAPPING ({ dispatch }, val) {
+    CHECK_REGION_OVERLAPPING ({ dispatch }, val) {
         let trackIndex = val.track_id
         let regionIndex = findRegionIndex(trackIndex, val.region_id)
         let lastedRegion = state.tracks[trackIndex].sequences[regionIndex]
         Observable.of(state.tracks[trackIndex].sequences)
             .map(seq => {
-                return _.map(seq, (each, i) => {
-                    if(i === regionIndex) return each
-                    let a = lastedRegion.start_beat, b = lastedRegion.start_beat+lastedRegion.beat - 1
-                    let x = each.start_beat, y = each.start_beat+each.beat - 1
-                    if (a <= x && b >= y){
-                        each.modified_time = Date.now()
-                        each.beat = 0
-                    } else if(a > x && b < y){
-                        each.modified_time = Date.now()
-                        each.beat = a - x
-                        let newRegion = {
-                            id: objectId(),
-                            chord: each.chord,
-                            modified_time: Date.now(),
-                            start_beat: b + 1,
-                            beat: y - b,
-                            active: false
+                if(state.tracks[trackIndex].type === 'PIANO'){
+                    console.log('piano naja');
+                    return _.map(seq, (each, i) => {
+                        if(i === regionIndex) return each
+                        let a = lastedRegion.start_beat, b = lastedRegion.start_beat+lastedRegion.beat - 1
+                        let x = each.start_beat, y = each.start_beat+each.beat - 1
+                        if (a <= x && b >= y){
+                            each.modified_time = Date.now()
+                            each.beat = 0
+                        } else if(a > x && b < y){
+                            each.modified_time = Date.now()
+                            each.beat = a - x
+                            let newRegion = {
+                                id: objectId(),
+                                chord: each.chord,
+                                modified_time: Date.now(),
+                                start_beat: b + 1,
+                                beat: y - b,
+                                active: false
+                            }
+                            return [each, newRegion]
+                        } else if(a <= y && a > x) {
+                            each.modified_time = Date.now()
+                            each.beat = a - x
+                        } else if(b >= x && b < y) {
+                            each.modified_time = Date.now()
+                            each.start_beat = b + 1
+                            each.beat = y - b
                         }
-                        return [each, newRegion]
-                    } else if(a <= y && a > x) {
-                        each.modified_time = Date.now()
-                        each.beat = a - x
-                    } else if(b >= x && b < y) {
-                        each.modified_time = Date.now()
-                        each.start_beat = b + 1
-                        each.beat = y - b
-                    }
-                    return each
-                })
+                        return each
+                    })
+                } else {
+                    return _.map(seq, (each, i) => {
+                        if(i === regionIndex) return each
+                        let bpm = state.details.bpm
+                        let a = lastedRegion.start_beat, b = lastedRegion.start_beat+StudioService.milliseconds2beats(bpm, lastedRegion.original_length - lastedRegion.trim_left - lastedRegion.trim_right) - 1
+                        let x = each.start_beat, y = each.start_beat+StudioService.milliseconds2beats(bpm, each.original_length - each.trim_left - each.trim_right) - 1
+                        if (a <= x && b >= y){
+                            each.modified_time = Date.now()
+                            each.original_length = 0
+                        } else if(a > x && b < y){
+                            let newRegion = {
+                                id: objectId(),
+                                url: each.url,
+                                modified_time: Date.now(),
+                                original_length: each.original_length,
+                                start_beat: b + 1,
+                                trim_left: each.original_length - StudioService.beats2milliseconds(bpm, y - b),
+                                trim_right: each.trim_right,
+                                active: false
+                            }
+                            each.modified_time = Date.now()
+                            each.trim_right = each.original_length - StudioService.beats2milliseconds(bpm, a - x)
+                            return [each, newRegion]
+                        } else if(a <= y && a > x) {
+                            each.modified_time = Date.now()
+                            each.trim_right = (each.original_length - each.trim_left) - StudioService.beats2milliseconds(bpm, a - x)
+                        } else if(b >= x && b < y) {
+                            each.modified_time = Date.now()
+                            each.start_beat = b + 1
+                            each.trim_left = (each.original_length - each.trim_right) - StudioService.beats2milliseconds(bpm, y - b)
+                        }
+                        return each
+                    })
+                }
             })
             .map(seq => _.flattenDeep(seq))
-            .map(seq => _.filter(seq, each => each.beat > 0))
+            .map(seq => _.filter(seq, each => each.beat > 0 || each.original_length > 0))
             .subscribe(seq => {
                 dispatch('UPDATE_TRACK_SEQUENCES', {
                     track_id: val.track_id,
@@ -413,7 +526,7 @@ const actions = {
         }
         commit('addChordRegion', newChord)
         dispatch('STUDIO_BEAT_FORWARD', val.chord_duration)
-        dispatch('CHECK_CHORD_REGION_OVERLAPPING', {
+        dispatch('CHECK_REGION_OVERLAPPING', {
             track_id: _.findIndex(state.tracks, (track) => track.active),
             region_id: newChord.id
         })
@@ -449,7 +562,6 @@ const getters = {
     getStudioActiveTrack: state => {
         return _.find(state.tracks, (track) => track.active)
     }
-
 }
 
 export default {

@@ -15,6 +15,7 @@
         </div>
         <ChordSuggestions></ChordSuggestions>
         <ChatBox></ChatBox>
+        <CountdownModal></CountdownModal>
     </div>
 </template>
 
@@ -25,6 +26,7 @@ import ChatBox from '../components/Studio/ChatBox'
 import BeatRuler from '../components/Studio/BeatRuler'
 import TracksComponent from '../components/Studio/Tracks'
 import ChordSuggestions from '../components/Studio/ChordSuggestions'
+import CountdownModal from '../components/Studio/CountdownModal'
 
 export default {
     components: {
@@ -32,7 +34,8 @@ export default {
         ChatBox,
         BeatRuler,
         TracksComponent,
-        ChordSuggestions
+        ChordSuggestions,
+        CountdownModal
     },
     data: () => ({
         zoom: 100,
@@ -44,7 +47,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({'tracks': 'getStudioTracks'})
+        ...mapGetters({ 'tracks': 'getStudioTracks', 'studioEnv': 'getStudioEnv' })
     }
 }
 

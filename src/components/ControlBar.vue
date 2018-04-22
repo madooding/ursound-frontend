@@ -5,7 +5,7 @@
         </div>
         <div class="controlbar__current-time">{{ currentTimeFormatted }}</div>
         <div class="controlbar__control">
-            <button class="record-btn">
+            <button class="record-btn" @click="record()" :disabled="!activeTrack || activeTrack.type !== 'AUDIO'" :class="{'recording': studioEnv.mode === 'RECORD'}">
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_1_">
                         <g id="XMLID_2_">
@@ -18,7 +18,7 @@
                     </g>
                 </svg>
             </button>
-            <button @click="previous()">
+            <button @click="previous()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN'">
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_2_">
                         <g id="XMLID_8_">
@@ -31,7 +31,7 @@
                     </g>
                 </svg>
             </button>
-            <button id="backward-btn" @click="backward()">
+            <button id="backward-btn" @click="backward()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN'">
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_1_">
                         <g id="XMLID_2_">
@@ -44,7 +44,7 @@
                     </g>
                 </svg>
             </button>
-            <button id="play-btn" @click="playPause()">
+            <button id="play-btn" @click="playPause()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN'">
                 <svg v-if="studioEnv.mode !== 'PLAYBACK'" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_2_">
                         <g id="XMLID_8_">
@@ -68,7 +68,7 @@
                     </g>
                 </svg>
             </button>
-            <button @click="forward()">
+            <button @click="forward()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN'">
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_1_">
                         <g id="XMLID_2_">
@@ -152,6 +152,7 @@ export default {
         },
         playPause() {
             if(this.studioEnv.mode !== 'PLAYBACK' && this.currentTimePercent < 100){
+                if(this.currentTimePercent == 0 && this.studioEnv.isMetronomeOn) this.metronome.up.play()
                 this.$store.dispatch('STUDIO_PLAY')
             } else {
                 this.$store.dispatch('STUDIO_PAUSE')
@@ -167,10 +168,20 @@ export default {
                 let percent = (delta/1000)/this.duration*100
                 this.$store.dispatch('SET_STUDIO_CURRENT_TIME', this.currentTimePercent + percent)
             }
+        },
+        record () {
+            if(this.studioEnv.mode === 'RECORD') {
+                this.$store.dispatch('STUDIO_PAUSE')
+            } else {
+                let beats = this.details.bars * this.details.time_signature
+                let percent = ((this.currentTimeBeatsFloor-1)/beats) * 100
+                this.$store.dispatch('SET_STUDIO_CURRENT_TIME', percent)
+                this.$store.dispatch('STUDIO_COUNTDOWN')
+            }
         }
     },
     computed: {
-        ...mapGetters({ details: 'getStudioDetails', 'studioEnv': 'getStudioEnv', 'currentTime': 'getStudioCurrentTime', 'currentKey': 'getStudioCurrentKey', 'duration': 'getStudioWholeDuration', 'currentTimePercent': 'getStudioCurrentTimePercent', currentTimeBeats: 'getStudioCurrentTimeBeats', }),
+        ...mapGetters({ details: 'getStudioDetails', 'studioEnv': 'getStudioEnv', 'currentTime': 'getStudioCurrentTime', 'currentKey': 'getStudioCurrentKey', 'duration': 'getStudioWholeDuration', 'currentTimePercent': 'getStudioCurrentTimePercent', currentTimeBeats: 'getStudioCurrentTimeBeats', activeTrack: 'getStudioActiveTrack' }),
         currentTimeFormatted(){
             return `${moment('2000-01-01 00:00:00').add(moment.duration(this.currentTime, 'seconds')).format("mm:ss")}.${Math.round((this.currentTime - Math.floor(this.currentTime)) * 10)}`
         },
@@ -189,7 +200,7 @@ export default {
             }
         },
         'studioEnv.mode': function() {
-            if(this.studioEnv.mode === 'PLAYBACK'){
+            if(this.studioEnv.mode === 'PLAYBACK' || this.studioEnv.mode === 'RECORD'){
                 this.timeDiff = Date.now()
                 this.counter()
             }

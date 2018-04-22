@@ -101,11 +101,38 @@ const playChord = (chord, beat, timer) => {
     piano.schedule(ac.currentTime, scheduleNotes)
 }
 
+/**
+ * 
+ * 
+ * @param {number} bpm bpm
+ * @param {number} duration duration (milliseconds)
+ * @returns {number} duration ms converted to beats
+ */
+const milliseconds2beats = (bpm, duration) => {
+    let rate = 60/bpm
+    return duration/1000/rate
+}
+
+
+/**
+ * 
+ * 
+ * @param {number} bpm bpm
+ * @param {number} beats duration (beats)
+ * @returns {number} duration beats converted to milliseconds
+ */
+const beats2milliseconds = (bpm, beats) => {
+    let rate = 60/bpm
+    return beats*rate*1000
+}
+
 export default {
     defineInstrument,
     keyMap,
     scaleMap,
     mapChord,
     getSuggestedChords,
-    playChord
+    playChord,
+    milliseconds2beats,
+    beats2milliseconds
 }

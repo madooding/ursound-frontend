@@ -27,7 +27,11 @@ export default {
     },
     methods: {
         renderRegion() {
-            this.container.css('width', this.region_data.beat * this.beatWidth)
+            if(this.track_data.type === 'PIANO') {
+                this.container.css('width', this.region_data.beat * this.beatWidth)
+            } else {
+                this.container.css('width',  ((this.region_data.original_length - (this.region_data.trim_left + this.region_data.trim_right))/1000)/this.songDuration*this.stageWidth)
+            }
             this.container.css('left', this.beatWidth * (this.region_data.start_beat - 1))
         },
         setActive () {
@@ -56,7 +60,7 @@ export default {
             let beats = this.details.bars * this.details.time_signature
             return this.stageWidth / beats
         },
-        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', currentKey: 'getStudioCurrentKey' })
+        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', currentKey: 'getStudioCurrentKey', songDuration: 'getStudioWholeDuration' })
     },
     watch: {
         stageWidth () {
@@ -64,7 +68,9 @@ export default {
         },
         time_signature (){
             this.renderRegion()
-        }
+        },
+        'region_data.trim_left': function() { this.renderRegion() },
+        'region_data.trim_right': function() { this.renderRegion() }
     }
 }
 </script>

@@ -2,7 +2,7 @@
     <div class="track-lane" ref="trackLaneContainer" :track_id="track_data.id">
         <canvas ref="trackLane"></canvas>
         <div class="regions">
-            <AudioRegion v-for="region in track_data.sequences" v-bind:key="region.id" :track_id="track_data.id" :region_id="region.id" class="audio-region" :class="{'audio-region--piano': track_data.type === 'PIANO', 'audio-region--audio': track_data.type === 'AUDIO'}" v-bind:track_data="track_data" v-bind:region_data="region"></AudioRegion>
+            <AudioRegion v-for="region in track_data.sequences" v-bind:key="region.id" :region_type="track_data.type" :track_id="track_data.id" :region_id="region.id" class="audio-region" :class="{'audio-region--piano': track_data.type === 'PIANO', 'audio-region--audio': track_data.type === 'AUDIO'}" v-bind:track_data="track_data" v-bind:region_data="region"></AudioRegion>
         </div>
         <svg version="1.1" ref="indicator" class="indicator-line" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 3 100" style="enable-background:new 0 0 3 100;" xml:space="preserve">
             <line id="XMLID_1_" class="st0" x1="1.5" y1="0" x2="1.5" y2="100"/>
@@ -99,6 +99,7 @@ export default {
             $(e.target).css('top', ((offsetY - offsetYtail) + Math.round(offsetYtail/100) * 100) - this.offsetTop)
         },
         addInteractionListener () {
+            let interactedRegion
             interact('.audio-region')
                 .draggable({
                     restrict: {
@@ -119,24 +120,39 @@ export default {
                         let perBeat = this.stageWidth / (this.details.time_signature * this.details.bars)
                         let startBeat = Math.round(parseInt(_.replace(target.css('left'), 'px', '')) / perBeat + 1)
                         let trackIndex = Math.max(0, Math.min((this.getTracks.length) * 100, target.offset().top - this.tracksContainer.offset().top)) / 100
-                        this.$store.dispatch('MOVE_AUDIO_REGION', {
-                            region_id: target.attr('region_id'),
-                            track_id: target.attr('track_id'),
-                            moveTo: {
-                                'startBeat': startBeat,
-                                'trackIndex': trackIndex
-                            }
-                        })
+                        let region_type = $(target).attr('region_type')
+                        if(region_type === 'PIANO'){
+                            this.$store.dispatch('MOVE_CHORD_REGION', {
+                                region_id: target.attr('region_id'),
+                                track_id: target.attr('track_id'),
+                                moveTo: {
+                                    'startBeat': startBeat,
+                                    'trackIndex': trackIndex
+                                }
+                            })
+                        } else {
+                                this.$store.dispatch('MOVE_AUDIO_REGION', {
+                                region_id: target.attr('region_id'),
+                                track_id: target.attr('track_id'),
+                                moveTo: {
+                                    'startBeat': startBeat,
+                                    'trackIndex': trackIndex
+                                }
+                            })
+                        }
                     }
                 })
                 .resizable({
                     edges: { left: '.resize-left', right: '.resize-right', bottom: false, top: false },
                     restrictSize: {
                         min: { width: this.beatWidth, height: 100 },
-                        max: { width: this.beatWidth * 4, height: 100 }
+                        max: { width: this.stageWidth, height: 100 }
                     },
                     onstart: (e) => {
                         this.elemOffsetX = parseFloat(_.replace($(e.target).css('left'), 'px', ''))
+                        let region_id = $(e.target).attr('region_id')
+                        let track_id = $(e.target).attr('track_id')
+                        interactedRegion = this.findRegion(track_id, region_id)
                     },
                     onmove: (e) => {
                         let target = e.target;
@@ -147,8 +163,18 @@ export default {
                         let width = e.rect.width
                         let widthTail = width % this.snapGrid
                         // Shift left when resizing and shrink region size
+                        
+                        let region_type = $(target).attr('region_type')
+                        let trim_direction = e.interaction.downEvent.path[0].className === 'resize-left' ? 'left' : 'right'
+                        let max_size
+                        if(region_type === 'PIANO') max_size = Math.min(this.beatWidth * 4 - 2, ((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2)
+                        else {
+                            if(trim_direction === 'left') {
+                                max_size = Math.min(-2 + this.beatWidth * StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_left + (interactedRegion.original_length - interactedRegion.trim_right - interactedRegion.trim_left)), ((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2)
+                            } else max_size = Math.min(-2 + this.beatWidth * StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_right + (interactedRegion.original_length - interactedRegion.trim_right - interactedRegion.trim_left)), ((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2)
+                        }
                         $(target).css('left', (this.elemOffsetX - elemOffsetZtail) + Math.round(elemOffsetZtail / this.snapGrid) * this.snapGrid)
-                        $(target).width(((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2)
+                        $(target).width(max_size)
                     },
                     onend: e => {
                         let target = e.target
@@ -157,49 +183,34 @@ export default {
                         let perBeat = this.stageWidth / (this.details.time_signature * this.details.bars)
                         let startBeat = Math.round(parseInt(_.replace($(target).css('left'), 'px', '')) / perBeat + 1)
                         let duration = Math.floor(this.removePx($(target).width()) / this.beatWidth + 1)
-                        this.$store.dispatch('RESIZE_AUDIO_REGION', {
-                            region_id: $(target).attr('region_id'),
-                            track_id: $(target).attr('track_id'),
-                            payload: {
-                                startBeat,
-                                duration
-                            }
-                        })
+                        let trim_direction = e.interaction.downEvent.path[0].className === 'resize-left' ? 'left' : 'right'
+                        let region_type = $(target).attr('region_type')
+                        if(region_type === 'PIANO'){
+                            this.$store.dispatch('RESIZE_CHORD_REGION', {
+                                region_id: $(target).attr('region_id'),
+                                track_id: $(target).attr('track_id'),
+                                payload: {
+                                    startBeat,
+                                    duration
+                                }
+                            })
+                        } else {
+                            this.$store.dispatch('RESIZE_AUDIO_REGION', {
+                                region_id: $(target).attr('region_id'),
+                                track_id: $(target).attr('track_id'),
+                                payload: {
+                                    startBeat,
+                                    duration,
+                                    'trim_direction': trim_direction
+                                }
+                            })
+                        }
                     },
                     restrictEdges: {
                         outer: '.tracks',
                         endOnly: true
                     },
                     inertia: false
-                })
-        },
-        checkRegionOverlapping () {
-            let lastedRegion = _.maxBy(this.track_data.sequences, 'modified_time')
-            if(lastedRegion == null) return
-            let lastedRegionIndex = _.findIndex(this.track_data.sequences, { 'id': lastedRegion.id })
-            Observable.of(this.track_data.sequences)
-                .map(seq => {
-                    return _.map(seq, (each, i) => {
-                        if(i === lastedRegionIndex) return each
-                        let a = lastedRegion.start_beat, b = lastedRegion.start_beat+lastedRegion.beat - 1
-                        let x = each.start_beat, y = each.start_beat+each.beat - 1
-                        if(a > x && b < y){
-                            each.beat = a - x
-                            let newRegion = {
-                                id: this.objectId(),
-                                chord: each.chord,
-                                modified_time: Date.now(),
-                                start_beat: b + 1,
-                                beat: y - b
-                            }
-                            return [each, newRegion]
-                        }
-                        return each
-                    })
-                })
-                .map(seq => _.flattenDeep(seq))
-                .subscribe(seq => {
-
                 })
         },
         removePx(text) {
@@ -217,6 +228,15 @@ export default {
                 let chord = StudioService.mapChord(this.details.key - 1, region.chord)
                 StudioService.playChord(chord, region.beat, this.beatDuration)
             }
+        },
+        findRegion (track_id, region_id) {
+            let trackIndex = _.findIndex(this.getTracks, each => each.id === track_id)
+            let regionIndex = _.findIndex(this.getTracks[trackIndex].sequences, each => each.id === region_id)
+            return this.getTracks[trackIndex].sequences[regionIndex]
+        },
+        milliseconds2beats (bpm, duration) {
+            let rate = 60/bpm
+            return duration/1000/rate
         }
     },
     computed: {

@@ -300,6 +300,11 @@ $track-panel-width: 280px;
                             top: 6px;
                         }
                     }
+                    .audio-region--audio.active {
+                        background-color: rgb(237, 171, 240);
+                        color: rgb(143, 79, 151);
+                        border-color: rgb(233, 133, 240);
+                    }
                 }
                 svg.indicator-line {
                     position: absolute;

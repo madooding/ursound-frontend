@@ -70,7 +70,8 @@ export default {
             this.renderRegion()
         },
         'region_data.trim_left': function() { this.renderRegion() },
-        'region_data.trim_right': function() { this.renderRegion() }
+        'region_data.trim_right': function() { this.renderRegion() },
+        'region_data.original_length': function() { this.renderRegion() }
     }
 }
 </script>

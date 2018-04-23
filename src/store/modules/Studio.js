@@ -121,7 +121,8 @@ const state = {
                     original_length: 21000,
                     trim_left: 0,
                     trim_right: 0,
-                    active: false
+                    active: false,
+                    recording: false
                 },
                 {
                     id: '5aa1819c4b1d20827767759a',
@@ -131,7 +132,8 @@ const state = {
                     original_length: 21000,
                     trim_left: 0,
                     trim_right: 0,
-                    active: false
+                    active: false,
+                    recording: false
                 }
             ]
         },
@@ -258,6 +260,19 @@ const mutations = {
     addChordRegion (state, val) {
         let activeTrack = getters.getStudioActiveTrack(state)
         activeTrack.sequences.push(val)
+    },
+    addAudioRegion (state, val) {
+        let activeTrack = getters.getStudioActiveTrack(state)
+        activeTrack.sequences.push(val)
+    },
+    updateRecordingRegion (state, val) {
+        let activeTrack = getters.getStudioActiveTrack(state)
+        let recordingIndex = _.findIndex(activeTrack.sequences, seq => seq.recording)
+        let recordingRegion = activeTrack.sequences[recordingIndex]
+        activeTrack.sequences[recordingIndex].original_length = getters.getStudioCurrentTime(state) * 1000 - StudioService.beats2milliseconds(state.details.bpm, recordingRegion.start_beat - 1)
+    },
+    finishRecordingRegion (state, val) {
+        if(val) val.recording = false //activeTrack.sequences[recordingIndex].recording = false
     },
     setStudioPlayingState (state, val) {
         state.env.mode = val ? 'PLAYBACK' : 'EDIT'
@@ -529,6 +544,33 @@ const actions = {
         dispatch('CHECK_REGION_OVERLAPPING', {
             track_id: _.findIndex(state.tracks, (track) => track.active),
             region_id: newChord.id
+        })
+    },
+    ADD_AUDIO_REGION ({ commit, dispatch }, val) {
+        let newAudioRegion = {
+            id: objectId(),
+            modified_time: Date.now(),
+            url: null,
+            start_beat: getters.getStudioCurrentTimeBeats(state),
+            active: false,
+            recording: val.recording ? val.recording : true,
+            original_length: 0,
+            trim_left: 0,
+            trim_right: 0
+        }
+        commit('addAudioRegion', newAudioRegion)
+    },
+    UPDATE_RECORDING_REGION ({ commit, dispatch }) {
+        commit('updateRecordingRegion')
+    },
+    FINISH_RECORDING_REGION ({ commit, dispatch }) {
+        let activeTrack = getters.getStudioActiveTrack(state)
+        let recordingIndex = _.findIndex(activeTrack.sequences, seq => seq.recording)
+        let recordingRegion = activeTrack.sequences[recordingIndex]
+        commit('finishRecordingRegion', recordingRegion)
+        dispatch('CHECK_REGION_OVERLAPPING', {
+            track_id: _.findIndex(state.tracks, track => track.id === activeTrack.id),
+            region_id: recordingRegion.id
         })
     }
 }

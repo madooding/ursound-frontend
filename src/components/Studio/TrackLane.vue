@@ -18,6 +18,8 @@ import { Observable } from 'rxjs'
 import { mapGetters } from 'vuex'
 import { StudioService } from '../../services'
 
+let chunks = [];
+
 export default {
     props: ['track_data'],
     data: () => ({
@@ -26,6 +28,7 @@ export default {
         elemOffsetX: 0,
         elemOffsetY: 0,
         offsetTop: 0,
+        mediaRecorder: null
     }),
     components: {
         AudioRegion
@@ -37,6 +40,21 @@ export default {
         this.renderIndicator()
         this.$nextTick(() => {
             this.addInteractionListener()
+            if(this.track_data.type === 'AUDIO' && navigator.mediaDevices) {
+                Observable.fromPromise(navigator.mediaDevices.getUserMedia({ audio: true }))
+                    .subscribe(stream => {
+                        this.mediaRecorder = new MediaRecorder(stream)
+                        this.mediaRecorder.ondataavailable = (e) => {
+                            chunks.push(e.data);
+                        }
+                        this.mediaRecorder.onstop = (e) => {
+                            let blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+                            let audioUrl = URL.createObjectURL(blob)
+                            console.log(audioUrl);
+                            chunks = [];
+                        }
+                    })
+            }
         })
         $('body').keydown(e => {
             if(e.which == 8) this.$store.dispatch('DELETE_SELECTED_REGION')
@@ -240,7 +258,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel', scrollX: 'getStudioCurrentScrollXPosition', snapGrid: 'getStudioSnapGrid', getTracks: 'getStudioTracks', currentTimeBeats: 'getStudioCurrentTimeBeats', studioEnv: 'getStudioEnv', wholeDuration: 'getStudioWholeDuration' }),
+        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel', scrollX: 'getStudioCurrentScrollXPosition', snapGrid: 'getStudioSnapGrid', getTracks: 'getStudioTracks', currentTimeBeats: 'getStudioCurrentTimeBeats', studioEnv: 'getStudioEnv', wholeDuration: 'getStudioWholeDuration', activeTrack: 'getStudioActiveTrack' }),
         beatWidth() {
             let beats = this.details.bars * this.details.time_signature
             return this.stageWidth / beats
@@ -259,15 +277,31 @@ export default {
         },
         indicatorPos() {
             this.renderIndicator()
+            if (this.studioEnv.mode === 'RECORD' && this.track_data.type === 'AUDIO' && this.track_data.id === this.activeTrack.id) {
+                this.$store.dispatch('UPDATE_RECORDING_REGION')
+            }
+
         },
         currentTimeBeatsFloor () {
             if(this.studioEnv.mode === 'PLAYBACK'){
                 if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
+            } else if (this.studioEnv.mode === 'RECORD'){
+                if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
             }
         },
         'studioEnv.mode' () {
-            if(this.studioEnv.mode === 'PLAYBACK') {
+            if (this.studioEnv.mode === 'PLAYBACK') {
                 if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
+            } else if (this.studioEnv.mode === 'RECORD' && this.track_data.id === this.activeTrack.id) {
+                if(this.track_data.type === 'AUDIO') {
+                    this.$store.dispatch('ADD_AUDIO_REGION', { recording: true })
+                    this.mediaRecorder.start()
+                }
+            } else if (this.studioEnv.mode === 'EDIT') {
+                if(this.track_data.type === 'AUDIO' && this.track_data.id === this.activeTrack.id) {
+                    this.$store.dispatch('FINISH_RECORDING_REGION')
+                    this.mediaRecorder.stop()
+                }
             }
         },
         'track_data.active' () {

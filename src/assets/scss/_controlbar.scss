@@ -87,6 +87,9 @@
             animation-timing-function: ease-in-out;
             animation-direction: alternate;
         }
+        button.record-btn:disabled {
+            fill: $secondary;
+        }
         button:disabled {
             opacity: .4;
         }

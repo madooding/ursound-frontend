@@ -32,22 +32,78 @@ $track-panel-width: 280px;
         pointer-events: none;
         align-items: center;
         justify-content: center;
+        color: $text-color-1;
         background-color: rgba(0, 0, 0, 0);
         transition: background-color .25s ease-in-out !important;
         &__container {
-            width: 500px;
+            position: relative;
+            width: 400px;
             height: auto;
             background-color: white;
             border-radius: 6px;
             opacity: 0;
+            padding: 0px 15px 0px 15px;
+            box-sizing: content-box;
             transition: opacity .25s ease-in !important;
             .modal__header {
-                color: $text-color-1;
                 font-weight: 600;
-                height: 80px;
+                height: 100px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
+            }
+            .modal__newtrack {
+                // display: flex;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr;
+                grid-column-gap: 20px;
+                width: 100%;
+                min-height: 200px;
+                height: auto;
+                padding: 0px 15px 0px 15px;
+                // justify-content: space-between;
+                // align-items: stretch;
+                
+                .type {
+                    transition: transform ease .25s;
+                    .icon {
+                        display: flex;
+                        justify-content: center;
+                        border-radius: 4px;
+                        background-color: $dark-primary;
+                        svg {
+                            width: 60%;
+                            fill: white;
+                        }
+                    }
+                    .name {
+                        font-weight: 500;
+                        height: 60px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+                .type:hover {
+                    cursor: pointer;
+                    transform: scale(1.05);
+                }
+                .type:active {
+                    transform: scale(.95);
+                }
+            }
+            .modal__btn {
+                cursor: pointer;
+            }
+            .modal__btn.btn--close {
+                position: absolute;
+                right: 20px;
+                top: 18px;
+                opacity: .8;
+            }
+            .modal__btn.btn--close:hover {
+                opacity: 1;
             }
         }
     }

@@ -28,7 +28,8 @@ export default {
         elemOffsetX: 0,
         elemOffsetY: 0,
         offsetTop: 0,
-        mediaRecorder: null
+        mediaRecorder: null,
+        recentStudioMode: 'EDIT'
     }),
     components: {
         AudioRegion
@@ -290,18 +291,23 @@ export default {
             }
         },
         'studioEnv.mode' () {
-            if (this.studioEnv.mode === 'PLAYBACK') {
-                if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
-            } else if (this.studioEnv.mode === 'RECORD' && this.track_data.id === this.activeTrack.id) {
-                if(this.track_data.type === 'AUDIO') {
-                    this.$store.dispatch('ADD_AUDIO_REGION', { recording: true })
-                    this.mediaRecorder.start()
+            try {
+                if (this.studioEnv.mode === 'PLAYBACK') {
+                    if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
+                } else if (this.studioEnv.mode === 'RECORD' && this.track_data.id === this.activeTrack.id) {
+                    if(this.track_data.type === 'AUDIO') {
+                        this.$store.dispatch('ADD_AUDIO_REGION', { recording: true })
+                        this.mediaRecorder.start()
+                    }
+                } else if (this.studioEnv.mode === 'EDIT') {
+                    if( this.recentStudioMode == 'RECORD' && this.track_data.type === 'AUDIO' && this.track_data.id === this.activeTrack.id) {
+                        this.$store.dispatch('FINISH_RECORDING_REGION')
+                        this.mediaRecorder.stop()
+                    }
                 }
-            } else if (this.studioEnv.mode === 'EDIT') {
-                if(this.track_data.type === 'AUDIO' && this.track_data.id === this.activeTrack.id) {
-                    this.$store.dispatch('FINISH_RECORDING_REGION')
-                    this.mediaRecorder.stop()
-                }
+            } catch (err) {}
+            finally {
+                this.recentStudioMode = this.studioEnv.mode
             }
         },
         'track_data.active' () {

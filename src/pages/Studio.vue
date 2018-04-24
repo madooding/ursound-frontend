@@ -7,7 +7,7 @@
         <div class="track-section">
             <div class="tracks-panel">
                 <TrackControl v-for="track in tracks" :key="track.id" v-bind:track_data="track" @click.native="setActive(track.id)" :class="{'active': track.active}"></TrackControl>
-                <div class="track track--add-new-track">
+                <div class="track track--add-new-track" @click="addNewTrack()">
                     + Add New Track
                 </div>
             </div>
@@ -16,6 +16,7 @@
         <ChordSuggestions></ChordSuggestions>
         <ChatBox></ChatBox>
         <CountdownModal></CountdownModal>
+        <NewTrackModal></NewTrackModal>
     </div>
 </template>
 
@@ -27,6 +28,7 @@ import BeatRuler from '../components/Studio/BeatRuler'
 import TracksComponent from '../components/Studio/Tracks'
 import ChordSuggestions from '../components/Studio/ChordSuggestions'
 import CountdownModal from '../components/Studio/CountdownModal'
+import NewTrackModal from '../components/Studio/NewTrackModal'
 
 export default {
     components: {
@@ -35,7 +37,8 @@ export default {
         BeatRuler,
         TracksComponent,
         ChordSuggestions,
-        CountdownModal
+        CountdownModal,
+        NewTrackModal
     },
     data: () => ({
         zoom: 100,
@@ -44,6 +47,9 @@ export default {
     methods: {
         setActive (id) {
             this.$store.dispatch('SET_STUDIO_ACTIVE_TRACK', id)
+        },
+        addNewTrack () {
+            this.$store.dispatch('STUDIO_SET_MODE', 'ADD_NEW_TRACK')
         }
     },
     computed: {

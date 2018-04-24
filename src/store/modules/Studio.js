@@ -44,7 +44,7 @@ const state = {
         stage_width: 0,
         currentScrollXPos: 0,
         currentTimePercent: 15,
-        mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING
+        mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK
         piano: null,
         isMetronomeOn: false,
     },
@@ -297,6 +297,9 @@ const actions = {
     },
     STUDIO_RECORD ({ commit }) {
         commit('setStudioMode', 'RECORD')
+    },
+    STUDIO_SET_MODE ({ commit }, val) {
+        commit('setStudioMode', val)
     },
     MUTE_TRACK({commit}, val){
         commit('muteTrackById', val)

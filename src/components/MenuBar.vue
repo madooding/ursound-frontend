@@ -24,7 +24,7 @@
                     <li v-if="!isLoggedIn"><router-link to="/" class="">Home</router-link></li>
                     <li v-if="loginShow && !isLoggedIn"><router-link to="/login">Login</router-link></li>
                     <li v-if="signupShow && !isLoggedIn"><router-link to="/signup">Signup</router-link></li>
-                    <li v-if="isLoggedIn"><router-link to="/studio" class="button">New Project</router-link></li>
+                    <li v-if="isLoggedIn"><a class="button" @click="createNewProject()">New Project</a></li>
                     <li v-if="isLoggedIn"><router-link to="/">Explore</router-link></li>
                     <li v-if="isLoggedIn"><router-link to="/"> <img :src="getUserProfileData.profile_img" class="profile-img">@{{ getUserProfileData.username }}</router-link></li>
                     <li v-if="isLoggedIn"><router-link to="/"> <i class="ion-android-notifications"><span class="count">14</span></i></router-link></li>
@@ -36,7 +36,11 @@
 </template>
 
 <script>
+import { Observable } from 'rxjs'
+import { ProjectsService } from '../services'
 import { mapGetters, mapActions } from 'vuex'
+
+
 export default {
     data: () => ({
         loginShow: true,
@@ -62,6 +66,16 @@ export default {
               this.loginShow = true
               this.signupShow = false;
             }
+        },
+        createNewProject () {
+            Observable.fromPromise(ProjectsService.createNewProject())
+                .pluck('data')
+                .flatMap(data => {
+                    return Promise.resolve(ProjectsService.parseProjectData(data))
+                }, (data, project) => ({ ...project }))
+                .subscribe(result => {
+                    this.$router.push({ path: `/studio/${result.details.project_id}` })
+                })
         }
     },
     computed: {

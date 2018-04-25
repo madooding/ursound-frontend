@@ -1,4 +1,4 @@
-import studio, { StudioService } from '../../services'
+import studio, { StudioService, ProjectsService } from '../../services'
 import _ from 'lodash'
 import { Observable } from 'rxjs'
 
@@ -38,131 +38,44 @@ const objectId = () => {
     }).toLowerCase();
 }
 
-const state = {
+const studioEnvStruct = {
     env: {
         zoomLevel: 100,
         stage_width: 0,
         currentScrollXPos: 0,
-        currentTimePercent: 15,
-        mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK
+        currentTimePercent: 0,
+        mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK, LOAD_PROJECT
         piano: null,
         isMetronomeOn: false,
     },
     details: {
-        name: "Untitled-2",
+        project_id: null,
+        modified_time: null,
+        last_commit_id: null,
+        last_commit_user_id: null,
+        owner_id: null,
+        downloadable: false,
+        name: null,
         cover: "",
-        genre: "",
         bpm: 80,
         time_signature: 4,
-        bars: 32,
+        bars: 16,
         key: 1,
-        description: ""
+        description: "",
+        master_volume: 80,
+        members: []
     },
     tracks: [
-        {   
-            id: '5aa18167142a86f9a1bed5c6',
-            modified_time: '1520534666935',
-            name: "Smart Piano",
-            type: 'PIANO',
-            volume: 60,
-            solo: false,
-            muted: false,
-            active: false,
-            sequences: [
-                {
-                    id: '5aa18432096b49808d94365b',
-                    modified_time: '1520534640605',
-                    chord: '1',
-                    beat: 4,
-                    start_beat: 1,
-                    active: false
-                },
-                {
-                    id: '5aa58510ffd1c66bd284692c',
-                    modified_time: '1520796970421',
-                    chord: '6',
-                    beat: 4,
-                    start_beat: 5,
-                    active: false
-                },
-                {
-                    id: '5aa5879529e4861250e3b7ad',
-                    modified_time: '1520797602077',
-                    chord: '4',
-                    beat: 4,
-                    start_beat: 9,
-                    active: false
-                },
-                {
-                    id: '5aa587cdfd959911fc2e570c',
-                    modified_time: '1520797657368',
-                    chord: '5',
-                    beat: 4,
-                    start_beat: 13,
-                    active: false
-                },
-            ]
-        },
-        {
-            id: '5aa1818f0fd5c9c6999c3e91',
-            modified_time: '1520534696744',
-            name: "Voice",
-            type: 'AUDIO',
-            volume: 80,
-            solo: false,
-            muted: true,
-            active: false,
-            sequences: [
-                {
-                    id: '5adb81146096afad2126a0a0',
-                    modified_time: '1524334905576',
-                    url: 'https://wavesurfer-js.org/example/media/small-demo.wav',
-                    start_beat: 1,
-                    original_length: 21000,
-                    trim_left: 0,
-                    trim_right: 0,
-                    active: false,
-                    recording: false
-                },
-                {
-                    id: '5aa1819c4b1d20827767759a',
-                    modified_time: '1524407577443',
-                    url: 'https://wavesurfer-js.org/example/media/small-demo.wav',
-                    start_beat: 29,
-                    original_length: 21000,
-                    trim_left: 0,
-                    trim_right: 0,
-                    active: false,
-                    recording: false
-                }
-            ]
-        },
-        {
-            id: '5aa1819c4b1d20827767759a',
-            modified_time: '1520534710381',
-            name: "Voice",
-            type: 'PIANO',
-            volume: 80,
-            solo: false,
-            muted: true,
-            active: false,
-            sequences: [] 
-        },
-        {
-            id: '5aa18257e1d9d93db99ba4ba',
-            modified_time: '1520534736609',
-            name: "Voice",
-            type: 'AUDIO',
-            volume: 80,
-            solo: false,
-            muted: true,
-            active: false,
-            sequences: [] 
-        }
+
     ],
     chat: {
+        chat_messages: [],
         show: false
     }
+}
+
+const state = {
+    ...studioEnvStruct
 }
 
 const mutations = {
@@ -279,12 +192,53 @@ const mutations = {
     },
     setStudioMode (state, val) {
         state.env.mode = val
+    },
+    studioAddNewTrack (state, val) {
+        let newTrack = {
+            id: objectId(),
+            modified_time: Date.now(),
+            name: val.type === 'PIANO' ? 'Piano' : 'Audio',
+            type: val.type,
+            volume: 80,
+            solo: false,
+            muted: false,
+            active: false,
+            sequences: [] 
+        }
+        state.tracks.push(newTrack)
+    },
+    resetStudioEnv (state) {
+        state.env = studioEnvStruct.env
+        state.details = studioEnvStruct.details
+        state.tracks = studioEnvStruct.tracks
+        state.chat = studioEnvStruct.chat
+    },
+    setProjectData (state, val) {
+        state.details = val.details
+        state.tracks = val.tracks
+        state.chat.chat_messages = val.chats
     }
 }
 
 const actions = {
     SET_PIANO_INSTRUMENT ({commit}, val) {
         commit('setPianoInstrument', val)
+    },
+    STUDIO_LOAD_PROJECT_DATA ({ commit, dispatch }, val) {
+        dispatch('STUDIO_SET_MODE', 'LOAD_PROJECT')
+        Observable.fromPromise(ProjectsService.getProjectData(val.project_id))
+            .pluck('data')
+            .flatMap(data => {
+                return Promise.resolve(ProjectsService.parseProjectData(data))
+            }, (data, project) => ({ ...project }))
+            .do((result) => { 
+                if(result.tracks.length < 1) dispatch('STUDIO_SET_MODE', 'ADD_NEW_TRACK')
+                else dispatch('STUDIO_SET_MODE', 'EDIT')
+            })
+            .subscribe(result => {
+                commit('setProjectData', result)
+            })
+
     },
     STUDIO_PLAY({commit}){
         commit('setStudioPlayingState', true)
@@ -398,7 +352,6 @@ const actions = {
         Observable.of(state.tracks[trackIndex].sequences)
             .map(seq => {
                 if(state.tracks[trackIndex].type === 'PIANO'){
-                    console.log('piano naja');
                     return _.map(seq, (each, i) => {
                         if(i === regionIndex) return each
                         let a = lastedRegion.start_beat, b = lastedRegion.start_beat+lastedRegion.beat - 1
@@ -575,6 +528,12 @@ const actions = {
             track_id: _.findIndex(state.tracks, track => track.id === activeTrack.id),
             region_id: recordingRegion.id
         })
+    },
+    STUDIO_ADD_NEW_TRACK ({ commit }, val) {
+        commit('studioAddNewTrack', val)
+    },
+    RESET_STUDIO_ENV ({ commit }) {
+        commit('resetStudioEnv')
     }
 }
 

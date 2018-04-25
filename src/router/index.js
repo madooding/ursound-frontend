@@ -46,10 +46,13 @@ const router = new Router({
             meta: { requiredAuth: true }
         },
         {
-            path: '/studio',
+            path: '/studio/:project_id?',
             name: 'StudioMode',
             component: StudioPage,
-            meta: { requiredAuth: true }
+            meta: { requiredAuth: true, requiredProjectId: true },
+            props: (route) => ({
+                project_id: route.params.project_id
+            })
         }
     ]
 })
@@ -59,12 +62,15 @@ const match = async (to, from, next) => {
     if (to.matched.some(x => x.meta.beforeAuth)){
         if(store.getters.isLoggedIn){
             next({ path: "/explore" })
-        } else next()
+        }
     }
 
     if (to.matched.some((x) => x.meta.requiredAuth)) {
-        if(store.getters.isLoggedIn) next()
-        else next({ path: "/login" })
+        if(!store.getters.isLoggedIn) next({ path: "/login" })
+    }
+
+    if (to.matched.some(x => x.meta.requiredProjectId)) {
+        if(!to.params.project_id) next({ path: from.path })
     }
 
     if (to.matched.some((x) => x.meta.needFacebookAuthorized)) {
@@ -76,11 +82,11 @@ const match = async (to, from, next) => {
             })
             let result = await getLoginState()
             if (result.status !== "connected") next({ path: '/signup' })
-            else next()
         } catch (err){
             next({ path: '/signup' })
         }
     }
+    next()
 }
 
 router.beforeEach((to, from, next) => {

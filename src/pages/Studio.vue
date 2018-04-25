@@ -29,8 +29,12 @@ import TracksComponent from '../components/Studio/Tracks'
 import ChordSuggestions from '../components/Studio/ChordSuggestions'
 import CountdownModal from '../components/Studio/CountdownModal'
 import NewTrackModal from '../components/Studio/NewTrackModal'
+import { ProjectsService } from '../services'
+
+
 
 export default {
+    props: ['project_id'],
     components: {
         TrackControl,
         ChatBox,
@@ -40,9 +44,13 @@ export default {
         CountdownModal,
         NewTrackModal
     },
+    created () {
+        this.$store.dispatch('STUDIO_LOAD_PROJECT_DATA', { project_id: this.project_id })
+    },
     data: () => ({
         zoom: 100,
-        scrollX: 0
+        scrollX: 0,
+        loading: false
     }),
     methods: {
         setActive (id) {
@@ -54,6 +62,9 @@ export default {
     },
     computed: {
         ...mapGetters({ 'tracks': 'getStudioTracks', 'studioEnv': 'getStudioEnv' })
+    },
+    beforeDestroy () {
+        this.$store.dispatch('RESET_STUDIO_ENV')
     }
 }
 

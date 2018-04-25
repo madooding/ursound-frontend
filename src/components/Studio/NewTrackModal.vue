@@ -58,11 +58,12 @@ export default {
         show: false
     }),
     computed: {
-        ...mapGetters({ 'studioEnv': 'getStudioEnv', details: 'getStudioDetails' })
+        ...mapGetters({ 'studioEnv': 'getStudioEnv', details: 'getStudioDetails', tracks: 'getStudioTracks' })
     },
     methods: {
         addTrack (type) {
             this.toggle()
+            this.$store.dispatch('STUDIO_ADD_NEW_TRACK', { type: type })
         },
         toggle () {
             this.show = false

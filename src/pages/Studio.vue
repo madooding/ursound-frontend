@@ -17,6 +17,7 @@
         <ChatBox></ChatBox>
         <CountdownModal></CountdownModal>
         <NewTrackModal></NewTrackModal>
+        <no-permission-modal></no-permission-modal>
     </div>
 </template>
 
@@ -29,6 +30,7 @@ import TracksComponent from '../components/Studio/Tracks'
 import ChordSuggestions from '../components/Studio/ChordSuggestions'
 import CountdownModal from '../components/Studio/CountdownModal'
 import NewTrackModal from '../components/Studio/NewTrackModal'
+import NoPermissionModal from '../components/Studio/NoPermissionModal'
 import { ProjectsService } from '../services'
 
 
@@ -42,7 +44,8 @@ export default {
         TracksComponent,
         ChordSuggestions,
         CountdownModal,
-        NewTrackModal
+        NewTrackModal,
+        NoPermissionModal
     },
     created () {
         this.$store.dispatch('STUDIO_LOAD_PROJECT_DATA', { project_id: this.project_id })

@@ -636,14 +636,24 @@ $track-panel-width: 280px;
                     }
                 }
             }
+
+            .messages.right + .messages.events, .messages.left + .messages.events {
+                margin-top: 20px;
+            }
+            
             .messages.events {
                 flex: 1;
-                padding: 10px;
                 margin: 0px;
                 height: auto;
                 font-size: 11pt;
                 color: $text-color-3;
                 text-align: center;
+            }
+            .messages.events + .messages.left, .messages.events + .messages.right {
+                margin-top: 20px;
+            }
+            .messages.events:last-of-type {
+                padding-bottom: 10px;
             }
         }
         .message-input {

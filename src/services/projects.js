@@ -54,7 +54,6 @@ const parseProjectData = (data) => {
         bars: project.details.bars,
         key: project.details.key,
         description: project.details.description,
-        master_volume: project.details.master_volume,
         members: project.members
     }
     let tracks = project.tracks

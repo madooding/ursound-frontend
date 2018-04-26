@@ -18,7 +18,7 @@
                     </g>
                 </svg>
             </button>
-            <button @click="previous()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN'">
+            <button @click="previous()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN' || studioEnv.mode === 'NO_PERMISSION'">
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_2_">
                         <g id="XMLID_8_">
@@ -31,7 +31,7 @@
                     </g>
                 </svg>
             </button>
-            <button id="backward-btn" @click="backward()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN'">
+            <button id="backward-btn" @click="backward()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN' || studioEnv.mode === 'NO_PERMISSION'">
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_1_">
                         <g id="XMLID_2_">
@@ -44,7 +44,7 @@
                     </g>
                 </svg>
             </button>
-            <button id="play-btn" @click="playPause()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN'">
+            <button id="play-btn" @click="playPause()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN' || studioEnv.mode === 'NO_PERMISSION'">
                 <svg v-if="studioEnv.mode !== 'PLAYBACK'" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_2_">
                         <g id="XMLID_8_">
@@ -68,7 +68,7 @@
                     </g>
                 </svg>
             </button>
-            <button @click="forward()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN'">
+            <button @click="forward()" :disabled="studioEnv.mode === 'RECORD' || studioEnv.mode === 'COUNTDOWN' || studioEnv.mode === 'NO_PERMISSION'">
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                     <g id="Layer_1_1_">
                         <g id="XMLID_2_">
@@ -121,10 +121,10 @@ export default {
         timeDiff: null,
         metronome: {
             up: new Howl({
-                src: ['static/audio/metronomeup.wav']
+                src: ['../static/audio/metronomeup.wav']
             }),
             down: new Howl({
-                src: ['static/audio/metronomedown.wav']
+                src: ['../static/audio/metronomedown.wav']
             })
         }
     }),

@@ -1,6 +1,7 @@
 import studio, { StudioService, ProjectsService } from '../../services'
 import _ from 'lodash'
 import { Observable } from 'rxjs'
+import router from '../../router'
 
 
 /**
@@ -44,9 +45,10 @@ const studioEnvStruct = {
         stage_width: 0,
         currentScrollXPos: 0,
         currentTimePercent: 0,
-        mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK, LOAD_PROJECT
+        mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK, LOAD_PROJECT, NO_PERMISSION
         piano: null,
         isMetronomeOn: false,
+        master_volume: 80
     },
     details: {
         project_id: null,
@@ -62,7 +64,6 @@ const studioEnvStruct = {
         bars: 16,
         key: 1,
         description: "",
-        master_volume: 80,
         members: []
     },
     tracks: [
@@ -237,6 +238,13 @@ const actions = {
             })
             .subscribe(result => {
                 commit('setProjectData', result)
+            }, err => {
+                switch(err.response.status){
+                    case 404: router.push({ path: '/explore' })
+                            break
+                    case 401: dispatch('STUDIO_SET_MODE', 'NO_PERMISSION')
+                            break
+                }
             })
 
     },

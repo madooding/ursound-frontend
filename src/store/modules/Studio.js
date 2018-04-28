@@ -232,6 +232,19 @@ const actions = {
             .flatMap(data => {
                 return Promise.resolve(ProjectsService.parseProjectData(data))
             }, (data, project) => ({ ...project }))
+            .flatMap(project => {
+                return Observable.from(project.tracks)
+                        .flatMap(track => {
+                            return ProjectsService.setTrackPlayer(track)
+                        }, (track, sequences) => {
+                            track.sequences = sequences
+                            return track
+                        })
+                        .toArray()
+            }, (project, tracks) => {
+                project.tracks = tracks
+                return project
+            })
             .do((result) => { 
                 if(result.tracks.length < 1) dispatch('STUDIO_SET_MODE', 'ADD_NEW_TRACK')
                 else dispatch('STUDIO_SET_MODE', 'EDIT')
@@ -523,6 +536,7 @@ const actions = {
             id: objectId(),
             modified_time: Date.now(),
             url: null,
+            player: null,
             start_beat: getters.getStudioCurrentTimeBeats(state),
             active: false,
             recording: val.recording ? val.recording : true,
@@ -535,10 +549,13 @@ const actions = {
     UPDATE_RECORDING_REGION ({ commit, dispatch }) {
         commit('updateRecordingRegion')
     },
-    FINISH_RECORDING_REGION ({ commit, dispatch }) {
+    FINISH_RECORDING_REGION ({ commit, dispatch }, val) {
         let activeTrack = getters.getStudioActiveTrack(state)
         let recordingIndex = _.findIndex(activeTrack.sequences, seq => seq.recording)
         let recordingRegion = activeTrack.sequences[recordingIndex]
+        recordingRegion.url = val.url
+        recordingRegion.player = val.player
+        recordingRegion.original_length = val.player.duration() * 1000
         commit('finishRecordingRegion', recordingRegion)
         dispatch('CHECK_REGION_OVERLAPPING', {
             track_id: _.findIndex(state.tracks, track => track.id === activeTrack.id),

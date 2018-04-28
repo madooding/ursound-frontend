@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { Howl } from 'howler'
+import { Observable } from 'rxjs'
 
 const API_URL = 'http://localhost:9000'
 /**
@@ -50,6 +52,40 @@ const uploadBlobAudio = (project_id, region_id, blob) => {
         }
     })
 }
+/**
+ * 
+ * 
+ * @param {Object} track each track of that song
+ * @returns {Observable}
+ */
+const setTrackPlayer = (track) => {
+    return Observable.from(track.sequences)
+            .flatMap(seq => {
+                return setRegionPlayer(seq)
+            }, (old, newer) => newer)
+            .toArray()
+}
+/**
+ * 
+ * 
+ * @param {Object} region 
+ * @returns {Observable}
+ */
+const setRegionPlayer = (region) => {
+    return Observable.fromPromise(new Promise((resolve, reject) => {
+        let player = new Howl({
+            src: [region.url],
+            onload: (e) => {
+                region.player = player
+                region.original_length = player.duration() * 1000
+                resolve(region)
+            },
+            onloaderror: (e) => {
+                reject(e)
+            }
+        })
+    }))
+}
 
 
 /**
@@ -85,5 +121,7 @@ export default {
     createNewProject,
     getProjectData,
     parseProjectData,
-    uploadBlobAudio
+    uploadBlobAudio,
+    setRegionPlayer,
+    setTrackPlayer
 }

@@ -55,9 +55,16 @@ export default {
                             let recordingRegion = _.find(this.track_data.sequences, region => region.recording)
                             this.uploadAudio(recordingRegion.id, blob)
                                 .subscribe((res) => {
-                                    this.$store.dispatch('FINISH_RECORDING_REGION')
+                                    let player = new Howl({
+                                        src: [res.data.url],
+                                        onload: () => {
+                                            this.$store.dispatch('FINISH_RECORDING_REGION', {
+                                                url: res.data.url,
+                                                player: player
+                                            })
+                                        }
+                                    })
                                 }, err => {
-                                    this.$store.dispatch('FINISH_RECORDING_REGION')
                                     this.$store.dispatch('DELETED_REGION', {
                                         track_id: this.track_data.id,
                                         region_id: recordingRegion.id

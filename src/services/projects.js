@@ -31,6 +31,26 @@ const getProjectData = (project_id) => {
     })
 }
 
+/**
+ * 
+ * 
+ * @param {Number} project_id 
+ * @param {Blob} blob 
+ * @returns {Promise}
+ */
+const uploadBlobAudio = (project_id, region_id, blob) => {
+    let _token = localStorage.getItem("_token")
+    let data = new FormData()
+    data.append('file', blob, `${region_id}.ogg`)
+    if(_token === null) return Promise.reject({ code: "TOKEN_UNDEFINED", messages: "Token is not undefined."})
+    return axios.post(`${API_URL}/service/projects/${project_id}/upload`, data, {
+        headers: {
+            "Authorization": `jwt ${_token}`,
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
+
 
 /**
  * 
@@ -64,5 +84,6 @@ const parseProjectData = (data) => {
 export default {
     createNewProject,
     getProjectData,
-    parseProjectData
+    parseProjectData,
+    uploadBlobAudio
 }

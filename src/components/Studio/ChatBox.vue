@@ -16,7 +16,7 @@
             <div v-for="msg in messages" :key="msg.msg_id" class="messages" :class="{ 'right': msg.sender_id == userData.user_id && msg.type == 'MESSAGES', 'left': msg.sender_id != userData.user_id && msg.type == 'MESSAGES', 'events': msg.type == 'EVENTS' }">
                 <img v-if="msg.sender_id !== userData.user_id && msg.type == 'MESSAGES'" class="profile" :src="msg.sender_img">
                 <div v-if="msg.type === 'MESSAGES'" class="sub-messages">
-                    <div v-for="message in msg.messages" class="text">{{ message.message }}</div>
+                    <div v-for="message in msg.messages" :key="message.datetime" class="text">{{ message.message }}</div>
                 </div>
                 <div v-if="msg.type === 'EVENTS' && msg.event_type == 'LEAVE_PROJECT'" class="text">{{ msg.sender_name }} left this project</div>
                 <div v-if="msg.type === 'EVENTS' && msg.event_type == 'MADE_CHANGES'" class="text">{{ msg.sender_name }} has made changes</div>

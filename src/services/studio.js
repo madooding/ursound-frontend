@@ -126,6 +126,7 @@ const beats2milliseconds = (bpm, beats) => {
     return beats*rate*1000
 }
 
+
 export default {
     defineInstrument,
     keyMap,

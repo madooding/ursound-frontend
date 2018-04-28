@@ -16,7 +16,9 @@ import interact from 'interactjs'
 import AudioRegion from './AudioRegion'
 import { Observable } from 'rxjs'
 import { mapGetters } from 'vuex'
-import { StudioService } from '../../services'
+import { StudioService, ProjectsService } from '../../services'
+import { Howl } from 'howler'
+
 
 let chunks = [];
 
@@ -50,8 +52,17 @@ export default {
                         }
                         this.mediaRecorder.onstop = (e) => {
                             let blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
-                            let audioUrl = URL.createObjectURL(blob)
-                            console.log(audioUrl);
+                            let recordingRegion = _.find(this.track_data.sequences, region => region.recording)
+                            this.uploadAudio(recordingRegion.id, blob)
+                                .subscribe((res) => {
+                                    this.$store.dispatch('FINISH_RECORDING_REGION')
+                                }, err => {
+                                    this.$store.dispatch('FINISH_RECORDING_REGION')
+                                    this.$store.dispatch('DELETED_REGION', {
+                                        track_id: this.track_data.id,
+                                        region_id: recordingRegion.id
+                                    })
+                                })
                             chunks = [];
                         }
                     })
@@ -253,9 +264,8 @@ export default {
             let regionIndex = _.findIndex(this.getTracks[trackIndex].sequences, each => each.id === region_id)
             return this.getTracks[trackIndex].sequences[regionIndex]
         },
-        milliseconds2beats (bpm, duration) {
-            let rate = 60/bpm
-            return duration/1000/rate
+        uploadAudio (region_id, blob) {
+            return Observable.fromPromise(ProjectsService.uploadBlobAudio(this.details.project_id, region_id, blob))
         }
     },
     computed: {
@@ -301,7 +311,6 @@ export default {
                     }
                 } else if (this.studioEnv.mode === 'EDIT') {
                     if( this.recentStudioMode == 'RECORD' && this.track_data.type === 'AUDIO' && this.track_data.id === this.activeTrack.id) {
-                        this.$store.dispatch('FINISH_RECORDING_REGION')
                         this.mediaRecorder.stop()
                     }
                 }

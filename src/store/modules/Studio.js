@@ -45,7 +45,7 @@ const studioEnvStruct = {
         stage_width: 0,
         currentScrollXPos: 0,
         currentTimePercent: 0,
-        mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK, LOAD_PROJECT, NO_PERMISSION
+        mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK, LOAD_PROJECT, NO_PERMISSION, UPLOADING_AUDIO
         piano: null,
         isMetronomeOn: false,
         master_volume: 80
@@ -477,6 +477,14 @@ const actions = {
                 regionIndex,
                 payload: false
             })
+        })
+    },
+    DELETED_REGION ({ commit }, val) {
+        let trackIndex = findTrackIndex(val.track_id)
+        let regionIndex = findRegionIndex(trackIndex, val.region_id)
+        commit('deleteRegion', {
+            trackIndex,
+            regionIndex
         })
     },
     DELETE_SELECTED_REGION ({ commit }) {

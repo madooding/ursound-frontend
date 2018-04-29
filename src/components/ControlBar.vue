@@ -174,6 +174,7 @@ export default {
         },
         record () {
             if(this.studioEnv.mode === 'RECORD') {
+                this.studioEnv.piano.stop()
                 this.$store.dispatch('STUDIO_PAUSE')
             } else {
                 let beats = this.details.bars * this.details.time_signature

@@ -31,6 +31,7 @@ export default {
         elemOffsetY: 0,
         offsetTop: 0,
         mediaRecorder: null,
+        currentRegion: null,
         recentStudioMode: 'EDIT'
     }),
     components: {
@@ -266,6 +267,18 @@ export default {
                 StudioService.playChord(chord, region.beat, this.beatDuration)
             }
         },
+        playAudioOnBeat (beat) {
+            // Find region that beat current on
+            let bpm = this.details.bpm
+            let region = _.find(this.track_data.sequences, each => beat >= each.start_beat && beat <= each.start_beat + StudioService.milliseconds2beats(this.details.bpm, each.original_length - each.trim_right - each.trim_left))
+            if((this.currentRegion == null && region) || (region && region.id != this.currentRegion.id)){
+                this.currentRegion = region
+                this.currentRegion.player.seek((StudioService.beats2milliseconds(this.details.bpm, this.currentTimeBeats - region.start_beat) + region.trim_left)/1000)
+                this.currentRegion.player.play()
+            } else if (this.currentRegion && region == null) {
+                this.currentRegion.player.stop()
+            }
+        },
         findRegion (track_id, region_id) {
             let trackIndex = _.findIndex(this.getTracks, each => each.id === track_id)
             let regionIndex = _.findIndex(this.getTracks[trackIndex].sequences, each => each.id === region_id)
@@ -300,6 +313,9 @@ export default {
             }
 
         },
+        currentTimeBeats () {
+            if(this.studioEnv.mode === 'PLAYBACK' && this.track_data.type === 'AUDIO') this.playAudioOnBeat(this.currentTimeBeats)
+        },
         currentTimeBeatsFloor () {
             if(this.studioEnv.mode === 'PLAYBACK'){
                 if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
@@ -311,12 +327,15 @@ export default {
             try {
                 if (this.studioEnv.mode === 'PLAYBACK') {
                     if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
+                    else if(this.track_data.type === 'AUDIO') this.playAudioOnBeat(this.currentTimeBeatsFloor)
                 } else if (this.studioEnv.mode === 'RECORD' && this.track_data.id === this.activeTrack.id) {
                     if(this.track_data.type === 'AUDIO') {
                         this.$store.dispatch('ADD_AUDIO_REGION', { recording: true })
                         this.mediaRecorder.start()
                     }
                 } else if (this.studioEnv.mode === 'EDIT') {
+                    if(this.currentRegion) this.currentRegion.player.stop()
+                    this.currentRegion = null
                     if( this.recentStudioMode == 'RECORD' && this.track_data.type === 'AUDIO' && this.track_data.id === this.activeTrack.id) {
                         this.mediaRecorder.stop()
                     }
@@ -324,6 +343,12 @@ export default {
             } catch (err) {}
             finally {
                 this.recentStudioMode = this.studioEnv.mode
+            }
+        },
+        'studioEnv.seek_signal' () {
+            if(this.studioEnv.mode === 'PLAYBACK'){
+                if(this.currentRegion) this.currentRegion.player.stop()
+                this.currentRegion = null
             }
         },
         'track_data.active' () {

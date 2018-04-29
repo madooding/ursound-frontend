@@ -136,14 +136,17 @@ export default {
             this.$store.dispatch('TOGGLE_CHATBOX')
         },
         forward () {
+            this.$store.dispatch('SET_SEEK_SIGNAL')
             this.$store.dispatch('STUDIO_BEAT_FORWARD', 4)
             this.studioEnv.piano.stop()
         },
         backward () {
+            this.$store.dispatch('SET_SEEK_SIGNAL')
             this.$store.dispatch('STUDIO_BEAT_BACKWARD', 4)
             this.studioEnv.piano.stop()
         },
         previous () {
+            this.$store.dispatch('SET_SEEK_SIGNAL')
             this.$store.dispatch('SET_STUDIO_CURRENT_TIME', 0)
             this.studioEnv.piano.stop()
         },

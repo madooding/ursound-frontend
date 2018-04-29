@@ -102,6 +102,7 @@ export default {
             indicator.css('left', `${this.indicatorPos}px`)
         },
         moveIndicator(e){
+            this.$store.dispatch('SET_SEEK_SIGNAL')
             let containerOffset = Math.max(0, Math.min(this.container.width(), e.pageX - $(this.$refs.beatRulerContainer).offset().left))
             let offsetX = Math.min(this.stageWidth, Math.max(0, e.pageX - $(this.$refs.beatRulerContainer).offset().left) + this.scrollX)
             let offsetXtail = offsetX % this.snapGrid
@@ -111,7 +112,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({details: 'getStudioDetails', stageWidth: 'getStageWidth', scrollX: 'getStudioCurrentScrollXPosition', indicatorPos: 'getStudioCurrentTimePixel', currentTimePercent: 'getStudioCurrentTimePercent', snapGrid: 'getStudioSnapGrid'})
+        ...mapGetters({ studioEnv: 'getStudioEnv', details: 'getStudioDetails', stageWidth: 'getStageWidth', scrollX: 'getStudioCurrentScrollXPosition', indicatorPos: 'getStudioCurrentTimePixel', currentTimePercent: 'getStudioCurrentTimePercent', snapGrid: 'getStudioSnapGrid'})
     },
     watch: {
         stageWidth() {

@@ -48,6 +48,7 @@ const studioEnvStruct = {
         mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK, LOAD_PROJECT, NO_PERMISSION, UPLOADING_AUDIO
         piano: null,
         isMetronomeOn: false,
+        seek_signal: false,
         master_volume: 80
     },
     details: {
@@ -114,6 +115,9 @@ const mutations = {
     },
     setStudioCurrentTimePercent(state, val){
         state.env.currentTimePercent = val
+    },
+    setSeekSignal(state, val) {
+        state.env.seek_signal = val
     },
     setStudioActiveTrack(state, val) {
         state.tracks = _.map(state.tracks, each => {
@@ -302,6 +306,9 @@ const actions = {
     },
     SET_STUDIO_CURRENT_TIME({commit}, val){
         commit('setStudioCurrentTimePercent', Math.max(0, Math.min(100, val)))
+    },
+    SET_SEEK_SIGNAL({ commit }) {
+        commit('setSeekSignal', !state.env.seek_signal)
     },
     STUDIO_BEAT_FORWARD ({ dispatch }, val) {
         let beats = state.details.bars * state.details.time_signature

@@ -111,13 +111,11 @@ export default {
     mounted () {
         $(this.$refs.textbox).bind({
             keydown: (e) => {
-                if(e.which == 13) {
-                    if(e.shiftKey === true) return true
-                    else { 
-                        this.send()
-                        return false
-                    }
-                } else return true
+                if(e.which == 13 && e.shiftKey !== true) {
+                    this.send()
+                    return false
+                }
+                return true
             }
         })
     },

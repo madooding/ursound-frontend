@@ -80,7 +80,8 @@ const studioEnvStruct = {
     ],
     chat: {
         chat_messages: [],
-        show: false
+        show: false,
+        unseen: 0
     }
 }
 
@@ -230,6 +231,9 @@ const mutations = {
         state.details = val.details
         state.tracks = val.tracks
         state.chat.chat_messages = val.chats
+    },
+    addChatmessage (stage, val) {
+        state.chat.chat_messages.push(val)
     }
 }
 
@@ -582,6 +586,9 @@ const actions = {
     },
     RESET_STUDIO_ENV ({ commit }) {
         commit('resetStudioEnv')
+    },
+    STUDIO_ADD_CHAT_MESSAGE ({ commit }, val) {
+        commit('addChatMessage', val)
     }
 }
 
@@ -613,7 +620,8 @@ const getters = {
     },
     getStudioActiveTrack: state => {
         return _.find(state.tracks, (track) => track.active)
-    }
+    },
+    getStudioChat: state => state.chat
 }
 
 export default {

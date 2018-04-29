@@ -14,7 +14,7 @@
             <tracks-component></tracks-component>
         </div>
         <ChordSuggestions></ChordSuggestions>
-        <ChatBox></ChatBox>
+        <ChatBox :project_id="project_id"></ChatBox>
         <CountdownModal></CountdownModal>
         <NewTrackModal></NewTrackModal>
         <no-permission-modal></no-permission-modal>

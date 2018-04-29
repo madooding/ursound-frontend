@@ -1,7 +1,7 @@
 <template>
     <div class="modal" :class="{'show': studioEnv.mode === 'COUNTDOWN'}">
         <div class="modal__container">
-            <div class="modal__header">Recording in {{ countingTime }}</div>
+            <div class="modal__header">Recording starts in {{ countingTime }}</div>
         </div>
     </div>
 </template>

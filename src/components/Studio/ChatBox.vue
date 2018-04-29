@@ -24,15 +24,21 @@
             </div>
         </div>
         <div class="message-input">
-            <textarea type="text" placeholder="Say Something" rows="1"></textarea>
+            <textarea type="text" v-model="text" placeholder="Say Something" rows="1" ref="textbox"></textarea>
         </div>
     </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import io from 'socket.io-client'
+
+
 export default {
+    props: ['project_id'],
     data: () => ({
+        socket: null,
+        text: '',
         messages: [
             {
                 msg_id: '5ae24d517adb300e0862a58d',
@@ -95,8 +101,38 @@ export default {
             }
         ]
     }),
+    created () {
+        this.socket = io('http://localhost:9000/studio_chat')
+        this.socket.emit('subscribe', {
+            project_id: this.project_id,
+            user_id: this.userData.user_id
+        })
+    },
+    mounted () {
+        $(this.$refs.textbox).bind({
+            keydown: (e) => {
+                if(e.which == 13) {
+                    if(e.shiftKey === true) return true
+                    else { 
+                        this.send()
+                        return false
+                    }
+                } else return true
+            }
+        })
+    },
+    methods: {
+        send () {
+            this.socket.emit('send_message', {
+                project_id: this.project_id,
+                user_id: this.userData.user_id,
+                message: this.text
+            })
+            this.text = ''
+        }
+    },
     computed: {
-        ...mapGetters({ show: 'isChatboxShow', userData: 'getUserProfileData' })
+        ...mapGetters({ details: 'getStudioDetails', show: 'isChatboxShow', userData: 'getUserProfileData', studioChat: 'getStudioChat' })
     }
 }
 </script>

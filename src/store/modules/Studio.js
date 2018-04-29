@@ -48,6 +48,14 @@ const studioEnvStruct = {
         mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK, LOAD_PROJECT, NO_PERMISSION, UPLOADING_AUDIO
         piano: null,
         isMetronomeOn: false,
+        metronome: {
+            up: new Howl({
+                src: ['../static/audio/metronomeup.wav']
+            }),
+            down: new Howl({
+                src: ['../static/audio/metronomedown.wav']
+            })
+        },
         seek_signal: false,
         master_volume: 80
     },
@@ -239,7 +247,7 @@ const actions = {
             .flatMap(project => {
                 return Observable.from(project.tracks)
                         .flatMap(track => {
-                            return ProjectsService.setTrackPlayer(track)
+                            return StudioService.setTrackPlayer(track)
                         }, (track, sequences) => {
                             track.sequences = sequences
                             return track

@@ -285,7 +285,7 @@ export default {
             return this.getTracks[trackIndex].sequences[regionIndex]
         },
         uploadAudio (region_id, blob) {
-            return Observable.fromPromise(ProjectsService.uploadBlobAudio(this.details.project_id, region_id, blob))
+            return Observable.fromPromise(StudioService.uploadBlobAudio(this.details.project_id, region_id, blob))
         }
     },
     computed: {

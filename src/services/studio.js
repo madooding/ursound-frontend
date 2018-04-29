@@ -101,6 +101,65 @@ const playChord = (chord, beat, timer) => {
     piano.schedule(ac.currentTime, scheduleNotes)
 }
 
+
+/**
+ * 
+ * 
+ * @param {Number} project_id 
+ * @param {Blob} blob 
+ * @returns {Promise}
+ */
+const uploadBlobAudio = (project_id, region_id, blob) => {
+    let _token = localStorage.getItem("_token")
+    let data = new FormData()
+    data.append('file', blob, `${region_id}.ogg`)
+    if(_token === null) return Promise.reject({ code: "TOKEN_UNDEFINED", messages: "Token is not undefined."})
+    return axios.post(`${API_URL}/service/projects/${project_id}/upload`, data, {
+        headers: {
+            "Authorization": `jwt ${_token}`,
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
+
+
+/**
+ * 
+ * 
+ * @param {Object} track each track of that song
+ * @returns {Observable}
+ */
+const setTrackPlayer = (track) => {
+    return Observable.from(track.sequences)
+            .flatMap(seq => {
+                return setRegionPlayer(seq)
+            }, (old, newer) => newer)
+            .toArray()
+}
+/**
+ * 
+ * 
+ * @param {Object} region 
+ * @returns {Observable}
+ */
+const setRegionPlayer = (region) => {
+    return Observable.fromPromise(new Promise((resolve, reject) => {
+        let player = new Howl({
+            src: [region.url],
+            onload: (e) => {
+                region.player = player
+                region.original_length = player.duration() * 1000
+                resolve(region)
+            },
+            onloaderror: (e) => {
+                reject(e)
+            }
+        })
+    }))
+}
+
+
+
 /**
  * 
  * 
@@ -135,5 +194,8 @@ export default {
     getSuggestedChords,
     playChord,
     milliseconds2beats,
-    beats2milliseconds
+    beats2milliseconds,
+    uploadBlobAudio,
+    setRegionPlayer,
+    setTrackPlayer
 }

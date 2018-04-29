@@ -19,7 +19,8 @@ export default {
         bps: null
     }),
     computed: {
-        ...mapGetters({ 'studioEnv': 'getStudioEnv', details: 'getStudioDetails' })
+        ...mapGetters({ 'studioEnv': 'getStudioEnv', details: 'getStudioDetails' }),
+        metronome () { return this.studioEnv.metronome }
     },
     methods: {
         countdown() {
@@ -29,6 +30,8 @@ export default {
             let delta = now - this.timeDiff
             if(delta/1000 >= this.bps){
                 this.timeDiff = Date.now()
+                if(this.countingTime % this.details.time_signature == 1 && this.countingTime > 1) this.metronome.up.play()
+                else if(this.countingTime > 1) this.metronome.down.play()
                 if(this.countingTime - 1 <= 0) {
                     cancelAnimationFrame(this.timeutil)
                     this.$store.dispatch('STUDIO_RECORD')
@@ -41,6 +44,7 @@ export default {
         'studioEnv.mode': function () {
             if(this.studioEnv.mode === 'COUNTDOWN') {
                 this.show = true
+                this.metronome.up.play()
                 this.countingTime = this.details.time_signature
                 this.bps = 60/this.details.bpm
                 this.timeDiff = null

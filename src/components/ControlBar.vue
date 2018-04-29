@@ -118,15 +118,7 @@ import { Howl } from 'howler'
 export default {
     data: () => ({
         timeutil: undefined,
-        timeDiff: null,
-        metronome: {
-            up: new Howl({
-                src: ['../static/audio/metronomeup.wav']
-            }),
-            down: new Howl({
-                src: ['../static/audio/metronomedown.wav']
-            })
-        }
+        timeDiff: null
     }),
     components: {
         vueSlider
@@ -155,7 +147,6 @@ export default {
         },
         playPause() {
             if(this.studioEnv.mode !== 'PLAYBACK' && this.currentTimePercent < 100){
-                if(this.currentTimePercent == 0 && this.studioEnv.isMetronomeOn) this.metronome.up.play()
                 this.$store.dispatch('STUDIO_PLAY')
             } else {
                 this.$store.dispatch('STUDIO_PAUSE')
@@ -182,6 +173,12 @@ export default {
                 this.$store.dispatch('SET_STUDIO_CURRENT_TIME', percent)
                 this.$store.dispatch('STUDIO_COUNTDOWN')
             }
+        },
+        playMetronomeSound() {
+            if(this.currentTimeBeats - this.currentTimeBeatsFloor == 0 && this.studioEnv.isMetronomeOn) {
+                if(this.currentTimeBeats % this.details.time_signature == 1 ) this.metronome.up.play()
+                else this.metronome.down.play()
+            }
         }
     },
     computed: {
@@ -191,20 +188,22 @@ export default {
         },
         currentTimeBeatsFloor () {
             return Math.floor(this.currentTimeBeats)
-        }
+        },
+        metronome () { return this.studioEnv.metronome }
     },
     beforeDestroy() {
         cancelAnimationFrame(this.timeutil)
     },
     watch: {
         currentTimeBeatsFloor () {
-            if(this.studioEnv.mode === 'PLAYBACK' && this.studioEnv.isMetronomeOn){
+            if((this.studioEnv.mode === 'PLAYBACK' || this.studioEnv.mode === 'RECORD') && this.studioEnv.isMetronomeOn){
                 if(this.currentTimeBeatsFloor % this.details.time_signature == 1) this.metronome.up.play()
                 else this.metronome.down.play()
             }
         },
         'studioEnv.mode': function() {
             if(this.studioEnv.mode === 'PLAYBACK' || this.studioEnv.mode === 'RECORD'){
+                this.playMetronomeSound()
                 this.timeDiff = Date.now()
                 this.counter()
             }

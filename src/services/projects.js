@@ -3,6 +3,20 @@ import { Howl } from 'howler'
 import { Observable } from 'rxjs'
 
 const API_URL = 'http://localhost:9000'
+
+/**
+ * 
+ * 
+ * @returns {string} return an objectID
+ */
+const objectId = () => {
+    var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
+        return (Math.random() * 16 | 0).toString(16);
+    }).toLowerCase();
+}
+
+
 /**
  * 
  * 
@@ -32,6 +46,7 @@ const getProjectData = (project_id) => {
         }
     })
 }
+
 
 
 
@@ -65,6 +80,7 @@ const parseProjectData = (data) => {
 }
 
 export default {
+    objectId,
     createNewProject,
     getProjectData,
     parseProjectData

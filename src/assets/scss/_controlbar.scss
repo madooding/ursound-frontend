@@ -133,6 +133,24 @@
         align-items: center;
         justify-content: center;
         button {
+            span.count {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: "Helvetica";
+                font-style: normal;
+                font-size: 8pt;
+                line-height: 8pt;
+                min-width: 14pt;
+                min-height: 14pt;
+                border-radius: 14pt;
+                font-weight: 100;
+                position: absolute;
+                background-color: $secondary;
+                left: 2px;
+                top:12px;
+                color: white !important;
+            }
             width: 23px;
             height: 23px;
             transition: fill .5s ease;

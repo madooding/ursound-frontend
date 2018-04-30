@@ -12,7 +12,7 @@
                 </div>
             </div>
         </div>
-        <div class="messages-box">
+        <div class="messages-box" ref="messageBox">
             <div v-for="msg in messages" :key="msg.msg_id" class="messages" :class="{ 'right': msg.sender_id == userData.user_id && msg.type == 'MESSAGES', 'left': msg.sender_id != userData.user_id && msg.type == 'MESSAGES', 'events': msg.type == 'EVENTS' }">
                 <img v-if="msg.sender_id !== userData.user_id && msg.type == 'MESSAGES'" class="profile" :src="msg.sender_img">
                 <div v-if="msg.type === 'MESSAGES'" class="sub-messages">
@@ -39,7 +39,7 @@ export default {
     data: () => ({
         socket: null,
         text: '',
-        messages: [
+        mockup_messages: [
             {
                 msg_id: '5ae24d517adb300e0862a58d',
                 sender_id: 58,
@@ -102,14 +102,7 @@ export default {
         ]
     }),
     created () {
-        this.socket = io('http://localhost:9000/studio_chat')
-        this.socket.emit('subscribe', {
-            project_id: this.project_id,
-            user_id: this.userData.user_id
-        })
-        this.socket.on('message', message => {
-            console.log(message);
-        })
+
     },
     mounted () {
         $(this.$refs.textbox).bind({
@@ -122,18 +115,30 @@ export default {
             }
         })
     },
+    updated () {
+        this.$nextTick(() => {
+            let messageBox = $(this.$refs.messageBox)
+            messageBox.scrollTop(this.$refs.messageBox.scrollHeight)
+        })
+    },
     methods: {
         send () {
-            this.socket.emit('send_message', {
-                project_id: this.project_id,
+            this.$store.dispatch('STUDIO_SEND_MESSAGE', {
                 user_id: this.userData.user_id,
                 message: this.text
             })
             this.text = ''
         }
     },
+    watch: {
+        messages () {
+            let messageBox = $(this.$refs.messageBox)
+            messageBox.animate({ scrollTop: this.$refs.messageBox.scrollHeight }, "slow")
+        }
+    },
     computed: {
-        ...mapGetters({ details: 'getStudioDetails', show: 'isChatboxShow', userData: 'getUserProfileData', studioChat: 'getStudioChat' })
+        ...mapGetters({ details: 'getStudioDetails', show: 'isChatboxShow', userData: 'getUserProfileData', studioChat: 'getStudioChat', studioEnv: 'getStudioEnv' }),
+        messages () { return this.studioChat.chat_messages }
     }
 }
 </script>

@@ -351,6 +351,7 @@ export default {
         },
         'studioEnv.seek_signal' () {
             if(this.studioEnv.mode === 'PLAYBACK'){
+                this.studioEnv.piano.stop()
                 if(this.currentRegion) this.currentRegion.player.stop()
                 this.currentRegion = null
             }

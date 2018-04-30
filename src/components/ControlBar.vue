@@ -101,6 +101,7 @@
         </div>
         <div class="controlbar__messages">
             <button @click="showChatBox">
+                <span class="count" v-show="studioChat.unseen > 0">{{ studioChat.unseen }}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23">
                     <path id="message" class="cls-1" d="M1523,168l-5.89-1.473a11.5,11.5,0,1,1,4.42-4.419Zm-4.79-18.245a9.516,9.516,0,1,0-1,14.314L1520,165l-0.93-2.792A9.507,9.507,0,0,0,1518.21,149.755ZM1516.5,158a1.5,1.5,0,1,1,1.5-1.5A1.5,1.5,0,0,1,1516.5,158Zm-5,0a1.5,1.5,0,1,1,1.5-1.5A1.5,1.5,0,0,1,1511.5,158Zm-5,0a1.5,1.5,0,1,1,1.5-1.5A1.5,1.5,0,0,1,1506.5,158Z" transform="translate(-1500 -145)"/>
                 </svg>
@@ -182,7 +183,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({ details: 'getStudioDetails', 'studioEnv': 'getStudioEnv', 'currentTime': 'getStudioCurrentTime', 'currentKey': 'getStudioCurrentKey', 'duration': 'getStudioWholeDuration', 'currentTimePercent': 'getStudioCurrentTimePercent', currentTimeBeats: 'getStudioCurrentTimeBeats', activeTrack: 'getStudioActiveTrack' }),
+        ...mapGetters({ details: 'getStudioDetails', 'studioEnv': 'getStudioEnv', 'currentTime': 'getStudioCurrentTime', 'currentKey': 'getStudioCurrentKey', 'duration': 'getStudioWholeDuration', 'currentTimePercent': 'getStudioCurrentTimePercent', currentTimeBeats: 'getStudioCurrentTimeBeats', activeTrack: 'getStudioActiveTrack', studioChat: 'getStudioChat' }),
         currentTimeFormatted(){
             return `${moment('2000-01-01 00:00:00').add(moment.duration(this.currentTime, 'seconds')).format("mm:ss")}.${Math.round((this.currentTime - Math.floor(this.currentTime)) * 10)}`
         },

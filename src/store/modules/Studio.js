@@ -1,8 +1,10 @@
 import studio, { StudioService, ProjectsService } from '../../services'
+import store from '../../store'
 import _ from 'lodash'
-import { Observable } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
+import io from 'socket.io-client'
 import router from '../../router'
-
+import { last } from 'rxjs/operators';
 
 /**
  * 
@@ -40,6 +42,7 @@ const objectId = () => {
 }
 
 const studioEnvStruct = {
+    studioSocket: io.Socket,
     env: {
         zoomLevel: 100,
         stage_width: 0,
@@ -48,6 +51,7 @@ const studioEnvStruct = {
         mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK, LOAD_PROJECT, NO_PERMISSION, UPLOADING_AUDIO
         piano: null,
         isMetronomeOn: false,
+        studioEvent: io.prototype,
         metronome: {
             up: new Howl({
                 src: ['../static/audio/metronomeup.wav']
@@ -109,6 +113,7 @@ const mutations = {
     },
     toggleChatbox(state){
         state.chat.show = !state.chat.show
+        state.chat.unseen = 0
     },
     toggleMetronome(state){
         state.env.isMetronomeOn = !state.env.isMetronomeOn
@@ -232,8 +237,21 @@ const mutations = {
         state.tracks = val.tracks
         state.chat.chat_messages = val.chats
     },
-    addChatmessage (stage, val) {
-        state.chat.chat_messages.push(val)
+    addMessageEvent (state, val) {
+        if(!state.chat.show) state.chat.unseen++
+        let last_message = state.chat.chat_messages.pop()
+        if(last_message && last_message.sender_id == val.sender_id && last_message.type == 'MESSAGES' ) {
+            last_message.messages.push(val.messages[0])
+            last_message.last_update = val.last_update
+            state.chat.chat_messages.push(last_message)
+        } else {
+            if(last_message) state.chat.chat_messages.push(last_message)
+            state.chat.chat_messages.push(val)
+        }
+    },
+    setStudioSocket (state, val) {
+        state.studioSocket = val.socket
+        state.env.studioEvent = val.subject
     }
 }
 
@@ -261,7 +279,13 @@ const actions = {
                 project.tracks = tracks
                 return project
             })
+            .do(result => {
+                //Set studio socket
+                let connection = StudioService.defineSocketConnection(result.details.project_id, store.getters.getUserProfileData.user_id)
+                commit('setStudioSocket', connection)
+            })
             .do((result) => { 
+                //Set studio mode
                 if(result.tracks.length < 1) dispatch('STUDIO_SET_MODE', 'ADD_NEW_TRACK')
                 else dispatch('STUDIO_SET_MODE', 'EDIT')
             })
@@ -587,8 +611,32 @@ const actions = {
     RESET_STUDIO_ENV ({ commit }) {
         commit('resetStudioEnv')
     },
-    STUDIO_ADD_CHAT_MESSAGE ({ commit }, val) {
-        commit('addChatMessage', val)
+    STUDIO_ADD_MESSAGE_EVENT ({ commit }, val) {
+        commit('addMessageEvent', val)
+    },
+    SET_STUDIO_SOCKET ({ commit }, val) {
+        let connection = StudioService.defineSocketConnection(result.details.project_id, store.getters.getUserProfileData.user_id)
+        commit('setStudioSocket', connection)
+    },
+    STUDIO_SEND_MESSAGE ({ commit, dispatch }, val) {
+        let last_update = Date.now().toString()
+        dispatch('STUDIO_ADD_MESSAGE_EVENT', {
+            msg_id: objectId(),
+            sender_id: val.user_id,
+            type: 'MESSAGES',
+            last_update: last_update,
+            messages: [
+                {
+                    datetime: last_update,
+                    message: val.message
+                }
+            ]
+        })
+        state.studioSocket.emit('send_message', {
+            project_id: state.details.project_id,
+            user_id: val.user_id,
+            message: val.message
+        })
     }
 }
 

@@ -1,8 +1,10 @@
 import Soundfont from 'soundfont-player'
-import { Observable } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
 import store from '../store'
 import axios from 'axios'
+import io from 'socket.io-client'
 import _ from 'lodash'
+import { ProjectsService } from '.';
 
 const API_URL = 'http://localhost:9000'
 
@@ -172,6 +174,40 @@ const milliseconds2beats = (bpm, duration) => {
     return duration/1000/rate
 }
 
+const defineSocketReturnedValueStructure = {
+    socket: io,
+    subject: Subject.prototype
+}
+
+/**
+ * 
+ * 
+ * @param {Number} project_id 
+ * @param {Number} user_id 
+ * @returns {defineSocketReturnedValueStructure} return an object including inside with io object and subjec object
+ */
+const defineSocketConnection = (project_id, user_id) => {
+    let socket = io('http://localhost:9000/studio_chat')
+    let subject = new Subject()
+    socket.emit('subscribe', {
+        project_id: project_id,
+        user_id: user_id
+    })
+    socket.on('messages', messages => {
+        store.dispatch('STUDIO_ADD_MESSAGE_EVENT', messages)
+        subject.next({
+            type: 'MESSAGES',
+            messages: messages
+        })
+    })
+    socket.on('events', event => {
+        subject.next({
+            type: 'EVENTS',
+            event: event
+        })
+    })
+    return { socket, subject }
+}
 
 /**
  * 
@@ -197,5 +233,6 @@ export default {
     beats2milliseconds,
     uploadBlobAudio,
     setRegionPlayer,
-    setTrackPlayer
+    setTrackPlayer,
+    defineSocketConnection
 }

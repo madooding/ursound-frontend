@@ -107,6 +107,9 @@ export default {
             project_id: this.project_id,
             user_id: this.userData.user_id
         })
+        this.socket.on('message', message => {
+            console.log(message);
+        })
     },
     mounted () {
         $(this.$refs.textbox).bind({

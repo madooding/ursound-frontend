@@ -271,7 +271,7 @@ const actions = {
                         .flatMap(track => {
                             return StudioService.setTrackPlayer(track)
                         }, (track, sequences) => {
-                            track.sequences = sequences
+                            if (track.type === 'AUDIO') track.sequences = sequences
                             return track
                         })
                         .toArray()

@@ -132,6 +132,7 @@ const uploadBlobAudio = (project_id, region_id, blob) => {
  * @returns {Observable}
  */
 const setTrackPlayer = (track) => {
+    if (track.type === 'PIANO') return Promise.resolve(track.sequences)
     return Observable.from(track.sequences)
             .flatMap(seq => {
                 return setRegionPlayer(seq)

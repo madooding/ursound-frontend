@@ -15,7 +15,7 @@
         <transition name="fade" mode="in-out">
             <div class="menubar__menu" v-if="isStudioMode">
                 <ul class="less-padding">
-                    <li><a class="button">Save</a></li>
+                    <li><a class="button" :class="{ 'disabled': !studioEnv.changed }" :disabled="!studioEnv.changed" @click="syncProjectData()">Sync</a></li>
                     <li><a class="button button--outline">Exit Studio</a></li>
                 </ul>
             </div>
@@ -76,10 +76,16 @@ export default {
                 .subscribe(result => {
                     this.$router.push({ path: `/studio/${result.details.project_id}` })
                 })
+        },
+        syncProjectData () {
+            if(this.studioEnv.changed) {
+                // console.log(ProjectsService.parseStudioToProjectData({ details: this.studioDetails, tracks: this.tracks }))
+            }
         }
     },
     computed: {
         ...mapGetters(['isLoggedIn', 'getUserProfileData']),
+        ...mapGetters({ studioEnv: 'getStudioEnv', studioDetails: 'getStudioDetails', tracks: 'getStudioTracks' }),
         isStudioMode(){
             if (/\/studio.*/.test(this.getPath())){
                 return true

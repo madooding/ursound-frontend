@@ -1,8 +1,32 @@
 import axios from 'axios'
 import { Howl } from 'howler'
 import { Observable } from 'rxjs'
+import { studio } from '.';
 
 const API_URL = 'http://localhost:9000'
+
+const projectsModel = {
+    project_id: Number,
+    modified_time: String,
+    last_commit_id: String,
+    last_commit_user_id: String,
+    owner_id: Number,
+    downloadable: Boolean,
+    details: {
+        name: String,
+        cover: String,
+        bpm: Number,
+        time_signature: Number,
+        bars: Number,
+        key: Number,
+        description: String
+    },
+    members: Array,
+    comments: Array,
+    chatroom: Array,
+    likes: Array,
+    tracks: Array
+}
 
 /**
  * 
@@ -24,13 +48,15 @@ const objectId = () => {
  */
 const createNewProject = () => {
     let _token = localStorage.getItem("_token")
-    if(_token === null) return Promise.reject({ code: "TOKEN_UNDEFINED", messages: "Token is not undefined."})
+    if(_token === null) return Promise.reject({ code: "TOKEN_UNDEFINED", messages: "Token is undefined." })
     return axios.post(`${API_URL}/service/projects`, {}, {
         headers: {
             "Authorization": `jwt ${_token}`
         }
     })
 }
+
+
 /**
  * 
  * 
@@ -39,7 +65,7 @@ const createNewProject = () => {
  */
 const getProjectData = (project_id) => {
     let _token = localStorage.getItem("_token")
-    if(_token === null) return Promise.reject({ code: "TOKEN_UNDEFINED", messages: "Token is not undefined."})
+    if(_token === null) return Promise.reject({ code: "TOKEN_UNDEFINED", messages: "Token is undefined." })
     return axios.get(`${API_URL}/service/projects/${project_id}`, {
         headers: {
             "Authorization": `jwt ${_token}`
@@ -47,6 +73,51 @@ const getProjectData = (project_id) => {
     })
 }
 
+
+/**
+ * 
+ * 
+ * @param {projectsModel} project_data 
+ * @returns {Promise} return a promise of axios (It will be a updated project data)
+ */
+const syncProjectData = (project_data) => {
+    let _token = localStorage.getItem('_token')
+    if(_token === null) return Promise.reject({ code: 'TOKEN_UNDEFINED', messages: "Token is undefined." })
+    return axios.post(`${API_URL}/service/projects/${project_id}`, project_data, {
+        headers: {
+            "Authorization": `jwt ${_token}`
+        }
+    })
+}
+
+/**
+ * 
+ * 
+ * @param {Object} studio_data 
+ * @returns {projectsModel}
+ */
+const parseStudioToProjectData = (studio_data) => {
+    let projectData = { ...projectsModel }
+    projectData.project_id = studio_data.details.project_id
+    projectData.modified_time = studio_data.details.modified_time
+    projectData.last_commit_id = studio_data.details.last_commit_id
+    projectData.last_commit_user_id = studio_data.details.last_commit_user_id
+    projectData.owner_id = studio_data.details.owner_id
+    projectData.downloadable = studio_data.details.downloadable
+    projectData.details.name = studio_data.details.name
+    projectData.details.cover = studio_data.details.cover
+    projectData.details.bpm = studio_data.details.bpm
+    projectData.details.time_signature = studio_data.details.time_signature
+    projectData.details.bars = studio_data.details.bars
+    projectData.details.key = studio_data.details.key
+    projectData.details.description = studio_data.details.description
+    projectData.tracks = studio_data.tracks
+    delete projectData.members
+    delete projectData.comments
+    delete projectData.chatroom
+    delete projectData.likes
+    return projectData
+}
 
 
 
@@ -83,5 +154,7 @@ export default {
     objectId,
     createNewProject,
     getProjectData,
-    parseProjectData
+    syncProjectData,
+    parseProjectData,
+    parseStudioToProjectData
 }

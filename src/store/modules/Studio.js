@@ -61,6 +61,7 @@ const studioEnvStruct = {
             })
         },
         seek_signal: false,
+        changed: false,
         master_volume: 80
     },
     details: {
@@ -165,6 +166,7 @@ const mutations = {
         regionData.beat = val.payload.duration
         regionData.modified_time = modified_time
         state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex] = regionData
+        state.tracks[val.currentIndex.trackIndex].modified_time = modified_time
     },
     resizeAudioRegion (state, val) {
         let bpm = state.details.bpm
@@ -179,6 +181,7 @@ const mutations = {
             regionData.trim_right += diff
         }
         state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex] = regionData
+        state.tracks[val.currentIndex.trackIndex].modified_time = modified_time
     },
     updateTrackSequences (state, val) {
         state.tracks[val.trackIndex].sequences = val.payload
@@ -192,6 +195,7 @@ const mutations = {
     addChordRegion (state, val) {
         let activeTrack = getters.getStudioActiveTrack(state)
         activeTrack.sequences.push(val)
+        activeTrack.modified_time = Date.now()
     },
     addAudioRegion (state, val) {
         let activeTrack = getters.getStudioActiveTrack(state)
@@ -204,7 +208,9 @@ const mutations = {
         activeTrack.sequences[recordingIndex].original_length = getters.getStudioCurrentTime(state) * 1000 - StudioService.beats2milliseconds(state.details.bpm, recordingRegion.start_beat - 1)
     },
     finishRecordingRegion (state, val) {
+        let activeTrack = getters.getStudioActiveTrack(state)
         if(val) val.recording = false //activeTrack.sequences[recordingIndex].recording = false
+        activeTrack.modified_time = Date.now()
     },
     setStudioPlayingState (state, val) {
         state.env.mode = val ? 'PLAYBACK' : 'EDIT'
@@ -252,6 +258,9 @@ const mutations = {
     setStudioSocket (state, val) {
         state.studioSocket = val.socket
         state.env.studioEvent = val.subject
+    },
+    setStudioChangeSignal (state, val) {
+        state.env.changed = val
     }
 }
 
@@ -316,14 +325,17 @@ const actions = {
     STUDIO_SET_MODE ({ commit }, val) {
         commit('setStudioMode', val)
     },
-    MUTE_TRACK({commit}, val){
+    MUTE_TRACK({ commit, dispatch }, val){
         commit('muteTrackById', val)
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
-    SOLO_TRACK({commit}, val){
+    SOLO_TRACK({ commit, dispatch }, val){
         commit('soloTrackById', val)
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
-    UPDATE_TRACK_VOLUME({commit}, val){
+    UPDATE_TRACK_VOLUME({ commit, dispatch }, val){
         commit('updateTrackVolume', val)
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     TOGGLE_CHATBOX({commit}) {
         commit('toggleChatbox')
@@ -371,6 +383,7 @@ const actions = {
         })
         dispatch('CHECK_REGION_OVERLAPPING', { track_id: val.moveTo.trackIndex, region_id: val.region_id })
         dispatch('SET_STUDIO_ACTIVE_TRACK', state.tracks[val.moveTo.trackIndex].id)
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     MOVE_AUDIO_REGION ({ dispatch, commit }, val) {
         let trackIndex = findTrackIndex(val.track_id)
@@ -384,6 +397,7 @@ const actions = {
         })
         dispatch('CHECK_REGION_OVERLAPPING', { track_id: val.moveTo.trackIndex, region_id: val.region_id })
         dispatch('SET_STUDIO_ACTIVE_TRACK', state.tracks[val.moveTo.trackIndex].id)
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     RESIZE_CHORD_REGION ({ dispatch, commit }, val) {
         let trackIndex = findTrackIndex(val.track_id)
@@ -396,6 +410,7 @@ const actions = {
             payload: val.payload
         })
         dispatch('CHECK_REGION_OVERLAPPING', { track_id: trackIndex, region_id: val.region_id })
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     RESIZE_AUDIO_REGION ({ dispatch, commit }, val) {
         let trackIndex = findTrackIndex(val.track_id)
@@ -408,6 +423,7 @@ const actions = {
             payload: val.payload
         })
         dispatch('CHECK_REGION_OVERLAPPING', { track_id: trackIndex, region_id: val.region_id })
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     CHECK_REGION_OVERLAPPING ({ dispatch }, val) {
         let trackIndex = val.track_id
@@ -535,15 +551,16 @@ const actions = {
             })
         })
     },
-    DELETED_REGION ({ commit }, val) {
+    DELETED_REGION ({ commit, dispatch }, val) {
         let trackIndex = findTrackIndex(val.track_id)
         let regionIndex = findRegionIndex(trackIndex, val.region_id)
         commit('deleteRegion', {
             trackIndex,
             regionIndex
         })
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
-    DELETE_SELECTED_REGION ({ commit }) {
+    DELETE_SELECTED_REGION ({ commit, dispatch }) {
         state.tracks.forEach((track, trackIndex) => {
             track.sequences.forEach((region, regionIndex) => {
                 if(region.active === true) commit('deleteRegion', {
@@ -552,6 +569,7 @@ const actions = {
                 })
             })
         })
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     ADD_CHORD_REGION ({ commit, dispatch }, val) {
         let currentTimeBeats = getters.getStudioCurrentTimeBeats(state)
@@ -573,6 +591,7 @@ const actions = {
             track_id: _.findIndex(state.tracks, (track) => track.active),
             region_id: newChord.id
         })
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     ADD_AUDIO_REGION ({ commit, dispatch }, val) {
         let newAudioRegion = {
@@ -604,9 +623,11 @@ const actions = {
             track_id: _.findIndex(state.tracks, track => track.id === activeTrack.id),
             region_id: recordingRegion.id
         })
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
-    STUDIO_ADD_NEW_TRACK ({ commit }, val) {
+    STUDIO_ADD_NEW_TRACK ({ commit, dispatch }, val) {
         commit('studioAddNewTrack', val)
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     RESET_STUDIO_ENV ({ commit }) {
         commit('resetStudioEnv')
@@ -637,6 +658,9 @@ const actions = {
             user_id: val.user_id,
             message: val.message
         })
+    },
+    SET_STUDIO_CHANGE_SIGNAL ({ commit }, val) {
+        commit('setStudioChangeSignal', val)
     }
 }
 

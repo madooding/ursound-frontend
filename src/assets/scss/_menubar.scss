@@ -103,6 +103,11 @@
                     background-color: white;
                     color: $dark-primary !important;
                 }
+                a.button.disabled, a.button.disabled:hover {
+                    cursor: not-allowed;
+                    background-color: $secondary;
+                    opacity: .3;
+                }
 
                 i {
                     position: relative;

@@ -48,7 +48,7 @@ const studioEnvStruct = {
         stage_width: 0,
         currentScrollXPos: 0,
         currentTimePercent: 0,
-        mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK, LOAD_PROJECT, NO_PERMISSION, UPLOADING_AUDIO
+        mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK, LOAD_PROJECT, NO_PERMISSION, UPLOADING_AUDIO, ADD_NEW_CONTRIBUTOR
         piano: null,
         isMetronomeOn: false,
         studioEvent: io.prototype,
@@ -338,6 +338,7 @@ const actions = {
             })
             .subscribe(result => {
                 commit('setProjectData', result)
+                dispatch('SET_STUDIO_CHANGE_SIGNAL', false)
             }, err => {
                 switch(err.response.status){
                     case 404: router.push({ path: '/explore' })

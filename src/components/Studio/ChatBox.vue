@@ -3,7 +3,7 @@
         <div class="top">
             <p>Collaborators</p>
             <div class="collaborators">
-                <div class="each">+</div>
+                <div class="each" @click="addNewContributor()">+</div>
                 <div class="each">
                     <img class="profile" src="https://scontent.fbkk1-5.fna.fbcdn.net/v/t1.0-1/p320x320/26219889_1789282987773023_6787029426488757917_n.jpg?oh=6da679dd75fd139108d94c725477173d&oe=5B1DEF90" alt="">
                 </div>
@@ -128,6 +128,9 @@ export default {
                 message: this.text
             })
             this.text = ''
+        },
+        addNewContributor () {
+            this.$store.dispatch('STUDIO_SET_MODE', 'ADD_NEW_CONTRIBUTOR')
         }
     },
     watch: {

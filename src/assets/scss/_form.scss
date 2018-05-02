@@ -74,3 +74,27 @@
         color: $secondary;
     }
 }
+
+.inputContainer.compact {
+
+    .inputContainer__prefix {
+        height: 40px;
+        width: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        i {
+            font-size: 18pt;
+        }
+    }
+
+    input {
+        height: 40px;
+        font-size: 12pt;
+        padding-left: 40px;
+    }
+
+    input::placeholder {
+        font-size: 12pt;
+    }
+}

@@ -35,8 +35,25 @@ const facebookSignup = (username, password, _fbToken) => {
         }
     })
 }
+/**
+ * 
+ * 
+ * @param {String} username piece of username to search in backend
+ * @returns {Promise} returns promise which contains array of user data
+ */
+const searchUsersByUsername = (username) => {
+    let _token = localStorage.getItem('_token')
+    if(_token === null) return Promise.reject({ code: 'TOKEN_UNDEFINED', messages: "Token is undefined." })
+    return axios.get(`${API_URL}/service/users/search/${username}`, {
+        headers: {
+            Authorization: `jwt ${_token}`
+        }
+    })
+}
+
 
 export default {
     defaultSignup,
-    facebookSignup
+    facebookSignup,
+    searchUsersByUsername
 }

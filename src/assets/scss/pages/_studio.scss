@@ -91,6 +91,73 @@ $track-panel-width: 280px;
                     transform: scale(.95);
                 }
             }
+            .modal__add-contributor {
+                margin-bottom: 15px;
+
+                .user-list {
+                    width: 100%;
+                    height: auto;
+                    div.user {
+                        width: 100%;
+                        height: 50px;
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        .user__profile-pic {
+                            height: 40px;
+                            width: 40px;
+                            border-radius: 40px;
+                            background-color: #ddd;
+                            margin-right: 15px;
+                            overflow: hidden;
+                            img {
+                                height: 100%;
+                                width: 100%;
+                            }
+                        }
+                        .user__username {
+                            display: flex;
+                            color: $text-color-2;
+                            align-items: center;
+                            height: 100%;
+                            flex-grow: 1;
+                            margin-right: 15px;
+                        }
+                        .user__add-btn {
+                            cursor: pointer;
+                            font-size: 10pt;
+                            background-color: $secondary;
+                            color: white;
+                            border-radius: 40px;
+                            border-style: none;
+                            height: 30px;
+                            padding: 0px 15px;
+                            outline: none;
+                        }
+                        .user__add-btn:hover {
+                            background-color: $dark-secondary;
+                        }
+                        .user__add-btn:active {
+                            background-color: $darker-secondary;
+                        }
+
+                        .user__add-btn.disabled {
+                            background-color: white;
+                            border-style: solid;
+                            border-width: thin;
+                            border-color: #C8C8C8;
+                            color: #C8C8C8;
+                        }
+                    }
+                }
+            }
+            .modal__add-contributor > div {
+                margin-bottom: 20px;
+            }
+            .modal__add-contributor > div:last-child {
+                margin-bottom: 0px;
+            }
+
             .modal__btn {
                 cursor: pointer;
             }

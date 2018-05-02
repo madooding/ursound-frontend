@@ -17,6 +17,7 @@
         <ChatBox :project_id="project_id"></ChatBox>
         <CountdownModal></CountdownModal>
         <NewTrackModal></NewTrackModal>
+        <add-contributor-modal></add-contributor-modal>
         <no-permission-modal></no-permission-modal>
     </div>
 </template>
@@ -31,6 +32,7 @@ import ChordSuggestions from '../components/Studio/ChordSuggestions'
 import CountdownModal from '../components/Studio/CountdownModal'
 import NewTrackModal from '../components/Studio/NewTrackModal'
 import NoPermissionModal from '../components/Studio/NoPermissionModal'
+import AddContributorModal from '../components/Studio/AddContributorModal'
 import { ProjectsService } from '../services'
 
 
@@ -45,7 +47,8 @@ export default {
         ChordSuggestions,
         CountdownModal,
         NewTrackModal,
-        NoPermissionModal
+        NoPermissionModal,
+        AddContributorModal
     },
     created () {
         this.$store.dispatch('STUDIO_LOAD_PROJECT_DATA', { project_id: this.project_id })

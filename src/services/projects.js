@@ -83,7 +83,7 @@ const getProjectData = (project_id) => {
 const syncProjectData = (project_data) => {
     let _token = localStorage.getItem('_token')
     if(_token === null) return Promise.reject({ code: 'TOKEN_UNDEFINED', messages: "Token is undefined." })
-    return axios.post(`${API_URL}/service/projects/${project_id}`, project_data, {
+    return axios.put(`${API_URL}/service/projects/${project_data.project_id}`, project_data, {
         headers: {
             "Authorization": `jwt ${_token}`
         }

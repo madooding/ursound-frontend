@@ -310,6 +310,43 @@ const actions = {
             })
 
     },
+    STUDIO_SYNC_PROJECT_DATA ({ commit, dispatch }, val) {
+        dispatch('STUDIO_SET_MODE', 'SYNC_PROJECT')
+        let projectData = ProjectsService.parseStudioToProjectData({ details: state.details, tracks: state.tracks })
+        Observable.fromPromise(ProjectsService.syncProjectData(projectData))
+            .pluck('data')
+            .flatMap(data => {
+                return Promise.resolve(ProjectsService.parseProjectData(data))
+            }, (data, project) => ({ ...project }))
+            .flatMap(project => {
+                return Observable.from(project.tracks)
+                        .flatMap(track => {
+                            return StudioService.setTrackPlayer(track)
+                        }, (track, sequences) => {
+                            track.sequences = sequences
+                            return track
+                        })
+                        .toArray()
+            }, (project, tracks) => {
+                project.tracks = tracks
+                return project
+            })
+            .do((result) => { 
+                //Set studio mode
+                if(result.tracks.length < 1) dispatch('STUDIO_SET_MODE', 'ADD_NEW_TRACK')
+                else dispatch('STUDIO_SET_MODE', 'EDIT')
+            })
+            .subscribe(result => {
+                commit('setProjectData', result)
+            }, err => {
+                switch(err.response.status){
+                    case 404: router.push({ path: '/explore' })
+                            break
+                    case 401: dispatch('STUDIO_SET_MODE', 'NO_PERMISSION')
+                            break
+                }
+            })
+    },
     STUDIO_PLAY({commit}){
         commit('setStudioPlayingState', true)
     },

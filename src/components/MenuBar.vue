@@ -79,7 +79,7 @@ export default {
         },
         syncProjectData () {
             if(this.studioEnv.changed) {
-                // console.log(ProjectsService.parseStudioToProjectData({ details: this.studioDetails, tracks: this.tracks }))
+                this.$store.dispatch('STUDIO_SYNC_PROJECT_DATA')
             }
         }
     },

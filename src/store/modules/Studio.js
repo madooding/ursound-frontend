@@ -596,18 +596,21 @@ const actions = {
             trackIndex,
             regionIndex
         })
+        console.log(regionIndex);
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     DELETE_SELECTED_REGION ({ commit, dispatch }) {
         state.tracks.forEach((track, trackIndex) => {
             track.sequences.forEach((region, regionIndex) => {
-                if(region.active === true) commit('deleteRegion', {
-                    trackIndex,
-                    regionIndex,
-                })
+                if(region.active === true) {
+                    commit('deleteRegion', {
+                        trackIndex,
+                        regionIndex,
+                    })
+                    dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+                }
             })
         })
-        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     ADD_CHORD_REGION ({ commit, dispatch }, val) {
         let currentTimeBeats = getters.getStudioCurrentTimeBeats(state)

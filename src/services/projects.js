@@ -93,6 +93,24 @@ const syncProjectData = (project_data) => {
 /**
  * 
  * 
+ * @param {Number} project_id project id to be added new contributor
+ * @param {Number} user_id user id of user to be added to project
+ * @returns {Promise} 
+ */
+const addNewContributor = (project_id, user_id) => {
+    let _token = localStorage.getItem('_token')
+    if(_token === null) return Promise.reject({ code: 'TOKEN_UNDEFINED', messages: "Token is undefined." })
+    return axios.post(`${API_URL}/service/projects/${project_id}/contributors/${user_id}`, {}, {
+        headers: {
+            "Authorization": `jwt ${_token}`
+        }
+    })
+}
+
+
+/**
+ * 
+ * 
  * @param {Object} studio_data 
  * @returns {projectsModel}
  */
@@ -162,6 +180,7 @@ export default {
     createNewProject,
     getProjectData,
     syncProjectData,
+    addNewContributor,
     parseProjectData,
     parseStudioToProjectData
 }

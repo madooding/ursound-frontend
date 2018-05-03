@@ -261,6 +261,9 @@ const mutations = {
     },
     setStudioChangeSignal (state, val) {
         state.env.changed = val
+    },
+    studioUpdateMembersOfProject (state, val) {
+        state.details.members = val
     }
 }
 
@@ -273,7 +276,6 @@ const actions = {
         Observable.fromPromise(ProjectsService.getProjectData(val.project_id))
             .pluck('data')
             .flatMap(data => {
-                console.log(data);
                 return Promise.resolve(ProjectsService.parseProjectData(data))
             }, (data, project) => ({ ...project }))
             .flatMap(project => {
@@ -351,6 +353,9 @@ const actions = {
                     }
                 }
             })
+    },
+    STUDIO_UPDATE_MEMBERS_OF_PROJECT ({ commit }, val) {
+        commit('studioUpdateMembersOfProject', val)
     },
     STUDIO_PLAY({commit}){
         commit('setStudioPlayingState', true)

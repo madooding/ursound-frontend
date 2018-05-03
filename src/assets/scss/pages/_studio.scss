@@ -45,12 +45,16 @@ $track-panel-width: 280px;
             padding: 0px 15px 0px 15px;
             box-sizing: content-box;
             transition: opacity .25s ease-in !important;
+            overflow: hidden;
             .modal__header {
                 font-weight: 600;
                 height: 100px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
+            }
+            .modal__header.underlined {
+                border-bottom: solid #DDD thin;
             }
             .modal__newtrack {
                 // display: flex;
@@ -92,17 +96,35 @@ $track-panel-width: 280px;
                 }
             }
             .modal__add-contributor {
-                margin-bottom: 15px;
 
+                .inputContainer {
+                    input {
+                        border-radius: 0px;
+                        border-bottom: solid #DDD thin;
+                    }
+                    input:focus {
+                        background-color: white;
+                        border-color: $primary;
+                        border-style: solid;    
+                        border-width: thin;
+                    }
+                }
                 .user-list {
                     width: 100%;
                     height: auto;
+                    height: 210px;
+                    max-height: 280px;
+                    overflow-y: scroll;
+                    background-color: #F3F3F3;
                     div.user {
                         width: 100%;
-                        height: 50px;
+                        height: 70px;
                         display: flex;
                         flex-direction: row;
                         align-items: center;
+                        padding: 15px;
+                        border-bottom: solid #EEE thin;
+                        background-color: white;
                         .user__profile-pic {
                             height: 40px;
                             width: 40px;
@@ -152,7 +174,7 @@ $track-panel-width: 280px;
                 }
             }
             .modal__add-contributor > div {
-                margin-bottom: 20px;
+                // margin-bottom: 20px;
             }
             .modal__add-contributor > div:last-child {
                 margin-bottom: 0px;
@@ -170,6 +192,9 @@ $track-panel-width: 280px;
             .modal__btn.btn--close:hover {
                 opacity: 1;
             }
+        }
+        &__container.avoid-padding {
+            padding: 0px;
         }
     }
 

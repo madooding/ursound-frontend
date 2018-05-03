@@ -272,6 +272,7 @@ export default {
             let bpm = this.details.bpm
             let region = _.find(this.track_data.sequences, each => beat >= each.start_beat && beat <= each.start_beat + StudioService.milliseconds2beats(this.details.bpm, each.original_length - each.trim_right - each.trim_left) && !each.recording)
             if((this.currentRegion == null && region) || (region && region.id != this.currentRegion.id)){
+                if(this.currentRegion) this.currentRegion.player.stop()
                 this.currentRegion = region
                 this.currentRegion.player.seek((StudioService.beats2milliseconds(this.details.bpm, this.currentTimeBeats - region.start_beat) + region.trim_left)/1000)
                 this.currentRegion.player.play()

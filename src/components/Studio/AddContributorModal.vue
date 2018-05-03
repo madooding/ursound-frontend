@@ -2,7 +2,7 @@
     <div class="modal" :class="{ 'show': show }">
         <div class="modal__container avoid-padding">
             <div class="modal__btn btn--close" @click="toggle()"><i class="ion-close"></i></div>
-            <div class="modal__header underlined">Add New Contributor</div>
+            <div class="modal__header underlined">Add New Collaborators</div>
             <div class="modal__add-contributor">
                 <div class="inputContainer compact">
                     <span class="inputContainer__prefix"><i class="ion-ios-search"></i></span>
@@ -13,7 +13,7 @@
                         <div class="user__profile-pic"><img :src="user.profile_img" alt=""></div>
                         <div class="user__username">{{ user.username }}</div>
                         <button class="user__add-btn" v-if="!checkAdded(user.user_id)" @click="addContributor(user.user_id)">Add</button>
-                        <button class="user__add-btn disabled" v-else>Added</button>
+                        <button class="user__add-btn disabled" v-else disabled>Added</button>
                     </div>
                 </div>
             </div>
@@ -45,8 +45,15 @@ export default {
                 .pluck('data')
                 .subscribe(result => {
                     this.$store.dispatch('STUDIO_UPDATE_MEMBERS_OF_PROJECT', result.members)
+                    this.$store.dispatch('STUDIO_EVENT_EMITTER', {
+                        user_id: this.$store.getters.getUserProfileData.user_id,
+                        event_type: 'ADD_NEW_COLLABORATORS',
+                        payload: {
+                            ...(_.find(this.users_data, user => user.user_id == user_id))
+                        }
+                    })
                 }, err => {
-                    if(err.response) console.log(err.response);
+                    if(err.response.messages) console.log(err.response.messages);
                 })
         },
         search() {

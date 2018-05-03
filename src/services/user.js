@@ -35,6 +35,8 @@ const facebookSignup = (username, password, _fbToken) => {
         }
     })
 }
+
+
 /**
  * 
  * 
@@ -50,10 +52,27 @@ const searchUsersByUsername = (username) => {
         }
     })
 }
+/**
+ * 
+ * 
+ * @param {Number} user_id 
+ * @returns {Promise}
+ */
+const getUserProfileByUserId = (user_id) => {
+    let _token = localStorage.getItem('_token')
+    if(_token === null) return Promise.reject({ code: 'TOKEN_UNDEFINED', messages: "Token is undefined." })
+    return axios.get(`${API_URL}/service/users/id/${user_id}`, {
+        headers: {
+            Authorization: `jwt ${_token}`
+        }
+    })
+}
+
 
 
 export default {
     defaultSignup,
     facebookSignup,
-    searchUsersByUsername
+    searchUsersByUsername,
+    getUserProfileByUserId
 }

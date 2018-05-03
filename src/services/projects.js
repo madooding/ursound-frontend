@@ -170,6 +170,10 @@ const parseProjectData = (data) => {
         description: project.details.description,
         members: project.members
     }
+    details.members = _.map(details.members, member => {
+        member.profile_img = member.profile_img ? member.profile_img : '../static/blank_profile.png'
+        return member
+    })
     let tracks = project.tracks
     let chats = project.chatroom
     return { details, tracks: tracks, chats: chats }

@@ -202,9 +202,13 @@ const defineSocketConnection = (project_id, user_id) => {
         })
     })
     socket.on('events', event => {
+        store.dispatch('STUDIO_ADD_MESSAGE_EVENT', event.result)
         subject.next({
             type: 'EVENTS',
-            event: event
+            event: {
+                ...event.result,
+                payload: event.payload
+            }
         })
     })
     return { socket, subject }

@@ -246,7 +246,7 @@ const mutations = {
     addMessageEvent (state, val) {
         if(!state.chat.show) state.chat.unseen++
         let last_message = state.chat.chat_messages.pop()
-        if(last_message && last_message.sender_id == val.sender_id && last_message.type == 'MESSAGES' ) {
+        if(last_message && last_message.sender_id == val.sender_id && last_message.type == 'MESSAGES' && val.type == 'MESSAGES' ) {
             last_message.messages.push(val.messages[0])
             last_message.last_update = val.last_update
             state.chat.chat_messages.push(last_message)
@@ -707,6 +707,24 @@ const actions = {
             project_id: state.details.project_id,
             user_id: val.user_id,
             message: val.message
+        })
+    },
+    STUDIO_EVENT_EMITTER ({ commit, dispatch }, val) {
+        let last_update = Date.now().toString()
+        let event = {
+            msg_id: objectId(),
+            sender_id: val.user_id,
+            type: 'EVENTS',
+            event_type: val.event_type,
+            last_update: last_update,
+            payload: val.payload
+        }
+        dispatch('STUDIO_ADD_MESSAGE_EVENT', event)
+        state.studioSocket.emit('add_event', {
+            project_id: state.details.project_id,
+            user_id: val.user_id,
+            event_type: event.event_type,
+            payload: event.payload
         })
     },
     SET_STUDIO_CHANGE_SIGNAL ({ commit }, val) {

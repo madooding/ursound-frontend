@@ -112,6 +112,13 @@ const parseStudioToProjectData = (studio_data) => {
     projectData.details.key = studio_data.details.key
     projectData.details.description = studio_data.details.description
     projectData.tracks = studio_data.tracks
+    projectData.tracks =  _.map(projectData.tracks, track => {
+        track.sequences = _.map(track.sequences, seq => {
+            if (track.type == 'AUDIO') delete seq.player
+            return seq
+        })
+        return track
+    })
     delete projectData.members
     delete projectData.comments
     delete projectData.chatroom

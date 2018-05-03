@@ -273,6 +273,7 @@ const actions = {
         Observable.fromPromise(ProjectsService.getProjectData(val.project_id))
             .pluck('data')
             .flatMap(data => {
+                console.log(data);
                 return Promise.resolve(ProjectsService.parseProjectData(data))
             }, (data, project) => ({ ...project }))
             .flatMap(project => {
@@ -301,6 +302,7 @@ const actions = {
             .subscribe(result => {
                 commit('setProjectData', result)
             }, err => {
+                console.log(err);
                 switch(err.response.status){
                     case 404: router.push({ path: '/explore' })
                             break
@@ -340,11 +342,13 @@ const actions = {
                 commit('setProjectData', result)
                 dispatch('SET_STUDIO_CHANGE_SIGNAL', false)
             }, err => {
-                switch(err.response.status){
-                    case 404: router.push({ path: '/explore' })
-                            break
-                    case 401: dispatch('STUDIO_SET_MODE', 'NO_PERMISSION')
-                            break
+                if(err.response.status){
+                    switch(err.response.status){
+                        case 404: router.push({ path: '/explore' })
+                                break
+                        case 401: dispatch('STUDIO_SET_MODE', 'NO_PERMISSION')
+                                break
+                    }
                 }
             })
     },

@@ -33,7 +33,6 @@ import { mapGetters } from 'vuex'
 import io from 'socket.io-client'
 import { UserService } from '../../services/index';
 
-
 export default {
     props: ['project_id'],
     data: () => ({

@@ -340,9 +340,16 @@ const actions = {
                 if(result.tracks.length < 1) dispatch('STUDIO_SET_MODE', 'ADD_NEW_TRACK')
                 else dispatch('STUDIO_SET_MODE', 'EDIT')
             })
+            .do(() => {
+            })
             .subscribe(result => {
                 commit('setProjectData', result)
                 dispatch('SET_STUDIO_CHANGE_SIGNAL', false)
+                dispatch('STUDIO_EVENT_EMITTER', {
+                    user_id: store.getters.getUserProfileData.user_id,
+                    event_type: 'MADE_CHANGES',
+                    payload: {}
+                })
             }, err => {
                 if(err.response.status){
                     switch(err.response.status){
@@ -719,7 +726,7 @@ const actions = {
             last_update: last_update,
             payload: val.payload
         }
-        dispatch('STUDIO_ADD_MESSAGE_EVENT', event)
+        dispatch('STUDIO_ADD_MESSAGE_EVENT', { ...event })
         state.studioSocket.emit('add_event', {
             project_id: state.details.project_id,
             user_id: val.user_id,

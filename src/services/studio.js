@@ -203,6 +203,7 @@ const defineSocketConnection = (project_id, user_id) => {
     })
     socket.on('events', event => {
         store.dispatch('STUDIO_ADD_MESSAGE_EVENT', event.result)
+        if(event.result.event_type == 'MADE_CHANGES') store.dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
         subject.next({
             type: 'EVENTS',
             event: {

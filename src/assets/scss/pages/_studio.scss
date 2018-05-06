@@ -398,6 +398,7 @@ $track-panel-width: 280px;
                         overflow: hidden;
                         .resize-left {
                             position: absolute;
+                            z-index: 10;
                             left: 0px;
                             width: 5px;
                             height: 100%;
@@ -405,6 +406,7 @@ $track-panel-width: 280px;
                         }
                         .resize-right {
                             position: absolute;
+                            z-index: 10;
                             right: 0px;
                             width: 5px;
                             height: 100%;
@@ -435,6 +437,10 @@ $track-panel-width: 280px;
                         background-color: #F7B5FF;
                         color: #9959A1;
                         border-color: #F38FFF;
+                        .audio-waveform {
+                            height: 100%;
+                            position: absolute;
+                        }
 
                         .chord-name {
                             font-size: 20pt;

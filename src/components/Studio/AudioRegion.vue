@@ -4,6 +4,7 @@
         <div class="chord-name" v-if="track_data.type === 'PIANO'">{{ currentChord }}</div>
         <div class="time-signature" v-if="track_data.type === 'PIANO'">{{ time_signature }}</div>
         <div class="resize-right"></div>
+        <div class="audio-waveform" ref="waveform" v-if="track_data.type === 'AUDIO'"></div>
     </div>  
 </template>
 
@@ -15,15 +16,21 @@ import { StudioService } from '../../services'
 export default {
     props: ['track_data', 'region_data'],
     data: () => ({
-        container: null
+        container: null,
+        wavesurfer: null,
+        waveform: null
     }),
     mounted(){
         this.container = $(this.$refs.region)
+        this.waveform = $(this.$refs.waveform)
         this.renderRegion()
         let parentNode = this.$refs.region.parentNode
         $(parentNode).on('click', e => {
             if(e.target === parentNode) this.$store.dispatch('CLEAR_SELECTED_REGION')
         })
+    },
+    updated () {
+        
     },
     methods: {
         renderRegion() {
@@ -31,6 +38,22 @@ export default {
                 this.container.css('width', this.region_data.beat * this.beatWidth)
             } else {
                 this.container.css('width',  ((this.region_data.original_length - (this.region_data.trim_left + this.region_data.trim_right))/1000)/this.songDuration*this.stageWidth)
+                this.waveform.css('min-width', (this.region_data.original_length/1000)/this.songDuration*this.stageWidth)
+                if(this.region_data.url){
+                    this.wavesurfer = WaveSurfer.create({
+                        container: this.$refs.waveform,
+                        barHeight: 1,
+                        height: this.container.height(),
+                        responsive: true,
+                        interact: false,
+                        hideScrollbar: true,
+                        waveColor: '#ba7fc1',
+                        cursorWidth: 0
+                    })
+                    this.wavesurfer.load(this.region_data.url)
+                    this.waveform.css('left', -(this.beatWidth * StudioService.milliseconds2beats(this.details.bpm, this.region_data.trim_left)))
+
+                }
             }
             this.container.css('left', this.beatWidth * (this.region_data.start_beat - 1))
         },

@@ -180,6 +180,8 @@ const mutations = {
         } else {
             regionData.trim_right += diff
         }
+        regionData.trim_left = Math.max(0, regionData.trim_left)
+        regionData.trim_right = Math.max(0, regionData.trim_right)
         state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex] = regionData
         state.tracks[val.currentIndex.trackIndex].modified_time = modified_time
     },

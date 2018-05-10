@@ -208,10 +208,13 @@ export default {
                         if(region_type === 'PIANO') max_size = Math.min(this.beatWidth * 4 - 2, ((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2)
                         else {
                             if(trim_direction === 'left') {
-                                max_size = Math.min(-2 + this.beatWidth * StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_left + (interactedRegion.original_length - interactedRegion.trim_right - interactedRegion.trim_left)), ((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2)
+                                let minSize = StudioService.milliseconds2beats(this.details.bpm, interactedRegion.original_length - interactedRegion.trim_right) % this.details.time_signature
+                                let minActualSize = (minSize - Math.floor(minSize)) * this.beatWidth
+                                max_size = Math.max(minActualSize, Math.min(-2 + this.beatWidth * StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_left + (interactedRegion.original_length - interactedRegion.trim_right - interactedRegion.trim_left)), ((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2))
                             } else max_size = Math.min(-2 + this.beatWidth * StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_right + (interactedRegion.original_length - interactedRegion.trim_right - interactedRegion.trim_left)), ((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2)
                         }
-                        $(target).css('left', (this.elemOffsetX - elemOffsetZtail) + Math.round(elemOffsetZtail / this.snapGrid) * this.snapGrid)
+                        let minLeft = this.beatWidth * (interactedRegion.start_beat - StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_left) - 1)
+                        $(target).css('left', Math.max((this.elemOffsetX - elemOffsetZtail) + Math.round(elemOffsetZtail / this.snapGrid) * this.snapGrid, minLeft))
                         $(target).width(max_size)
                     },
                     onend: e => {

@@ -87,6 +87,7 @@ export default {
     },
     watch: {
         stageWidth () {
+            if(this.track_data.type === 'AUDIO') $(this.$refs.waveform).empty();
             this.renderRegion()
         },
         time_signature (){

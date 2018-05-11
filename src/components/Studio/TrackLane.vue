@@ -138,6 +138,8 @@ export default {
         },
         addInteractionListener () {
             let interactedRegion
+            let waveFormPos
+            let originalWidth
             interact('.audio-region')
                 .draggable({
                     restrict: {
@@ -188,9 +190,12 @@ export default {
                     },
                     onstart: (e) => {
                         this.elemOffsetX = parseFloat(_.replace($(e.target).css('left'), 'px', ''))
+                        waveFormPos = this.removePx($(e.target).children('.audio-waveform').css('left'))
+                        originalWidth = e.rect.width
                         let region_id = $(e.target).attr('region_id')
                         let track_id = $(e.target).attr('track_id')
                         interactedRegion = this.findRegion(track_id, region_id)
+                        console.log(interactedRegion);
                     },
                     onmove: (e) => {
                         let target = e.target;
@@ -210,11 +215,15 @@ export default {
                             if(trim_direction === 'left') {
                                 let minSize = StudioService.milliseconds2beats(this.details.bpm, interactedRegion.original_length - interactedRegion.trim_right) % this.details.time_signature
                                 let minActualSize = (minSize - Math.floor(minSize)) * this.beatWidth
-                                max_size = Math.max(minActualSize, Math.min(-2 + this.beatWidth * StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_left + (interactedRegion.original_length - interactedRegion.trim_right - interactedRegion.trim_left)), ((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2))
+                                width = width - minActualSize
+                                widthTail = width % this.snapGrid
+                                max_size = Math.max(minActualSize, Math.min(-2 + this.beatWidth * StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_left + (interactedRegion.original_length - interactedRegion.trim_right - interactedRegion.trim_left)), ((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2 + minActualSize))
+                                $(target).children('.audio-waveform').css('left', waveFormPos - (originalWidth - max_size) + 2)
                             } else max_size = Math.min(-2 + this.beatWidth * StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_right + (interactedRegion.original_length - interactedRegion.trim_right - interactedRegion.trim_left)), ((width - widthTail) + Math.round(widthTail / this.snapGrid) * this.snapGrid) - 2)
                         }
-                        let minLeft = this.beatWidth * (interactedRegion.start_beat - StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_left) - 1)
+                        let minLeft = region_type === 'AUDIO' ? this.beatWidth * (interactedRegion.start_beat - StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_left) - 1) : (interactedRegion.start_beat - 1 - (this.details.time_signature - interactedRegion.beat)) * this.beatWidth;
                         $(target).css('left', Math.max((this.elemOffsetX - elemOffsetZtail) + Math.round(elemOffsetZtail / this.snapGrid) * this.snapGrid, minLeft))
+                        console.log(this.elemOffsetX, elemOffsetZtail, minLeft);
                         $(target).width(max_size)
                     },
                     onend: e => {

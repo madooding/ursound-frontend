@@ -172,13 +172,11 @@ const mutations = {
         let bpm = state.details.bpm
         let regionData = state.tracks[val.currentIndex.trackIndex].sequences[val.currentIndex.regionIndex]
         let modified_time = Date.now()
-        let diff =  (regionData.original_length - (regionData.trim_left + regionData.trim_right)) - StudioService.beats2milliseconds(bpm, val.payload.duration)
-        // console.log(diff);
         if (val.payload.trim_direction === 'left') {
-            regionData.start_beat += StudioService.milliseconds2beats(bpm, diff)
-            regionData.trim_left += diff
+            regionData.trim_left += (-StudioService.beats2milliseconds(bpm, regionData.start_beat - val.payload.startBeat))
+            regionData.start_beat = val.payload.startBeat
         } else {
-            regionData.trim_right += diff
+            regionData.trim_right += (regionData.original_length - (regionData.trim_left + regionData.trim_right)) - StudioService.beats2milliseconds(bpm, val.payload.duration)
         }
         regionData.trim_left = Math.max(0, regionData.trim_left)
         regionData.trim_right = Math.max(0, regionData.trim_right)

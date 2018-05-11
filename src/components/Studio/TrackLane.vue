@@ -195,7 +195,6 @@ export default {
                         let region_id = $(e.target).attr('region_id')
                         let track_id = $(e.target).attr('track_id')
                         interactedRegion = this.findRegion(track_id, region_id)
-                        console.log(interactedRegion);
                     },
                     onmove: (e) => {
                         let target = e.target;

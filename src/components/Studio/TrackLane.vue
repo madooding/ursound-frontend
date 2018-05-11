@@ -223,7 +223,6 @@ export default {
                         }
                         let minLeft = region_type === 'AUDIO' ? this.beatWidth * (interactedRegion.start_beat - StudioService.milliseconds2beats(this.details.bpm, interactedRegion.trim_left) - 1) : (interactedRegion.start_beat - 1 - (this.details.time_signature - interactedRegion.beat)) * this.beatWidth;
                         $(target).css('left', Math.max((this.elemOffsetX - elemOffsetZtail) + Math.round(elemOffsetZtail / this.snapGrid) * this.snapGrid, minLeft))
-                        console.log(this.elemOffsetX, elemOffsetZtail, minLeft);
                         $(target).width(max_size)
                     },
                     onend: e => {

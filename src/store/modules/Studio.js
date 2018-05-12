@@ -684,6 +684,7 @@ const actions = {
             track_id: _.findIndex(state.tracks, track => track.id === activeTrack.id),
             region_id: recordingRegion.id
         })
+        dispatch('STUDIO_SET_MODE', 'EDIT')
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     STUDIO_ADD_NEW_TRACK ({ commit, dispatch }, val) {

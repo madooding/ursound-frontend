@@ -55,6 +55,9 @@ export default {
                             let blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
                             let recordingRegion = _.find(this.track_data.sequences, region => region.recording)
                             this.uploadAudio(recordingRegion.id, blob)
+                                .do(() => {
+                                    this.$store.dispatch('STUDIO_SET_MODE', 'UPLOADING_AUDIO')
+                                })
                                 .subscribe((res) => {
                                     let player = new Howl({
                                         src: [res.data.url],

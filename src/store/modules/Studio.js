@@ -616,7 +616,6 @@ const actions = {
             trackIndex,
             regionIndex
         })
-        console.log(regionIndex);
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     DELETE_SELECTED_REGION ({ commit, dispatch }) {

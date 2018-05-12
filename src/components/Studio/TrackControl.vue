@@ -16,7 +16,6 @@
             <svg v-if="track_data.type == 'AUDIO'" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="12 -13 50 50" style="enable-background:new 12 -13 50 50;" xml:space="preserve">
                 <g id="Layer_1_1_">
                     <title>Play Btn</title>
-                    <desc>Created with Sketch.</desc>
                     <g id="Page-1_1_">
                         <g id="_x2F_studio_x2F_:song-id_1_" transform="translate(-30.000000, -244.000000)">
                             <g id="Track-Panel_1_" transform="translate(0.000000, 72.000000)">
@@ -34,7 +33,9 @@
             </svg>
         </div>
         <div class="track__right-side">
-            <div class="name">{{ track_data.name }}</div>
+            <div class="name editable-text">
+                <input type="text" ref='name'>
+            </div>
             <div class="control">
                 <div class="control__section">
                     <input ref="volumeControl" type="text" class="dial" data-min="0" data-max="100" data-displayInput="false" data-width="25" data-height="25" data-thickness=".1" :value="track_data.volume">
@@ -58,6 +59,9 @@ import { mapGetters } from 'vuex'
 
 export default {
     props: ['track_data'],
+    data: () => ({
+        name: 'Audio'
+    }),
     components: {
         SoloBtn,
         MuteBtn
@@ -72,6 +76,15 @@ export default {
                 this.updateVolumeState(val)
             }
         });
+        let nameInput = $(this.$refs.name)
+        nameInput.val(this.track_data.name)
+        nameInput.blur(e => {
+            if(nameInput.val().length > 0 && nameInput.val() != this.track_data.name) this.updateTrackName(nameInput.val())
+            else nameInput.val(this.track_data.name)
+        })
+        nameInput.keydown(e => {
+            if(e.keyCode == 13) nameInput.blur()
+        })
     },
     methods: {
         muteActivate(data) {
@@ -84,6 +97,12 @@ export default {
             this.$store.dispatch('UPDATE_TRACK_VOLUME', {
                 id: this.track_data.id,
                 volume: val
+            })
+        },
+        updateTrackName(val) {
+            this.$store.dispatch('UPDATE_TRACK_NAME', {
+                id: this.track_data.id,
+                name: val
             })
         }
     }

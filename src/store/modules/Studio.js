@@ -113,6 +113,10 @@ const mutations = {
         let index = _.findIndex(state.tracks, o => o.id == val.id)
         state.tracks[index].volume = val.volume
     },
+    updateTrackName(state, val) {
+        let index = _.findIndex(state.tracks, o => o.id == val.id)
+        state.tracks[index].name = val.name
+    },  
     toggleChatbox(state){
         state.chat.show = !state.chat.show
         state.chat.unseen = 0
@@ -393,6 +397,10 @@ const actions = {
     },
     UPDATE_TRACK_VOLUME({ commit, dispatch }, val){
         commit('updateTrackVolume', val)
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+    },
+    UPDATE_TRACK_NAME ({ commit, dispatch }, val) {
+        commit('updateTrackName', val)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     TOGGLE_CHATBOX({commit}) {

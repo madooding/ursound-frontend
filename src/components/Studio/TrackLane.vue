@@ -98,7 +98,6 @@ export default {
             if (canvas.getContext) {
                 let ctx = canvas.getContext('2d')
                 if(!this.studioEnv.trackLaneCanvas){
-                    console.log('render track');
                     ctx.scale(2, 2)
                     ctx.clearRect(0, 0, canvas.width, canvas.height)
                     for(let beat = 1; beat <= this.details.bars * this.details.time_signature; beat++){

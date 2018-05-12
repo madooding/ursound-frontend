@@ -9,7 +9,7 @@ import { ProjectsService } from '.';
 
 const API_URL = 'http://localhost:9000'
 
-const ac = context.getAudioContext()
+let ac 
 
 const keyMap = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B']
 const chordMap = ['', 'm', 'm', '', '', 'm', 'dim']
@@ -72,6 +72,7 @@ const getSuggestedChords = (sequences) => {
  * @returns {Observable} return observable that contains piano instrument soundfont object
  */
 const defineInstrument = () => {
+    ac = context.getAudioContext()
     return Observable.fromPromise(Soundfont.instrument(ac, 'acoustic_grand_piano'))
         .do(piano => {
             store.dispatch('SET_PIANO_INSTRUMENT', piano)

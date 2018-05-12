@@ -19,6 +19,7 @@
         <NewTrackModal></NewTrackModal>
         <add-contributor-modal></add-contributor-modal>
         <no-permission-modal></no-permission-modal>
+        <ModeModal></ModeModal>
     </div>
 </template>
 
@@ -33,6 +34,9 @@ import CountdownModal from '../components/Studio/CountdownModal'
 import NewTrackModal from '../components/Studio/NewTrackModal'
 import NoPermissionModal from '../components/Studio/NoPermissionModal'
 import AddContributorModal from '../components/Studio/AddContributorModal'
+import ModeModal from '../components/Studio/ModeModal'
+
+
 import { ProjectsService } from '../services'
 
 
@@ -48,7 +52,8 @@ export default {
         CountdownModal,
         NewTrackModal,
         NoPermissionModal,
-        AddContributorModal
+        AddContributorModal,
+        ModeModal
     },
     created () {
         this.$store.dispatch('STUDIO_LOAD_PROJECT_DATA', { project_id: this.project_id })

@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { Observable, Subject } from 'rxjs'
 import io from 'socket.io-client'
 import router from '../../router'
-import { last } from 'rxjs/operators';
+import { last, distinct } from 'rxjs/operators';
 
 /**
  * 
@@ -50,6 +50,7 @@ const studioEnvStruct = {
         currentTimePercent: 0,
         mode: 'EDIT', // EDIT, PLAYBACK, COUNTDOWN, RECORDING, ADD_NEW_TRACK, LOAD_PROJECT, NO_PERMISSION, UPLOADING_AUDIO, ADD_NEW_CONTRIBUTOR
         piano: null,
+        trackLaneCanvas: null,
         isMetronomeOn: false,
         studioEvent: io.prototype,
         metronome: {
@@ -264,6 +265,9 @@ const mutations = {
     },
     studioUpdateMembersOfProject (state, val) {
         state.details.members = val
+    },
+    setStudioTracklaneCanvas (state, val) {
+        state.env.trackLaneCanvas = val
     }
 }
 
@@ -736,6 +740,12 @@ const actions = {
     },
     SET_STUDIO_CHANGE_SIGNAL ({ commit }, val) {
         commit('setStudioChangeSignal', val)
+    },
+    SET_STUDIO_TRACKLANE_CANVAS ({ commit }, val) {
+        commit('setStudioTracklaneCanvas', val)
+    },
+    RESET_STUDIO_TRACKLANE_CANVAS ({ commit, dispatch }) {
+        dispatch('SET_STUDIO_TRACKLANE_CANVAS', null)
     }
 }
 

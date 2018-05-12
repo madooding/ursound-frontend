@@ -94,17 +94,23 @@ export default {
             let avoid = Math.round(14/perBeat) * 2
             if (canvas.getContext) {
                 let ctx = canvas.getContext('2d')
-                ctx.scale(2, 2)
-                ctx.clearRect(0, 0, canvas.width, canvas.height)
-                for(let beat = 1; beat <= this.details.bars * this.details.time_signature; beat++){
-                    if (avoid === 0 || (beat % avoid === 1 && avoid > 0)) {
-                        ctx.beginPath();
-                        ctx.moveTo((beat - 1) * perBeat, 0);
-                        ctx.lineTo((beat - 1) * perBeat, height);
-                        ctx.strokeStyle = '#292B3B';
-                        ctx.stroke();
-                        ctx.closePath();
+                if(!this.studioEnv.trackLaneCanvas){
+                    console.log('render track');
+                    ctx.scale(2, 2)
+                    ctx.clearRect(0, 0, canvas.width, canvas.height)
+                    for(let beat = 1; beat <= this.details.bars * this.details.time_signature; beat++){
+                        if (avoid === 0 || (beat % avoid === 1 && avoid > 0)) {
+                            ctx.beginPath();
+                            ctx.moveTo((beat - 1) * perBeat, 0);
+                            ctx.lineTo((beat - 1) * perBeat, height);
+                            ctx.strokeStyle = '#292B3B';
+                            ctx.stroke();
+                            ctx.closePath();
+                        }
                     }
+                    this.$store.dispatch('SET_STUDIO_TRACKLANE_CANVAS', canvas)
+                } else {
+                    ctx.drawImage(this.studioEnv.trackLaneCanvas, 0, 0)
                 }
             }
         },

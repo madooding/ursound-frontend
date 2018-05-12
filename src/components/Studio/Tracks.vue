@@ -63,6 +63,9 @@ export default {
     watch: {
         scrollX() {
             $(this.$refs.tracks).scrollLeft(this.scrollX)
+        },
+        stageWidth() {
+            this.$store.dispatch('RESET_STUDIO_TRACKLANE_CANVAS')
         }
     },
     computed: {

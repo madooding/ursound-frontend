@@ -4,12 +4,12 @@ import store from '../store'
 import axios from 'axios'
 import io from 'socket.io-client'
 import _ from 'lodash'
+import context from './context'
 import { ProjectsService } from '.';
 
 const API_URL = 'http://localhost:9000'
 
-const AudioContext = window.AudioContext || window.webkitAudioContext
-const ac = new AudioContext()
+const ac = context.getAudioContext()
 
 const keyMap = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B']
 const chordMap = ['', 'm', 'm', '', '', 'm', 'dim']
@@ -99,8 +99,10 @@ const playChord = (chord, beat, timer) => {
     }
     let scheduleNotes = _.concat(_.map(_.range(beat), each => (_.map(chordStruct, note => ({ time: each * timer, 'note': note, duration: timer})))))
     scheduleNotes = _.flatten(scheduleNotes)
-
-    piano.schedule(ac.currentTime, scheduleNotes)
+    ac.resume().then(() => {
+        piano.schedule(ac.currentTime, scheduleNotes)
+    })
+    
 }
 
 

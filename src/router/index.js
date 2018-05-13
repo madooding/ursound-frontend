@@ -60,17 +60,25 @@ const router = new Router({
 
 const match = async (to, from, next) => {
     if (to.matched.some(x => x.meta.beforeAuth)){
-        if(store.getters.isLoggedIn){
-            next({ path: "/explore" })
+        if(await store.getters.isLoggedIn){
+            console.log('before Auth', store.getters.isLoggedIn);
+            router.push({ path: "/explore" })
+            return
         }
     }
 
     if (to.matched.some((x) => x.meta.requiredAuth)) {
-        if(!store.getters.isLoggedIn) next({ path: "/login" })
+        if(!store.getters.isLoggedIn) {
+            next({ path: `/login?redirect=${to.fullPath}` })
+            return
+        }
     }
 
     if (to.matched.some(x => x.meta.requiredProjectId)) {
-        if(!to.params.project_id) next({ path: from.path })
+        if(!to.params.project_id) {
+            next({ path: from.path })
+            return
+        }
     }
 
     if (to.matched.some((x) => x.meta.needFacebookAuthorized)) {
@@ -81,9 +89,13 @@ const match = async (to, from, next) => {
                 })
             })
             let result = await getLoginState()
-            if (result.status !== "connected") next({ path: '/signup' })
+            if (result.status !== "connected") {
+                next({ path: `/signup?redirect=${to.fullPath}` })
+                return
+            }
         } catch (err){
-            next({ path: '/signup' })
+            next({ path: `/signup?redirect=${to.fullPath}` })
+            return
         }
     }
     next()

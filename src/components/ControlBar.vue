@@ -122,7 +122,7 @@ export default {
     data: () => ({
         timeutil: undefined,
         timeDiff: null,
-        bpm: 60
+        bpm: null
     }),
     components: {
         vueSlider
@@ -197,7 +197,6 @@ export default {
         },
         setBpm () {
             this.bpm = $(this.$refs.tempo).val()
-            this.$store.dispatch('STUDIO_UPDATE_TEMPO', this.bpm)
         }
     },
     computed: {
@@ -214,7 +213,7 @@ export default {
         cancelAnimationFrame(this.timeutil)
     },
     watch: {
-        'details.project_id': function () {
+        'details.bpm': function () {
             this.bpm = this.details.bpm
         },
         currentTimeBeatsFloor () {
@@ -240,6 +239,7 @@ export default {
         },
         bpm () {
             this.bpm = Math.min(180, Math.max(60, this.bpm))
+            this.$store.dispatch('STUDIO_UPDATE_TEMPO', this.bpm)
             $(this.$refs.tempo).val(this.bpm)
         }
     }

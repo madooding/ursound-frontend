@@ -51,7 +51,7 @@
         </transition>
         <div class="box__footer">
             <p><router-link to="">Forgot password ?</router-link></p>
-            <p v-if="getPath === '/login'">New here ? <router-link to="/signup">Sign Up</router-link></p>
+            <p v-if="pageMode === 'login'">New here ? <router-link to="/signup">Sign Up</router-link></p>
             <p v-else-if="isSignupMode">Have an account ? <router-link to="/login">Log In</router-link></p>
         </div>
     </div>
@@ -72,7 +72,7 @@ export default {
         submitBtnLoading: false
     }),
     created(){
-        console.log("mounted!");
+        // console.log("mounted!");
     },
     computed: {
         getPath(){
@@ -131,13 +131,13 @@ export default {
                         let loginResult = await AuthService.facebookLogin(loginStatus.authResponse.accessToken)
                         console.log(loginResult)
                         this.$ls.set("_token", loginResult.data.token)
-                        this.$router.push('/explore')                        
+                        this.$router.push(this.$route.query.redirect || '/explore')                        
                     }
                 } else if(response.status === "connected"){
                     let loginResult = await AuthService.facebookLogin(response.authResponse.accessToken)
                     console.log(loginResult)
                     this.$ls.set("_token", loginResult.data.token)
-                    this.$router.push('/explore')                    
+                    this.$router.push(this.$route.query.redirect || '/explore')
                 }
             } catch (error){
                 console.log(error);
@@ -168,7 +168,7 @@ export default {
                             try {
                                 let result = await UserService.defaultSignup(this.email, this.username, this.password)
                                 this.$ls.set('_token', result.data.token)
-                                this.$router.push('/explore')
+                                this.$router.push(this.$route.query.redirect || '/explore')
                             } catch(err) {
                                 console.log(err.response.data)
                                 if(err.response.data){
@@ -184,7 +184,7 @@ export default {
                                 if(fbLoginState.status === 'connected'){
                                     let result = await UserService.facebookSignup(this.username, this.password, fbLoginState.authResponse.accessToken)
                                     this.$ls.set('_token', result.data.token)
-                                    this.$router.push('/explore')
+                                    this.$router.push(this.$route.query.redirect || '/explore')
                                 }
 
                             } catch (err) {
@@ -215,7 +215,7 @@ export default {
                             .then(response => {
                                 console.log(response.data)
                                 this.$ls.set("_token", response.data.token)
-                                this.$router.push('/explore')
+                                this.$router.push(this.$route.query.redirect || '/explore')
                                 this.submitBtnLoading = false
                             })
                             .catch(err => {

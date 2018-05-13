@@ -114,7 +114,15 @@
                 transition: fill .5s ease;
             }
         }
-    
+        
+        .option.tempo {
+            width: 60px;
+            input {
+                text-align: center;
+                padding-left: 12px;
+            }
+        }
+
         .option.active {
             button {
                 fill: $secondary;

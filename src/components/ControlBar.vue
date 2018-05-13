@@ -84,7 +84,9 @@
         </div>
         <div class="controlbar__options">
             <div class="option">Key : {{ currentKey }}</div>
-            <div class="option">110</div>
+            <div class="option tempo editable-text">
+                <input type="number" ref="tempo" maxlength="3" max='160' min='60' pattern="[0-9]{2,3}" @keydown.up="incDecBpm(1)" @keydown.down="incDecBpm(-1)">
+            </div>
             <div class="option">4/4</div>
             <div class="option" :class="{'active': studioEnv.isMetronomeOn }" @click="toggleMetronome()">
                 <button> 
@@ -119,10 +121,19 @@ import { Howl } from 'howler'
 export default {
     data: () => ({
         timeutil: undefined,
-        timeDiff: null
+        timeDiff: null,
+        bpm: 60
     }),
     components: {
         vueSlider
+    },
+    mounted () {
+        $(this.$refs.tempo).blur(() => {
+            this.setBpm()
+        }).keydown(e => {
+            if(e.keyCode == 13)  $(this.$refs.tempo).blur()
+        })
+        this.bpm = this.details.bpm
     },
     methods: {
         showChatBox(){
@@ -180,6 +191,13 @@ export default {
                 if(this.currentTimeBeats % this.details.time_signature == 1 ) this.metronome.up.play()
                 else this.metronome.down.play()
             }
+        },
+        incDecBpm (n) {
+            this.bpm += n
+        },
+        setBpm () {
+            this.bpm = $(this.$refs.tempo).val()
+            this.$store.dispatch('STUDIO_UPDATE_TEMPO', this.bpm)
         }
     },
     computed: {
@@ -196,6 +214,9 @@ export default {
         cancelAnimationFrame(this.timeutil)
     },
     watch: {
+        'details.project_id': function () {
+            this.bpm = this.details.bpm
+        },
         currentTimeBeatsFloor () {
             if((this.studioEnv.mode === 'PLAYBACK' || this.studioEnv.mode === 'RECORD') && this.studioEnv.isMetronomeOn){
                 if(this.currentTimeBeatsFloor % this.details.time_signature == 1) this.metronome.up.play()
@@ -216,6 +237,10 @@ export default {
         },
         'currentTimePercent': function() {
             if(this.currentTimePercent == 100) this.playPause()
+        },
+        bpm () {
+            this.bpm = Math.min(180, Math.max(60, this.bpm))
+            $(this.$refs.tempo).val(this.bpm)
         }
     }
 }

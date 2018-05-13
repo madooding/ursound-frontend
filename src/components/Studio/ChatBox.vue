@@ -58,7 +58,7 @@ export default {
     updated () {
         this.$nextTick(() => {
             let messageBox = $(this.$refs.messageBox)
-            messageBox.scrollTop(this.$refs.messageBox.scrollHeight)
+            if (this.$refs.messageBox) messageBox.scrollTop(this.$refs.messageBox.scrollHeight || 0)
         })
     },
     methods: {
@@ -100,7 +100,7 @@ export default {
     watch: {
         messages () {
             let messageBox = $(this.$refs.messageBox)
-            messageBox.animate({ scrollTop: this.$refs.messageBox.scrollHeight }, "slow")
+            if (this.$refs.messageBox) messageBox.animate({ scrollTop: this.$refs.messageBox.scrollHeight || 0 }, "slow")
         },
         'studioEnv.studioEvent' () {
             this.studioEnv.studioEvent

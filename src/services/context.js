@@ -8,7 +8,6 @@ let audioContext
  * @returns {AudioContextBase}
  */
 const getAudioContext = () => {
-    if(audioContext) console.log(audioContext.state);
     if(!audioContext) {
         audioContext = new AudioContext()
     }

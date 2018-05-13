@@ -134,6 +134,7 @@ export default {
             if(e.keyCode == 13)  $(this.$refs.tempo).blur()
         })
         this.bpm = this.details.bpm
+        $(this.$refs.tempo).val(this.bpm)
     },
     methods: {
         showChatBox(){
@@ -193,10 +194,13 @@ export default {
             }
         },
         incDecBpm (n) {
-            this.bpm += n
+            // this.bpm += n
+            // $(this.$refs.tempo).val(this.bpm)
         },
         setBpm () {
-            this.bpm = $(this.$refs.tempo).val()
+            let bpm = $(this.$refs.tempo).val()
+            bpm = Math.min(180, Math.max(60, bpm))
+            if (bpm != this.bpm) this.$store.dispatch('STUDIO_UPDATE_TEMPO', bpm)
         }
     },
     computed: {
@@ -215,6 +219,7 @@ export default {
     watch: {
         'details.bpm': function () {
             this.bpm = this.details.bpm
+            $(this.$refs.tempo).val(this.bpm)
         },
         currentTimeBeatsFloor () {
             if((this.studioEnv.mode === 'PLAYBACK' || this.studioEnv.mode === 'RECORD') && this.studioEnv.isMetronomeOn){
@@ -236,11 +241,6 @@ export default {
         },
         'currentTimePercent': function() {
             if(this.currentTimePercent == 100) this.playPause()
-        },
-        bpm () {
-            this.bpm = Math.min(180, Math.max(60, this.bpm))
-            this.$store.dispatch('STUDIO_UPDATE_TEMPO', this.bpm)
-            $(this.$refs.tempo).val(this.bpm)
         }
     }
 }

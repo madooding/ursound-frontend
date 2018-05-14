@@ -180,7 +180,7 @@ export default {
             this.timeutil = requestAnimationFrame(this.counter)
             let now = Date.now()
             let delta = now - this.timeDiff
-            if(delta > 1000/60){
+            if(delta >= 1000/60){
                 this.timeDiff = now - (delta % 1000/60)
                 let percent = (delta/1000)/this.duration*100
                 this.$store.dispatch('SET_STUDIO_CURRENT_TIME', this.currentTimePercent + percent)

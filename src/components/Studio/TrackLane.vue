@@ -279,10 +279,11 @@ export default {
             }).toLowerCase();
         },
         playChordOnBeat (beat) {
-            let region = _.find(this.track_data.sequences, each => each.start_beat == beat)
+            if (this.currentTimeBeats - beat > .1) return
+            let region = _.find(this.track_data.sequences, each => beat >= each.start_beat && beat < each.start_beat+each.beat)
             if(region){
                 let chord = StudioService.mapChord(this.details.key - 1, region.chord)
-                StudioService.playChord(chord, region.beat, this.beatDuration)
+                StudioService.playChord(chord, this.beatDuration)
             }
         },
         playAudioOnBeat (beat) {

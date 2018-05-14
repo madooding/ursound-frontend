@@ -86,9 +86,13 @@ const defineInstrument = () => {
  * @param {number} beat how many time of repeating playing that chord
  * @param {number} timer duration
  */
-const playChord = (chord, beat, timer) => {
+const playChord = (chord, timer) => {
     let piano = store.getters.getStudioEnv.piano
-    let shiftedKey = _.findIndex(keyMap, key => key === chord[0] || key === chord[0]+chord[1])
+    let shiftedKey = _.findIndex(keyMap, key => {
+        if(/^[A-G][#b]/.test(chord)) return key == chord[0]+chord[1]
+        else return key == chord[0]
+        return false
+    })
     shiftedKey = shiftedKey > 7 ? shiftedKey - 12 : shiftedKey
     let chordStruct
     if (/^[A-G][#b]?$/.test(chord)){
@@ -98,7 +102,7 @@ const playChord = (chord, beat, timer) => {
     } else if (/^[A-G][#b]?dim$/.test(chord)){
         chordStruct = _.map(chordType.diminished, note => note + shiftedKey)
     }
-    let scheduleNotes = _.concat(_.map(_.range(beat), each => (_.map(chordStruct, note => ({ time: each * timer, 'note': note, duration: timer})))))
+    let scheduleNotes = _.map(_.range(1), each => (_.map(chordStruct, note => ({ time: each * timer, 'note': note, duration: timer}))))
     scheduleNotes = _.flatten(scheduleNotes)
     ac.resume().then(() => {
         piano.schedule(ac.currentTime, scheduleNotes)

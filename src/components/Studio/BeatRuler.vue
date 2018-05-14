@@ -118,6 +118,9 @@ export default {
         stageWidth() {
             this.onStageWidthChange()
         },
+        'details.time_signature': function () {
+            this.onStageWidthChange()
+        },
         scrollX() {
             this.container.animate({'scrollLeft': this.scrollX}, 0)
         },

@@ -66,6 +66,9 @@ export default {
         },
         stageWidth() {
             this.$store.dispatch('RESET_STUDIO_TRACKLANE_CANVAS')
+        },
+        'details.time_signature': function () {
+            this.$store.dispatch('RESET_STUDIO_TRACKLANE_CANVAS')
         }
     },
     computed: {

@@ -91,7 +91,11 @@
             <div class="option tempo editable-text">
                 <input type="number" ref="tempo" maxlength="3" max='160' min='60' pattern="[0-9]{2,3}" @keydown.up="incDecBpm(1)" @keydown.down="incDecBpm(-1)">
             </div>
-            <div class="option">4/4</div>
+            <div class="option time-signature dropdown dropdown--top" @click="toggleTimeSignatureSelect()" :class="{'show': timeSignatureSelect, 'active': timeSignatureSelect }">{{ `${details.time_signature}/4` }}
+                <div class="dropdown__content">
+                    <div class="list" v-for="i in [3, 4]" :key="i" :class="{'active': i == details.time_signature}" @click="selectTimeSignature(i)">{{ `${i}/4` }}</div>
+                </div>
+            </div>
             <div class="option" :class="{'active': studioEnv.isMetronomeOn }" @click="toggleMetronome()">
                 <button> 
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
@@ -129,7 +133,8 @@ export default {
         timeDiff: null,
         bpm: null,
         keys: [],
-        keySelect: false
+        keySelect: false,
+        timeSignatureSelect: false
     }),
     components: {
         vueSlider
@@ -217,6 +222,12 @@ export default {
         },
         selectKey (i) {
             this.$store.dispatch('STUDIO_UPDATE_KEY', i+1)
+        },
+        toggleTimeSignatureSelect () {
+            this.timeSignatureSelect = !this.timeSignatureSelect
+        },
+        selectTimeSignature (i) {
+            this.$store.dispatch('STUDIO_UPDATE_TIME_SIGNATURE', i)
         }
     },
     computed: {

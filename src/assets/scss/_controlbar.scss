@@ -102,7 +102,6 @@
         width: 30%;
         .option {
             width: auto;
-
             display: flex;
             align-items: center;
             justify-content: center;
@@ -121,6 +120,10 @@
                 text-align: center;
                 padding-left: 12px;
             }
+        }
+
+        .option.time-signature {
+            padding: 0px 15px;
         }
 
         .option.active {

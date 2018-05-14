@@ -123,6 +123,9 @@ const mutations = {
     studioUpdateKey(state, val) {
         state.details.key = val
     },
+    studioUpdateTimeSignature(state, val) {
+        state.details.time_signature = val
+    },
     toggleChatbox(state){
         state.chat.show = !state.chat.show
         state.chat.unseen = 0
@@ -415,6 +418,10 @@ const actions = {
     },
     STUDIO_UPDATE_KEY ({ commit, dispatch }, val) {
         commit('studioUpdateKey', val)
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+    },
+    STUDIO_UPDATE_TIME_SIGNATURE ({ commit, dispatch }, val) {
+        commit('studioUpdateTimeSignature', val)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     TOGGLE_CHATBOX({commit}) {

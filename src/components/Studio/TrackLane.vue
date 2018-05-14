@@ -326,6 +326,9 @@ export default {
         stageWidth() {
             this.onStageWidthChange()
         },
+        'details.time_signature': function () {
+            this.onStageWidthChange()
+        },
         indicatorPos() {
             this.renderIndicator()
             if (this.studioEnv.mode === 'RECORD' && this.track_data.type === 'AUDIO' && this.track_data.id === this.activeTrack.id) {

@@ -120,6 +120,9 @@ const mutations = {
     studioUpdateTempo(state, val) {
         state.details.bpm = val
     },
+    studioUpdateKey(state, val) {
+        state.details.key = val
+    },
     toggleChatbox(state){
         state.chat.show = !state.chat.show
         state.chat.unseen = 0
@@ -408,6 +411,10 @@ const actions = {
     },
     STUDIO_UPDATE_TEMPO ({ commit, dispatch }, val) {
         commit('studioUpdateTempo', val)
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+    },
+    STUDIO_UPDATE_KEY ({ commit, dispatch }, val) {
+        commit('studioUpdateKey', val)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     TOGGLE_CHATBOX({commit}) {

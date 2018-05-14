@@ -83,7 +83,11 @@
             </button>
         </div>
         <div class="controlbar__options">
-            <div class="option">Key : {{ currentKey }}</div>
+            <div class="option dropdown dropdown--top" @click="toggleKeySelect()" :class="{'show': keySelect}">Key : {{ currentKey }}
+                <div class="dropdown__content">
+                    <div class="list" v-for="(key, i) in keys" :key="i" :class="{'active': i == details.key-1}" @click="selectKey(i)">{{ key }}</div>
+                </div>
+            </div>
             <div class="option tempo editable-text">
                 <input type="number" ref="tempo" maxlength="3" max='160' min='60' pattern="[0-9]{2,3}" @keydown.up="incDecBpm(1)" @keydown.down="incDecBpm(-1)">
             </div>
@@ -117,15 +121,21 @@ import moment from 'moment'
 import vueSlider from 'vue-slider-component'
 import { mapGetters } from 'vuex'
 import { Howl } from 'howler'
+import { StudioService } from '../services'
 
 export default {
     data: () => ({
         timeutil: undefined,
         timeDiff: null,
-        bpm: null
+        bpm: null,
+        keys: [],
+        keySelect: false
     }),
     components: {
         vueSlider
+    },
+    created () {
+        this.keys = StudioService.keyMap
     },
     mounted () {
         $(this.$refs.tempo).blur(() => {
@@ -201,6 +211,12 @@ export default {
             let bpm = $(this.$refs.tempo).val()
             bpm = Math.min(180, Math.max(60, bpm))
             if (bpm != this.bpm) this.$store.dispatch('STUDIO_UPDATE_TEMPO', bpm)
+        },
+        toggleKeySelect () {
+            this.keySelect = !this.keySelect
+        },
+        selectKey (i) {
+            this.$store.dispatch('STUDIO_UPDATE_KEY', i+1)
         }
     },
     computed: {

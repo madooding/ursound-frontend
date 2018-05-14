@@ -74,7 +74,7 @@ export default {
     },
     computed: {
         currentChord () {
-            return StudioService.mapChord(this.currentKey, this.region_data.chord)
+            return StudioService.mapChord(this.details.key-1, this.region_data.chord)
         },
         time_signature() {
             return `${this.region_data.beat}/${this.details.time_signature}`

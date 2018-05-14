@@ -61,7 +61,7 @@ export default {
                     console.log(err);
                 })
         },
-        mapChord: (chord) => StudioService.mapChord(this.currentKey, chord),
+        mapChord: function (chord) { return StudioService.mapChord(this.details.key - 1, chord) },
         addChord (chord_id) {
             this.$store.dispatch('ADD_CHORD_REGION', {
                 chord_id,
@@ -73,7 +73,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({ "getActiveTrack": "getStudioActiveTrack", 'details':  'getStudioDetails', currentKey: 'getStudioCurrentKey' })
+        ...mapGetters({ "getActiveTrack": "getStudioActiveTrack", details:  'getStudioDetails', currentKey: 'getStudioCurrentKey' })
     },
     watch: {
         'getActiveTrack.id' () {

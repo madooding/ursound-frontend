@@ -83,7 +83,7 @@
             </button>
         </div>
         <div class="controlbar__options">
-            <div class="option dropdown dropdown--top" @click="toggleKeySelect()" :class="{'show': keySelect}">Key : {{ currentKey }}
+            <div class="option dropdown dropdown--top" @click="toggleKeySelect()" :class="{ 'show': keySelect, 'active': keySelect }">Key : {{ currentKey }}
                 <div class="dropdown__content">
                     <div class="list" v-for="(key, i) in keys" :key="i" :class="{'active': i == details.key-1}" @click="selectKey(i)">{{ key }}</div>
                 </div>

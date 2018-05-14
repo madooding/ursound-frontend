@@ -124,6 +124,7 @@
         }
 
         .option.active {
+            color: $secondary;
             button {
                 fill: $secondary;
             }
@@ -131,6 +132,11 @@
 
         .option.dropdown {
             cursor: pointer;
+            .dropdown__content {
+                .list {
+                    justify-content: center;
+                }
+            }
         }
     }
     

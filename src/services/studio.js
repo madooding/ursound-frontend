@@ -41,7 +41,7 @@ const mapChord = (key, n) => {
         return scaleMap(key)[n - 1] + chordMap[n - 1]
     } else if (/(^b[1-7]{1}$)/.test(n)) {
         n = parseInt(n[1])
-        return scaleMap(key)[n - 1] + 'b'
+        return scaleMap(key-1)[n - 1]
     } else if (/(^[1-7]{1}\/[1-7]{1}$)/.test(n)) {
         let a = parseInt(n[0])
         let b = parseInt(n[2])

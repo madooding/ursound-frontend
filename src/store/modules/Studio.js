@@ -204,7 +204,7 @@ const mutations = {
         state.tracks[val.trackIndex].sequences[val.regionIndex].active = val.payload
     },
     deleteRegion (state, val) {
-        state.tracks[val.trackIndex].sequences.splice(val.regionIndex, 1)
+        state.tracks[val.trackIndex].sequences[val.regionIndex].deleted = true
     },
     addChordRegion (state, val) {
         let activeTrack = getters.getStudioActiveTrack(state)
@@ -520,7 +520,7 @@ const actions = {
             .map(seq => {
                 if(state.tracks[trackIndex].type === 'PIANO'){
                     return _.map(seq, (each, i) => {
-                        if(i === regionIndex) return each
+                        if(i === regionIndex || each.deleted) return each
                         let a = lastedRegion.start_beat, b = lastedRegion.start_beat+lastedRegion.beat - 1
                         let x = each.start_beat, y = each.start_beat+each.beat - 1
                         if (a <= x && b >= y){
@@ -535,6 +535,7 @@ const actions = {
                                 modified_time: Date.now(),
                                 start_beat: b + 1,
                                 beat: y - b,
+                                deleted: false,
                                 active: false
                             }
                             return [each, newRegion]
@@ -550,7 +551,7 @@ const actions = {
                     })
                 } else {
                     return _.map(seq, (each, i) => {
-                        if(i === regionIndex) return each
+                        if(i === regionIndex || each.deleted) return each
                         let bpm = state.details.bpm
                         let a = lastedRegion.start_beat, b = lastedRegion.start_beat+StudioService.milliseconds2beats(bpm, lastedRegion.original_length - lastedRegion.trim_left - lastedRegion.trim_right) - 1
                         let x = each.start_beat, y = each.start_beat+StudioService.milliseconds2beats(bpm, each.original_length - each.trim_left - each.trim_right) - 1
@@ -566,7 +567,8 @@ const actions = {
                                 start_beat: b + 1,
                                 trim_left: each.original_length - StudioService.beats2milliseconds(bpm, y - b),
                                 trim_right: each.trim_right,
-                                active: false
+                                active: false,
+                                deleted: false
                             }
                             each.modified_time = Date.now()
                             each.trim_right = each.original_length - StudioService.beats2milliseconds(bpm, a - x)
@@ -671,6 +673,7 @@ const actions = {
             modified_time: Date.now(),
             chord: val.chord_id,
             beat: val.chord_duration,
+            deleted: false,
             start_beat: getters.getStudioCurrentTimeBeats(state),
             active: false
         }
@@ -691,6 +694,7 @@ const actions = {
             start_beat: getters.getStudioCurrentTimeBeats(state),
             active: false,
             recording: val.recording ? val.recording : true,
+            deleted: false,
             original_length: 0,
             trim_left: 0,
             trim_right: 0

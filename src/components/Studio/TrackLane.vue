@@ -2,7 +2,7 @@
     <div class="track-lane" ref="trackLaneContainer" :track_id="track_data.id">
         <canvas ref="trackLane"></canvas>
         <div class="regions">
-            <AudioRegion v-for="region in track_data.sequences" v-bind:key="region.id" :region_type="track_data.type" :track_id="track_data.id" :region_id="region.id" class="audio-region" :class="{'audio-region--piano': track_data.type === 'PIANO', 'audio-region--audio': track_data.type === 'AUDIO'}" v-bind:track_data="track_data" v-bind:region_data="region"></AudioRegion>
+            <AudioRegion v-for="region in track_data.sequences" v-bind:key="region.id" :region_type="track_data.type" :track_id="track_data.id" :region_id="region.id" class="audio-region" :class="{'audio-region--piano': track_data.type === 'PIANO', 'audio-region--audio': track_data.type === 'AUDIO'}" v-bind:track_data="track_data" v-bind:region_data="region" v-if="!region.deleted"></AudioRegion>
         </div>
         <svg version="1.1" ref="indicator" class="indicator-line" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 3 100" style="enable-background:new 0 0 3 100;" xml:space="preserve">
             <line id="XMLID_1_" class="st0" x1="1.5" y1="0" x2="1.5" y2="100"/>
@@ -280,7 +280,7 @@ export default {
         },
         playChordOnBeat (beat) {
             if (this.currentTimeBeats - beat > .1) return
-            let region = _.find(this.track_data.sequences, each => beat >= each.start_beat && beat < each.start_beat+each.beat)
+            let region = _.find(this.track_data.sequences, each => beat >= each.start_beat && beat < each.start_beat+each.beat && !each.deleted)
             if(region){
                 let chord = StudioService.mapChord(this.details.key - 1, region.chord)
                 StudioService.playChord(chord, this.beatDuration)
@@ -289,7 +289,7 @@ export default {
         playAudioOnBeat (beat) {
             // Find region that beat current on
             let bpm = this.details.bpm
-            let region = _.find(this.track_data.sequences, each => beat >= each.start_beat && beat <= each.start_beat + StudioService.milliseconds2beats(this.details.bpm, each.original_length - each.trim_right - each.trim_left) && !each.recording)
+            let region = _.find(this.track_data.sequences, each => beat >= each.start_beat && beat <= each.start_beat + StudioService.milliseconds2beats(this.details.bpm, each.original_length - each.trim_right - each.trim_left) && !each.recording && !each.deleted)
             if((this.currentRegion == null && region) || (region && region.id != this.currentRegion.id)){
                 if(this.currentRegion) this.currentRegion.player.stop()
                 this.currentRegion = region

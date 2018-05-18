@@ -558,6 +558,7 @@ const actions = {
                         if (a <= x && b >= y){
                             each.modified_time = Date.now()
                             each.original_length = 0
+                            each.deleted = true
                         } else if(a > x && b < y){
                             let newRegion = {
                                 id: objectId(),
@@ -581,12 +582,13 @@ const actions = {
                             each.start_beat = b + 1
                             each.trim_left = (each.original_length - each.trim_right) - StudioService.beats2milliseconds(bpm, y - b)
                         }
+
                         return each
                     })
                 }
             })
             .map(seq => _.flattenDeep(seq))
-            .map(seq => _.filter(seq, each => each.beat > 0 || each.original_length > 0))
+            .map(seq => _.filter(seq, each => each.beat > 0 || each.original_length >= 0))
             .subscribe(seq => {
                 dispatch('UPDATE_TRACK_SEQUENCES', {
                     track_id: val.track_id,

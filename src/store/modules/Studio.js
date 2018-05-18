@@ -526,6 +526,7 @@ const actions = {
                         if (a <= x && b >= y){
                             each.modified_time = Date.now()
                             each.beat = 0
+                            each.deleted = true
                         } else if(a > x && b < y){
                             each.modified_time = Date.now()
                             each.beat = a - x
@@ -588,7 +589,7 @@ const actions = {
                 }
             })
             .map(seq => _.flattenDeep(seq))
-            .map(seq => _.filter(seq, each => each.beat > 0 || each.original_length >= 0))
+            .map(seq => _.filter(seq, each => each.beat >= 0 || each.original_length >= 0))
             .subscribe(seq => {
                 dispatch('UPDATE_TRACK_SEQUENCES', {
                     track_id: val.track_id,

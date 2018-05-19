@@ -137,6 +137,7 @@ const parseStudioToProjectData = (studio_data) => {
         })
         return track
     })
+    projectData.logs = studio_data.logs
     delete projectData.members
     delete projectData.comments
     delete projectData.chatroom

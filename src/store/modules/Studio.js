@@ -89,7 +89,10 @@ const studioEnvStruct = {
         chat_messages: [],
         show: false,
         unseen: 0
-    }
+    },
+    logs: [
+
+    ]
 }
 
 const state = {
@@ -117,6 +120,9 @@ const mutations = {
     updateTrackName(state, val) {
         let index = _.findIndex(state.tracks, o => o.id == val.id)
         state.tracks[index].name = val.name
+    },
+    updateProjectName (state, val) {
+        state.details.name = val
     },
     studioUpdateTempo(state, val) {
         state.details.bpm = val
@@ -237,18 +243,11 @@ const mutations = {
         state.env.mode = val
     },
     studioAddNewTrack (state, val) {
-        let newTrack = {
-            id: objectId(),
-            modified_time: Date.now(),
-            name: val.type === 'PIANO' ? 'Piano' : 'Audio',
-            type: val.type,
-            volume: 80,
-            solo: false,
-            muted: false,
-            active: false,
-            sequences: [] 
-        }
-        state.tracks.push(newTrack)
+        state.tracks.push(val)
+    },
+    studioDeleteTrack (state, val) {
+        let trackIndex = _.findIndex(state.tracks, track => track.id == val.track_id)
+        delete state.tracks[trackIndex]
     },
     resetStudioEnv (state) {
         state.env = studioEnvStruct.env
@@ -285,6 +284,12 @@ const mutations = {
     },
     setStudioTracklaneCanvas (state, val) {
         state.env.trackLaneCanvas = val
+    },
+    addLogsActivity (state, val) {
+        state.logs.push(val)
+    },
+    resetLogsActivity (state) {
+        state.logs = []
     }
 }
 
@@ -337,7 +342,7 @@ const actions = {
     },
     STUDIO_SYNC_PROJECT_DATA ({ commit, dispatch }, val) {
         dispatch('STUDIO_SET_MODE', 'SYNC_PROJECT')
-        let projectData = ProjectsService.parseStudioToProjectData({ details: state.details, tracks: state.tracks })
+        let projectData = ProjectsService.parseStudioToProjectData({ details: state.details, tracks: state.tracks, logs: state.logs })
         Observable.fromPromise(ProjectsService.syncProjectData(projectData))
             .pluck('data')
             .flatMap(data => {
@@ -371,6 +376,7 @@ const actions = {
                     event_type: 'MADE_CHANGES',
                     payload: {}
                 })
+                dispatch('RESET_LOGS_ACTIVITY')
             }, err => {
                 if(err.response.status){
                     switch(err.response.status){
@@ -403,30 +409,62 @@ const actions = {
     MUTE_TRACK({ commit, dispatch }, val){
         commit('muteTrackById', val)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'MUTE_TRACK',
+            track_id: val
+        })
     },
     SOLO_TRACK({ commit, dispatch }, val){
         commit('soloTrackById', val)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'SOLO_TRACK',
+            track_id: val
+        })
     },
     UPDATE_TRACK_VOLUME({ commit, dispatch }, val){
         commit('updateTrackVolume', val)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'UPDATE_TRACK_VOLUME',
+            track_id: val.id
+        })
     },
     UPDATE_TRACK_NAME ({ commit, dispatch }, val) {
         commit('updateTrackName', val)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'UPDATE_TRACK_NAME',
+            track_id: val.id
+        })
+    },
+    UPDATE_PROJECT_NAME ({ commit, dispatch }, val) {
+        commit('updateProjectName', val)
+        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'UPDATE_PROJECT_NAME'
+        })
     },
     STUDIO_UPDATE_TEMPO ({ commit, dispatch }, val) {
         commit('studioUpdateTempo', val)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'UPDATE_TEMPO'
+        })
     },
     STUDIO_UPDATE_KEY ({ commit, dispatch }, val) {
         commit('studioUpdateKey', val)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'UPDATE_KEY'
+        })
     },
     STUDIO_UPDATE_TIME_SIGNATURE ({ commit, dispatch }, val) {
         commit('studioUpdateTimeSignature', val)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'UPDATE_TIME_SIGNATURE'
+        })
     },
     STUDIO_UPDATE_MASTER_VOL ({ commit, dispatch }, val) {
         commit('studioUpdateMasterVol', val)
@@ -478,6 +516,16 @@ const actions = {
         dispatch('CHECK_REGION_OVERLAPPING', { track_id: val.moveTo.trackIndex, region_id: val.region_id })
         dispatch('SET_STUDIO_ACTIVE_TRACK', state.tracks[val.moveTo.trackIndex].id)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'MOVE_CHORD_REGION',
+            from: {
+                track_id: val.track_id,
+                region_id: val.region_id
+            },
+            to: {
+                track_id: state.tracks[val.moveTo.trackIndex].id
+            }
+        })
     },
     MOVE_AUDIO_REGION ({ dispatch, commit }, val) {
         let trackIndex = findTrackIndex(val.track_id)
@@ -492,6 +540,16 @@ const actions = {
         dispatch('CHECK_REGION_OVERLAPPING', { track_id: val.moveTo.trackIndex, region_id: val.region_id })
         dispatch('SET_STUDIO_ACTIVE_TRACK', state.tracks[val.moveTo.trackIndex].id)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'MOVE_AUDIO_REGION',
+            from: {
+                track_id: val.track_id,
+                region_id: val.region_id
+            },
+            to: {
+                track_id: state.tracks[val.moveTo.trackIndex].id
+            }
+        })
     },
     RESIZE_CHORD_REGION ({ dispatch, commit }, val) {
         let trackIndex = findTrackIndex(val.track_id)
@@ -505,6 +563,11 @@ const actions = {
         })
         dispatch('CHECK_REGION_OVERLAPPING', { track_id: trackIndex, region_id: val.region_id })
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'RESIZE_CHORD_REGION',
+            track_id: val.track_id,
+            region_id: val.region_id
+        })
     },
     RESIZE_AUDIO_REGION ({ dispatch, commit }, val) {
         let trackIndex = findTrackIndex(val.track_id)
@@ -518,6 +581,11 @@ const actions = {
         })
         dispatch('CHECK_REGION_OVERLAPPING', { track_id: trackIndex, region_id: val.region_id })
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'RESIZE_AUDIO_REGION',
+            track_id: val.track_id,
+            region_id: val.region_id
+        })
     },
     CHECK_REGION_OVERLAPPING ({ dispatch }, val) {
         let trackIndex = val.track_id
@@ -661,12 +729,16 @@ const actions = {
             trackIndex,
             regionIndex
         })
-        dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     DELETE_SELECTED_REGION ({ commit, dispatch }) {
         state.tracks.forEach((track, trackIndex) => {
             track.sequences.forEach((region, regionIndex) => {
-                if(region.active === true) {
+                if(region.active === true && !region.deleted) {
+                    dispatch('ADD_LOGS_ACTIVITY', {
+                        type: 'DELETE_REGION',
+                        track_id: track.id,
+                        region_id: region.id
+                    })
                     commit('deleteRegion', {
                         trackIndex,
                         regionIndex,
@@ -698,6 +770,11 @@ const actions = {
             region_id: newChord.id
         })
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'ADD_CHORD_REGION',
+            track_id: _.find(state.tracks, (track) => track.active).id,
+            region_id: newChord.id
+        })
     },
     ADD_AUDIO_REGION ({ commit, dispatch }, val) {
         let newAudioRegion = {
@@ -731,11 +808,38 @@ const actions = {
             region_id: recordingRegion.id
         })
         dispatch('STUDIO_SET_MODE', 'EDIT')
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'ADD_AUDIO_REGION',
+            track_id: _.find(state.tracks, (track) => track.id === activeTrack.id).id,
+            region_id: recordingRegion.id
+        })
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
     },
     STUDIO_ADD_NEW_TRACK ({ commit, dispatch }, val) {
-        commit('studioAddNewTrack', val)
+        let newTrack = {
+            id: objectId(),
+            modified_time: Date.now(),
+            name: val.type === 'PIANO' ? 'Piano' : 'Audio',
+            type: val.type,
+            volume: 80,
+            solo: false,
+            muted: false,
+            active: false,
+            sequences: [] 
+        }
+        commit('studioAddNewTrack', newTrack)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'ADD_NEW_TRACK',
+            track_id: newTrack.id
+        })
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+    },
+    STUDIO_DELETE_TRACK ({ commit, dispatch }, val) {
+        commit('studioDeleteTrack', val)
+        dispatch('ADD_LOGS_ACTIVITY', {
+            type: 'DELETE_TRACK',
+            track_id: val.track_id
+        })
     },
     RESET_STUDIO_ENV ({ commit }) {
         commit('resetStudioEnv')
@@ -793,6 +897,12 @@ const actions = {
     },
     RESET_STUDIO_TRACKLANE_CANVAS ({ commit, dispatch }) {
         dispatch('SET_STUDIO_TRACKLANE_CANVAS', null)
+    },
+    ADD_LOGS_ACTIVITY ({ commit, dispatch }, val) {
+        commit('addLogsActivity', val)
+    },
+    RESET_LOGS_ACTIVITY ({ commit }) {
+        commit('resetLogsActivity')
     }
 }
 

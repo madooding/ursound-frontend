@@ -602,6 +602,11 @@ const actions = {
                             each.modified_time = Date.now()
                             each.beat = 0
                             each.deleted = true
+                            dispatch('ADD_LOGS_ACTIVITY', {
+                                type: 'DELETE_REGION',
+                                track_id: state.tracks[trackIndex].id,
+                                region_id: each.id
+                            })
                         } else if(a > x && b < y){
                             each.modified_time = Date.now()
                             each.beat = a - x
@@ -635,6 +640,11 @@ const actions = {
                             each.modified_time = Date.now()
                             each.original_length = 0
                             each.deleted = true
+                            dispatch('ADD_LOGS_ACTIVITY', {
+                                type: 'DELETE_REGION',
+                                track_id: state.tracks[trackIndex].id,
+                                region_id: each.id
+                            })
                         } else if(a > x && b < y){
                             let player = new Howl({
                                 src: [each.url]
@@ -899,7 +909,10 @@ const actions = {
         dispatch('SET_STUDIO_TRACKLANE_CANVAS', null)
     },
     ADD_LOGS_ACTIVITY ({ commit, dispatch }, val) {
-        commit('addLogsActivity', val)
+        commit('addLogsActivity', {
+            ...val,
+            modified_time: Date.now()
+        })
     },
     RESET_LOGS_ACTIVITY ({ commit }) {
         commit('resetLogsActivity')

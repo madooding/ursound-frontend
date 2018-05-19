@@ -283,7 +283,7 @@ export default {
             let region = _.find(this.track_data.sequences, each => beat >= each.start_beat && beat < each.start_beat+each.beat && !each.deleted)
             if(region){
                 let chord = StudioService.mapChord(this.details.key - 1, region.chord)
-                StudioService.playChord(chord, this.beatDuration)
+                StudioService.playChord(chord, this.beatDuration, this.gain)
             }
         },
         playAudioOnBeat (beat) {
@@ -294,6 +294,7 @@ export default {
                 if(this.currentRegion) this.currentRegion.player.stop()
                 this.currentRegion = region
                 this.currentRegion.player.seek((StudioService.beats2milliseconds(this.details.bpm, this.currentTimeBeats - region.start_beat) + region.trim_left)/1000)
+                this.currentRegion.player.volume(this.gain)
                 this.currentRegion.player.play()
             } else if (this.currentRegion && region == null) {
                 this.currentRegion.player.stop()
@@ -306,6 +307,9 @@ export default {
         },
         uploadAudio (region_id, blob) {
             return Observable.fromPromise(StudioService.uploadBlobAudio(this.details.project_id, region_id, blob))
+        },
+        updatePlayerVolume () {
+            if(this.track_data.type === 'AUDIO' && this.currentRegion) this.currentRegion.player.volume(this.gain)
         }
     },
     computed: {
@@ -320,6 +324,9 @@ export default {
         beatDuration () {
             let beats = this.details.bars * this.details.time_signature
             return this.wholeDuration / beats
+        },
+        gain () {
+            return this.track_data.volume * this.studioEnv.master_volume / 10000
         }
     },
     watch: {
@@ -383,6 +390,12 @@ export default {
             if(this.track_data.active == false) {
                 this.$store.dispatch('CLEAR_SELECTED_TRACK_REGION', { track_id: this.track_data.id })
             }
+        },
+        'studioEnv.master_volume' () {
+            this.updatePlayerVolume()
+        },
+        'track_data.volume' () {
+            this.updatePlayerVolume()
         }
     }
 }

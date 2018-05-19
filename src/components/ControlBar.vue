@@ -1,7 +1,7 @@
 <template>
     <div class="controlbar">
         <div class="controlbar__volume">
-            <vue-slider ref="volume" :tooltip="false" :dot-size="14" width="100%" :max="100" :interval="1" :speed="0.5" :bgStyle="{'background-color': '#9397B0', 'height': '3px', 'border': '3px', 'cursor': 'pointer'}" :processStyle="{'background-color': '#9397B0'}" :sliderStyle="{'margin-top': '-1.7px'}"></vue-slider>
+            <vue-slider ref="volume" v-model="master_volume" :tooltip="false" :dot-size="14" width="100%" :max="100" :interval="1" :speed="0.5" :bgStyle="{'background-color': '#9397B0', 'height': '3px', 'border': '3px', 'cursor': 'pointer'}" :processStyle="{'background-color': '#FC466B'}" :sliderStyle="{'margin-top': '-1.7px'}"></vue-slider>
         </div>
         <div class="controlbar__current-time">{{ currentTimeFormatted }}</div>
         <div class="controlbar__control">
@@ -83,7 +83,7 @@
             </button>
         </div>
         <div class="controlbar__options">
-            <div class="option dropdown dropdown--top" @click="toggleKeySelect()" :class="{ 'show': keySelect, 'active': keySelect }">Key : {{ currentKey }}
+            <div class="option keys dropdown dropdown--top" @click="toggleKeySelect()" :class="{ 'show': keySelect, 'active': keySelect }">Key : {{ currentKey }}
                 <div class="dropdown__content">
                     <div class="list" v-for="(key, i) in keys" :key="i" :class="{'active': i == details.key-1}" @click="selectKey(i)">{{ key }}</div>
                 </div>
@@ -134,7 +134,8 @@ export default {
         bpm: null,
         keys: [],
         keySelect: false,
-        timeSignatureSelect: false
+        timeSignatureSelect: false,
+        master_volume: 80
     }),
     components: {
         vueSlider
@@ -149,6 +150,7 @@ export default {
             if(e.keyCode == 13)  $(this.$refs.tempo).blur()
         })
         this.bpm = this.details.bpm
+        this.master_volume = this.studioEnv.master_volume
         $(this.$refs.tempo).val(this.bpm)
     },
     methods: {
@@ -268,6 +270,9 @@ export default {
         },
         'currentTimePercent': function() {
             if(this.currentTimePercent == 100) this.playPause()
+        },
+        master_volume () {
+            this.$store.dispatch('STUDIO_UPDATE_MASTER_VOL', this.master_volume)
         }
     }
 }

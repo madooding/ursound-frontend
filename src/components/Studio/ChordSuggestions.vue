@@ -50,7 +50,8 @@ export default {
         getSuggestedChords () {
             if (!this.show) return
             this.loading = true
-            let sequences = _.takeRight(_.map(_.sortBy(this.getActiveTrack.sequences, ['start_beat']), each => each.chord), 4)
+            let sequences = _.takeRight(_.filter(_.sortBy(this.getActiveTrack.sequences, ['start_beat']), each => !each.deleted), 4)
+            sequences = _.map(sequences, each => each.chord)
             StudioService.getSuggestedChords(sequences)
                 .finally(() => {
                     this.loading = false

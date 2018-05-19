@@ -126,6 +126,9 @@ const mutations = {
     studioUpdateTimeSignature(state, val) {
         state.details.time_signature = val
     },
+    studioUpdateMasterVol(state, val) {
+        state.env.master_volume = val
+    },
     toggleChatbox(state){
         state.chat.show = !state.chat.show
         state.chat.unseen = 0
@@ -423,6 +426,9 @@ const actions = {
     STUDIO_UPDATE_TIME_SIGNATURE ({ commit, dispatch }, val) {
         commit('studioUpdateTimeSignature', val)
         dispatch('SET_STUDIO_CHANGE_SIGNAL', true)
+    },
+    STUDIO_UPDATE_MASTER_VOL ({ commit, dispatch }, val) {
+        commit('studioUpdateMasterVol', val)
     },
     TOGGLE_CHATBOX({commit}) {
         commit('toggleChatbox')

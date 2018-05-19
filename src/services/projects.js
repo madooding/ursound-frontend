@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Howl } from 'howler'
 import { Observable } from 'rxjs'
 import { studio } from '.';
+import _ from 'lodash'
 
 const API_URL = 'http://localhost:9000'
 
@@ -116,6 +117,10 @@ const addNewContributor = (project_id, user_id) => {
  */
 const parseStudioToProjectData = (studio_data) => {
     let projectData = { ...projectsModel }
+    let updateTrackVolume = _.map(_.filter(studio_data.logs, log => log.type == 'UPDATE_TRACK_VOLUME'), log => ({ type: log.type, track_id: log.track_id }))
+    updateTrackVolume = _.uniqWith(updateTrackVolume, _.isEqual)
+    studio_data.logs = _.filter(studio_data.logs, log => log.type !== 'UPDATE_TRACK_VOLUME')
+    studio_data.logs.push(...updateTrackVolume)
     projectData.project_id = studio_data.details.project_id
     projectData.modified_time = studio_data.details.modified_time
     projectData.last_commit_id = studio_data.details.last_commit_id
@@ -142,6 +147,7 @@ const parseStudioToProjectData = (studio_data) => {
     delete projectData.comments
     delete projectData.chatroom
     delete projectData.likes
+    console.log(projectData);
     return projectData
 }
 

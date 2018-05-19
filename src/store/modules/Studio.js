@@ -610,6 +610,11 @@ const actions = {
                         } else if(a > x && b < y){
                             each.modified_time = Date.now()
                             each.beat = a - x
+                            dispatch('ADD_LOGS_ACTIVITY', {
+                                type: 'RESIZE_CHORD_REGION',
+                                track_id: state.tracks[trackIndex].id,
+                                region_id: each.region_id
+                            })
                             let newRegion = {
                                 id: objectId(),
                                 chord: each.chord,
@@ -619,14 +624,29 @@ const actions = {
                                 deleted: false,
                                 active: false
                             }
+                            dispatch('ADD_LOGS_ACTIVITY', {
+                                type: 'ADD_CHORD_REGION',
+                                track_id: state.tracks[trackIndex].id,
+                                region_id: newRegion.id
+                            })
                             return [each, newRegion]
                         } else if(a <= y && a > x) {
                             each.modified_time = Date.now()
                             each.beat = a - x
+                            dispatch('ADD_LOGS_ACTIVITY', {
+                                type: 'RESIZE_CHORD_REGION',
+                                track_id: state.tracks[trackIndex].id,
+                                region_id: each.region_id
+                            })
                         } else if(b >= x && b < y) {
                             each.modified_time = Date.now()
                             each.start_beat = b + 1
                             each.beat = y - b
+                            dispatch('ADD_LOGS_ACTIVITY', {
+                                type: 'RESIZE_CHORD_REGION',
+                                track_id: state.tracks[trackIndex].id,
+                                region_id: each.region_id
+                            })
                         }
                         return each
                     })
@@ -661,16 +681,36 @@ const actions = {
                                 active: false,
                                 deleted: false
                             }
+                            dispatch('ADD_LOGS_ACTIVITY', {
+                                type: 'ADD_AUDIO_REGION',
+                                track_id: state.tracks[trackIndex].id,
+                                region_id: newRegion.id
+                            })
+                            dispatch('ADD_LOGS_ACTIVITY', {
+                                type: 'RESIZE_CHORD_REGION',
+                                track_id: state.tracks[trackIndex].id,
+                                region_id: each.id
+                            })
                             each.modified_time = Date.now()
                             each.trim_right = each.original_length - StudioService.beats2milliseconds(bpm, a - x)
                             return [each, newRegion]
                         } else if(a <= y && a > x) {
                             each.modified_time = Date.now()
                             each.trim_right = (each.original_length - each.trim_left) - StudioService.beats2milliseconds(bpm, a - x)
+                            dispatch('ADD_LOGS_ACTIVITY', {
+                                type: 'RESIZE_CHORD_REGION',
+                                track_id: state.tracks[trackIndex].id,
+                                region_id: each.id
+                            })
                         } else if(b >= x && b < y) {
                             each.modified_time = Date.now()
                             each.start_beat = b + 1
                             each.trim_left = (each.original_length - each.trim_right) - StudioService.beats2milliseconds(bpm, y - b)
+                            dispatch('ADD_LOGS_ACTIVITY', {
+                                type: 'RESIZE_CHORD_REGION',
+                                track_id: state.tracks[trackIndex].id,
+                                region_id: each.id
+                            })
                         }
 
                         return each

@@ -147,7 +147,6 @@ const parseStudioToProjectData = (studio_data) => {
     delete projectData.comments
     delete projectData.chatroom
     delete projectData.likes
-    console.log(projectData);
     return projectData
 }
 

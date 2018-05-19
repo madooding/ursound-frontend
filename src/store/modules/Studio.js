@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs'
 import io from 'socket.io-client'
 import router from '../../router'
 import { last, distinct } from 'rxjs/operators';
+import { Howl } from 'howler'
 
 /**
  * 
@@ -567,6 +568,9 @@ const actions = {
                             each.original_length = 0
                             each.deleted = true
                         } else if(a > x && b < y){
+                            let player = new Howl({
+                                src: [each.url]
+                            })
                             let newRegion = {
                                 id: objectId(),
                                 url: each.url,
@@ -575,6 +579,7 @@ const actions = {
                                 start_beat: b + 1,
                                 trim_left: each.original_length - StudioService.beats2milliseconds(bpm, y - b),
                                 trim_right: each.trim_right,
+                                player: player,
                                 active: false,
                                 deleted: false
                             }

@@ -293,9 +293,9 @@ export default {
             if((this.currentRegion == null && region) || (region && region.id != this.currentRegion.id)){
                 if(this.currentRegion) this.currentRegion.player.stop()
                 this.currentRegion = region
-                this.currentRegion.player.seek((StudioService.beats2milliseconds(this.details.bpm, this.currentTimeBeats - region.start_beat) + region.trim_left)/1000)
-                this.currentRegion.player.volume(this.gain)
                 this.currentRegion.player.play()
+                this.currentRegion.player.seek((StudioService.beats2milliseconds(this.details.bpm, this.currentTimeBeatsFloor - region.start_beat) + region.trim_left)/1000)
+                this.currentRegion.player.volume(this.gain)
             } else if (this.currentRegion && region == null) {
                 this.currentRegion.player.stop()
             }
@@ -357,11 +357,11 @@ export default {
             try {
                 if (this.studioEnv.mode === 'PLAYBACK') {
                     if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
-                    else if(this.track_data.type === 'AUDIO') this.playAudioOnBeat(this.currentTimeBeatsFloor)
+                    else if(this.track_data.type === 'AUDIO') this.playAudioOnBeat(this.currentTimeBeats)
                 } else if (this.studioEnv.mode === 'RECORD') {
                     if(this.track_data.type === 'PIANO') this.playChordOnBeat(this.currentTimeBeatsFloor)
                     else if(this.track_data.type === 'AUDIO') {
-                        this.playAudioOnBeat(this.currentTimeBeatsFloor)
+                        this.playAudioOnBeat(this.currentTimeBeats)
                         if(this.track_data.id === this.activeTrack.id){
                             this.$store.dispatch('ADD_AUDIO_REGION', { recording: true })
                             this.mediaRecorder.start()

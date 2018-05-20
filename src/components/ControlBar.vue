@@ -96,7 +96,7 @@
                     <div class="list" v-for="i in [3, 4]" :key="i" :class="{'active': i == details.time_signature}" @click="selectTimeSignature(i)">{{ `${i}/4` }}</div>
                 </div>
             </div>
-            <div class="option" :class="{'active': studioEnv.isMetronomeOn }" @click="toggleMetronome()">
+            <div class="option metronome" :class="{'active': studioEnv.isMetronomeOn }" @click="toggleMetronome()">
                 <button> 
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 40 40" style="enable-background:new 0 0 40 40;" xml:space="preserve">
                         <g>

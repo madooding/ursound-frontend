@@ -414,9 +414,9 @@ $track-panel-width: 280px;
                         }
                     }
                     .audio-region--piano {
-                        background-color: #DDE986;
-                        border-color: #91AF73;
-                        color: #91AF73;
+                        background-color: #B5BF73;
+                        border-color: rgb(132, 158, 105);
+                        color: #69884D;
                         .chord-name {
                             font-size: 20pt;
                             font-weight: 600
@@ -429,14 +429,14 @@ $track-panel-width: 280px;
                         }
                     }
                     .audio-region--piano.active {
-                        background-color: #D8E85E;
-                        border-color: #77B13C;
+                        background-color: #DDE986;
+                        border-color: #91AF73;
                         color: #7EA457;
                     }
                     .audio-region--audio {
-                        background-color: #F7B5FF;
-                        color: #9959A1;
-                        border-color: #F38FFF;
+                        background-color: #CA95D3;
+                        color: #996AA2;
+                        border-color: #C677D3;
                         .audio-waveform {
                             height: 100%;
                             position: absolute;
@@ -457,6 +457,19 @@ $track-panel-width: 280px;
                         background-color: rgb(237, 171, 240);
                         color: rgb(143, 79, 151);
                         border-color: rgb(233, 133, 240);
+                    }
+                    .audio-region.muted {
+                        background-color: #454752;
+                        color: #73757D;
+                        border-color: unset;
+                        border: 0px;
+                    }
+                    .audio-region.muted.active {
+                        background-color: #8A8C93;
+                        color: #D0D1D3;
+                        border-color: white;
+                        border-style: solid;
+                        border-width: 1px;
                     }
                 }
                 svg.indicator-line {

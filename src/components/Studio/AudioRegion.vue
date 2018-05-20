@@ -1,5 +1,5 @@
 <template>
-    <div ref="region" @mousedown="setActive()" :class="{ 'active': region_data.active }"> 
+    <div ref="region" @mousedown="setActive()" :class="{ 'active': region_data.active, 'muted': track_data.muted || (isSoloMode && !track_data.solo) }"> 
         <div class="resize-left"></div>
         <div class="chord-name" v-if="track_data.type === 'PIANO'">{{ currentChord }}</div>
         <div class="time-signature" v-if="track_data.type === 'PIANO'">{{ time_signature }}</div>
@@ -47,7 +47,7 @@ export default {
                         responsive: true,
                         interact: false,
                         hideScrollbar: true,
-                        waveColor: '#ba7fc1',
+                        waveColor: this.waveColor,
                         cursorWidth: 0
                     })
                     this.wavesurfer.load(this.region_data.url)
@@ -83,7 +83,13 @@ export default {
             let beats = this.details.bars * this.details.time_signature
             return this.stageWidth / beats
         },
-        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', currentKey: 'getStudioCurrentKey', songDuration: 'getStudioWholeDuration' })
+        waveColor () {
+            if(this.track_data.muted || (this.isSoloMode && !this.track_data.solo)) {
+                if (this.region_data.active) return '#D0D1D3'
+                return '#73757D'
+            } return '#996AA2'
+        },
+        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', currentKey: 'getStudioCurrentKey', songDuration: 'getStudioWholeDuration', isSoloMode: 'getStudioSoloMode' })
     },
     watch: {
         stageWidth () {
@@ -91,6 +97,10 @@ export default {
             this.renderRegion()
         },
         time_signature (){
+            this.renderRegion()
+        },
+        waveColor () {
+            if(this.track_data.type === 'AUDIO') $(this.$refs.waveform).empty();
             this.renderRegion()
         },
         'region_data.trim_left': function() { this.renderRegion() },

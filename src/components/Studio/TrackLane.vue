@@ -313,7 +313,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel', scrollX: 'getStudioCurrentScrollXPosition', snapGrid: 'getStudioSnapGrid', getTracks: 'getStudioTracks', currentTimeBeats: 'getStudioCurrentTimeBeats', studioEnv: 'getStudioEnv', wholeDuration: 'getStudioWholeDuration', activeTrack: 'getStudioActiveTrack' }),
+        ...mapGetters({ details: 'getStudioDetails', stageWidth: 'getStageWidth', indicatorPos: 'getStudioCurrentTimePixel', scrollX: 'getStudioCurrentScrollXPosition', snapGrid: 'getStudioSnapGrid', getTracks: 'getStudioTracks', currentTimeBeats: 'getStudioCurrentTimeBeats', studioEnv: 'getStudioEnv', wholeDuration: 'getStudioWholeDuration', activeTrack: 'getStudioActiveTrack', isSoloMode: 'getStudioSoloMode' }),
         beatWidth() {
             let beats = this.details.bars * this.details.time_signature
             return this.stageWidth / beats
@@ -326,7 +326,7 @@ export default {
             return this.wholeDuration / beats
         },
         gain () {
-            return this.track_data.volume * this.studioEnv.master_volume / 10000
+            return this.track_data.volume * this.studioEnv.master_volume / 10000 * (this.track_data.muted || (this.isSoloMode && !this.track_data.solo) ? 0 : 1)
         }
     },
     watch: {
@@ -394,7 +394,7 @@ export default {
         'studioEnv.master_volume' () {
             this.updatePlayerVolume()
         },
-        'track_data.volume' () {
+        gain () {
             this.updatePlayerVolume()
         }
     }

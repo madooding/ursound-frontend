@@ -962,6 +962,9 @@ const actions = {
 const getters = {
     getStudioTracks: state => state.tracks,
     isChatboxShow: state => state.chat.show,
+    getStudioSoloMode: state => {
+        return _.some(state.tracks, track => track.solo)
+    },
     getStudioDetails: state => state.details,
     getStudioEnv: state => state.env,
     getStudioCurrentKey: state => StudioService.keyMap[state.details.key - 1],

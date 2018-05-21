@@ -20,6 +20,7 @@
         <add-contributor-modal></add-contributor-modal>
         <no-permission-modal></no-permission-modal>
         <ModeModal></ModeModal>
+        <LeavePageModal></LeavePageModal>
     </div>
 </template>
 
@@ -35,6 +36,7 @@ import NewTrackModal from '../components/Studio/NewTrackModal'
 import NoPermissionModal from '../components/Studio/NoPermissionModal'
 import AddContributorModal from '../components/Studio/AddContributorModal'
 import ModeModal from '../components/Studio/ModeModal'
+import LeavePageModal from '../components/Studio/LeavePageModal'
 
 
 import { ProjectsService } from '../services'
@@ -53,7 +55,8 @@ export default {
         NewTrackModal,
         NoPermissionModal,
         AddContributorModal,
-        ModeModal
+        ModeModal,
+        LeavePageModal
     },
     created () {
         this.$store.dispatch('STUDIO_LOAD_PROJECT_DATA', { project_id: this.project_id })
@@ -74,8 +77,14 @@ export default {
     computed: {
         ...mapGetters({ 'tracks': 'getStudioTracks', 'studioEnv': 'getStudioEnv' })
     },
-    beforeDestroy () {
-        this.$store.dispatch('RESET_STUDIO_ENV')
+    beforeRouteLeave (to, from, next) {
+        if (this.studioEnv.changed && this.studioEnv.mode !== 'SAVE_CHANGES') {
+            console.log('save changes');
+            this.$store.dispatch('STUDIO_SET_MODE', 'SAVE_CHANGES')
+        } else {
+            this.$store.dispatch('RESET_STUDIO_ENV')
+            next()
+        }
     }
 }
 

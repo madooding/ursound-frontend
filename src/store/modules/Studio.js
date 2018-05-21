@@ -95,9 +95,7 @@ const studioEnvStruct = {
     ]
 }
 
-const state = {
-    ...studioEnvStruct
-}
+const state = Object.assign({}, studioEnvStruct)
 
 const mutations = {
     setPianoInstrument (state, val) {
@@ -250,10 +248,12 @@ const mutations = {
         delete state.tracks[trackIndex]
     },
     resetStudioEnv (state) {
-        state.env = studioEnvStruct.env
-        state.details = studioEnvStruct.details
-        state.tracks = studioEnvStruct.tracks
-        state.chat = studioEnvStruct.chat
+        state.studioSocket.removeAllListeners()
+        state.env = Object.assign({}, studioEnvStruct.env)
+        state.details = Object.assign({}, studioEnvStruct.details)
+        state.tracks = Object.assign({}, studioEnvStruct.tracks)
+        state.chat = Object.assign({}, studioEnvStruct.chat)
+        state.env.changed = false
     },
     setProjectData (state, val) {
         state.details = val.details
@@ -991,7 +991,8 @@ const getters = {
     getStudioActiveTrack: state => {
         return _.find(state.tracks, (track) => track.active)
     },
-    getStudioChat: state => state.chat
+    getStudioChat: state => state.chat,
+    getStudioLogs: state => state.logs
 }
 
 export default {

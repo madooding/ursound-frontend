@@ -16,7 +16,7 @@
             <div class="menubar__menu" v-if="isStudioMode">
                 <ul class="less-padding">
                     <li><a class="button" :class="{ 'disabled': !studioEnv.changed }" :disabled="!studioEnv.changed" @click="syncProjectData()">Sync</a></li>
-                    <li><a class="button button--outline">Exit Studio</a></li>
+                    <li><a class="button button--outline" @click="exit()">Exit Studio</a></li>
                 </ul>
             </div>
             <div class="menubar__menu" v-else-if="!isStudioMode">
@@ -81,6 +81,9 @@ export default {
             if(this.studioEnv.changed) {
                 this.$store.dispatch('STUDIO_SYNC_PROJECT_DATA')
             }
+        },
+        exit () {
+            this.$router.push('/explore')
         }
     },
     computed: {

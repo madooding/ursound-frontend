@@ -141,13 +141,18 @@ export default {
             let offsetY = Math.max(0, Math.min(containerOffsetY - this.elemOffsetY, (this.getTracks.length) * 100 - $(e.target).height()))
             let offsetXtail = offsetX % this.snapGrid
             let offsetYtail = offsetY % 100
+            let topMargin = ((offsetY - offsetYtail) + Math.round(offsetYtail/100) * 100) - this.offsetTop;
             $(e.target).css('left', (offsetX - offsetXtail) + Math.round(offsetXtail/this.snapGrid) * this.snapGrid)
-            $(e.target).css('top', ((offsetY - offsetYtail) + Math.round(offsetYtail/100) * 100) - this.offsetTop)
+            $(e.target).css('top', topMargin)
+            let currentTrack = this.getTracks[(topMargin + this.offsetTop) / 100]
+            if(currentTrack && currentTrack.type != $(e.target).attr('region_type')) $(e.target).addClass('do-not')
+            else $(e.target).removeClass('do-not')
         },
         addInteractionListener () {
             let interactedRegion
             let waveFormPos
             let originalWidth
+            let startLeftPosition
             interact('.audio-region')
                 .draggable({
                     restrict: {
@@ -157,6 +162,7 @@ export default {
                         this.elemOffsetX = Math.max(0, Math.min(e.pageX - $(e.target).offset().left, $(e.target).width()))
                         this.elemOffsetY = Math.max(0, Math.min(e.pageY - $(e.target).offset().top, $(e.target).height()))
                         this.offsetTop = $(e.target).offset().top - this.tracksContainer.offset().top
+                        startLeftPosition = $(e.target).css('left')
                     },
                     onmove: e => {
                         this.moveAudioRegion(e)
@@ -169,24 +175,30 @@ export default {
                         let startBeat = Math.round(parseInt(_.replace(target.css('left'), 'px', '')) / perBeat + 1)
                         let trackIndex = Math.max(0, Math.min((this.getTracks.length) * 100, target.offset().top - this.tracksContainer.offset().top)) / 100
                         let region_type = $(target).attr('region_type')
-                        if(region_type === 'PIANO'){
-                            this.$store.dispatch('MOVE_CHORD_REGION', {
-                                region_id: target.attr('region_id'),
-                                track_id: target.attr('track_id'),
-                                moveTo: {
-                                    'startBeat': startBeat,
-                                    'trackIndex': trackIndex
-                                }
-                            })
-                        } else {
-                                this.$store.dispatch('MOVE_AUDIO_REGION', {
-                                region_id: target.attr('region_id'),
-                                track_id: target.attr('track_id'),
-                                moveTo: {
-                                    'startBeat': startBeat,
-                                    'trackIndex': trackIndex
-                                }
-                            })
+                        if(region_type == this.getTracks[trackIndex].type)
+                            if(region_type === 'PIANO'){
+                                this.$store.dispatch('MOVE_CHORD_REGION', {
+                                    region_id: target.attr('region_id'),
+                                    track_id: target.attr('track_id'),
+                                    moveTo: {
+                                        'startBeat': startBeat,
+                                        'trackIndex': trackIndex
+                                    }
+                                })
+                            } else {
+                                    this.$store.dispatch('MOVE_AUDIO_REGION', {
+                                    region_id: target.attr('region_id'),
+                                    track_id: target.attr('track_id'),
+                                    moveTo: {
+                                        'startBeat': startBeat,
+                                        'trackIndex': trackIndex
+                                    }
+                                })
+                            }
+                        else {
+                            $(e.target).removeClass('do-not')
+                            target.css('left', startLeftPosition)
+                            target.css('top', 0)
                         }
                     }
                 })

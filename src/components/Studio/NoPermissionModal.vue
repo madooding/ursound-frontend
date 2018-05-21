@@ -1,5 +1,5 @@
 <template>
-    <div class="modal" :class="{'show': studioEnv.mode === 'NO_PERMISSION'}">
+    <div class="modal" :class="{'show': studioEnv.mode === 'NO_PERMISSION' }">
         <div class="modal__container">
             <div class="modal__header">You don't have a permission to view or edit this project.</div>
         </div>

@@ -68,11 +68,45 @@ const getUserProfileByUserId = (user_id) => {
     })
 }
 
+/**
+ * 
+ * 
+ * @param {String} user_id 
+ * @returns 
+ */
+const getOwnedProjectDatas = (user_id) => {
+    let _token = localStorage.getItem('_token')
+    if(_token === null) return Promise.reject({ code: 'TOKEN_UNDEFINED', messages: "Token is undefined." })
+    return axios.get(`${API_URL}/service/users/id/${user_id}/owned_projects`, {
+        headers: {
+            Authorization: `jwt ${_token}`
+        }
+    })
+}
+
+/**
+ * 
+ * 
+ * @param {String} user_id 
+ * @returns 
+ */
+const getCollaboratedProjectDatas = (user_id) => {
+    let _token = localStorage.getItem('_token')
+    if(_token === null) return Promise.reject({ code: 'TOKEN_UNDEFINED', messages: "Token is undefined." })
+    return axios.get(`${API_URL}/service/users/id/${user_id}/collaborated_projects`, {
+        headers: {
+            Authorization: `jwt ${_token}`
+        }
+    })
+}
+
 
 
 export default {
     defaultSignup,
     facebookSignup,
     searchUsersByUsername,
-    getUserProfileByUserId
+    getUserProfileByUserId,
+    getOwnedProjectDatas,
+    getCollaboratedProjectDatas
 }

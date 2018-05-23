@@ -26,7 +26,7 @@
                     <li v-if="signupShow && !isLoggedIn"><router-link to="/signup">Signup</router-link></li>
                     <li v-if="isLoggedIn"><a class="button" @click="createNewProject()">New Project</a></li>
                     <li v-if="isLoggedIn"><router-link to="/">Explore</router-link></li>
-                    <li v-if="isLoggedIn"><router-link to="/"> <img :src="getUserProfileData.profile_img" class="profile-img">@{{ getUserProfileData.username }}</router-link></li>
+                    <li v-if="isLoggedIn"><router-link :to="'/profile/'+getUserProfileData.user_id"> <img :src="getUserProfileData.profile_img" class="profile-img">@{{ getUserProfileData.username }}</router-link></li>
                     <li v-if="isLoggedIn"><router-link to="/"> <i class="ion-android-notifications"><span class="count">14</span></i></router-link></li>
                     <li v-if="isLoggedIn"><router-link to="/"><i class="ion-ios-gear"></i></router-link></li>
                 </ul>

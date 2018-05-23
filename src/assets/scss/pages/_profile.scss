@@ -1,0 +1,270 @@
+@import "../_colors.scss";
+@import "../_extentions.scss";
+
+$max-width: 1000px;
+
+@keyframes placeHolderShimmer{
+    0%{
+        background-position: -468px 0
+    }
+    100%{
+        background-position: 468px 0
+    }
+}
+
+.user-profile {
+    @extend %default-font;
+    margin-top: 58px;
+    height: 232px;
+    width: 100%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0px 7px 0 rgba(0,0,0,0.16);
+    .profile-info-bg {
+        background: rgba(99,71,96,1);
+        background: radial-gradient(ellipse at top, #5B4260 0%, rgba(62,48,95,1) 80%);
+        height: 187px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        .profile-info-container {
+            display: flex;
+            align-items: flex-end;
+            width: 100%;
+            max-width: $max-width;
+            margin: 0px 15px;
+            color: white;
+            .profile-img {
+                position: relative;
+                width: 180px;
+                height: 180px;
+                margin-right: 30px;
+                img {
+                    width: 180px;
+                    height: 180px;
+                    overflow: hidden;
+                    background-size: contain;
+                    position: absolute;
+                    bottom: -65px;
+                    box-shadow: 0 0px 7px 0 rgba(0,0,0,0.26);
+                    border: white solid 5px;
+                    border-radius: 3px
+                }
+            }
+            .profile-contact {
+                flex-grow: 1;
+                height: auto;
+                margin-bottom: 20px;
+                .fullname {
+                    font-weight: 600;
+                    font-size: 22pt;
+                    margin-bottom: 5px;
+                }
+                .sub-contact {
+                    font-size: 10pt;
+                }
+            }
+        }
+    }
+    .profile-menu-container {
+        max-width: $max-width;
+        width: 100%;
+        padding-left: 210px;
+        margin: 0px 15px;
+        flex-grow: 1;
+        .profile-menu {
+            display: flex;
+            justify-content: flex-start;
+            .items {
+                cursor: pointer;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: auto;
+                height: 45px;
+                padding: 0 25px;
+                color:  $text-color-3;
+                font-size: 12pt;
+                font-weight: 500;
+                border-right:  #CECECE solid 1px;
+            }
+            .items:first-of-type {
+                border-left:  #CECECE solid 1px;
+            }
+            .items.highlight {
+                color: $secondary;
+            }
+            .items.pull-right {
+                padding: 0px;
+                margin-left: auto;
+                border: none;
+            }
+            .items:hover {
+                color: $text-color-2;
+            }
+            .items.highlight:hover {
+                color: $dark-secondary;
+            }
+        }
+    }
+}
+
+
+.user-works {
+    @extend %default-font;
+    margin: 40px 15px 20px 15px;
+    height: auto;
+    width: 100%;
+    max-width: $max-width;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .user-works-container {
+        width: 100%;
+        background-color: white;
+        box-shadow: 0 0px 7px 0 rgba(0,0,0,0.16);
+        border-radius: 4px;
+
+        .user-works-tabs {
+            color: $text-color-3;
+            font-weight: 500;
+            font-size: 11.5pt;
+            height: 50px;
+            padding: 0px 20px;
+            display: flex;
+            justify-content: flex-start;
+            border-bottom: #EEE solid 1px;
+            .items {
+                cursor: pointer;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                padding: 0px 3px;
+                margin-right: 25px;
+            }
+            .items.active {
+                box-sizing: inherit;
+                border-top: transparent solid 2px;
+                border-bottom: $secondary solid 2px;
+            }
+            .items:hover {
+                color: $text-color-2;
+            }
+            .items.pull-right {
+                padding: 0px;
+                margin-left: auto;
+                margin-right: 0px;
+                border: none;
+                .dropdown-btn {
+                    color: $secondary;
+                }
+                .dropdown-btn:hover {
+                    color: $dark-secondary;
+                }
+            }
+            .items.pull-right:hover {
+                color: $text-color-3
+            }
+        }
+    }
+    .song-list {
+        height: auto;
+        width: 100%;
+        padding: 15px;
+        .song {
+            background-color: none;
+            box-shadow: none;
+            padding: 0px;
+            height: 160px;
+            margin-bottom: 20px;
+            .song__contents {
+                button.song__more-btn.ion-more {
+                    top: 0px;
+                    right: 0px;
+                    padding: 0px;
+                }
+            }
+        }
+        .song:last-child {
+            margin-bottom: 0px;
+        }
+    }
+    .loading-project {
+        height: 84px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loading-project:after {
+        position: absolute;
+        content: '';
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 84px;
+        background-color: $text-color-3;
+        -webkit-mask: url('../svg/loading-spinner-white.svg') no-repeat center;
+        -webkit-mask-size: 50px;
+        mask: url('../svg/loading-spinner-white.svg') no-repeat center;
+        mask-size: 50%;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+    }
+
+    .no-projects-yet {
+        font-weight: 500;
+        height: 84px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: $text-color-3;
+    }
+
+    .create-new-project-btn {
+        cursor: pointer;
+        font-weight: 500;
+        color: $text-color-3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $text-color-3;
+        background-color: white;
+        padding: 20px;
+        width:100%;
+        margin-top: 20px;
+        border-radius: 4px;
+        border: $text-color-3 dashed 2px;
+        transition: border-color ease .25s, color ease .25s, transform ease-in-out .25s;
+    }
+    
+    .create-new-project-btn:hover {
+        border-color: $secondary;
+        color: $secondary;
+    }
+
+    .create-new-project-btn:active {
+        transform: scale(.95);
+    }
+}
+
+.loading {
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: #f6f7f8;
+    background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+    background-size: 800px 104px;
+    position: relative;
+}

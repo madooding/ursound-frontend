@@ -58,6 +58,7 @@ export default {
         // this.song_data = this.$props.song_data
     },
     mounted() {
+        if(this.getPlayerCurrentSongData.id == this.song_data.id && this.isPlayerPlaying) this.isPlaying = true
         this.wavesurfer = WaveSurfer.create({
             container: this.$refs.spectrum,
             waveColor: '#959494',
@@ -136,7 +137,7 @@ export default {
         getPlayerCurrentTime(){
             if(this.song_data.id === this.getPlayerCurrentSongData.id){
                 this.currentTime = this.getPlayerCurrentTime
-                this.wavesurfer.seekTo(this.getPlayerCurrentTime/this.song_data.duration)
+                this.wavesurfer.seekTo(this.getPlayerCurrentTime/this.getPlayerCurrentSongData.duration)
             }
         }
 

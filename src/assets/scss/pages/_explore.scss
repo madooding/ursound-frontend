@@ -14,141 +14,141 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+}
 
-    .song {
-        /* songs box: */
-        background: #FFFFFF;
-        position: relative;
-        border-radius: 4px;
-        box-shadow: 0 0px 7px 0 rgba(0,0,0,0.16);
-        height: 190px;
-        margin-bottom: 20px;
+.song {
+    /* songs box: */
+    background: #FFFFFF;
+    position: relative;
+    border-radius: 4px;
+    box-shadow: 0 0px 7px 0 rgba(0,0,0,0.16);
+    height: 190px;
+    margin-bottom: 20px;
+    width: 100%;
+    padding: 15px;
+    display: flex;
+    color: $text-color-3;
+    &__cover {
+        max-width: 160px;
+        max-height: 160px;
+        height: 100%;
         width: 100%;
-        padding: 15px;
+        background-size: cover;
+        border-radius: 4px;
+        margin-right: 25px;
+    }
+    &__contents {
+        flex-grow: 1;
+        padding: 5px 0px;
         display: flex;
-        color: $text-color-3;
-        &__cover {
-            max-width: 160px;
-            max-height: 160px;
-            height: 100%;
-            width: 100%;
-            background-size: cover;
-            border-radius: 4px;
-            margin-right: 25px;
+        flex-direction: column;
+        align-content: center;
+        &__name {
+            font-weight: 600;
+            line-height: 1;
+            color: $text-color-1;
+            vertical-align: bottom;
+            margin-bottom: 10px;
+            small {
+                font-size: 14pt;
+                color: $text-color-3;
+            }
         }
-        &__contents {
+        &__playback {
             flex-grow: 1;
-            padding: 5px 0px;
             display: flex;
-            flex-direction: column;
-            align-content: center;
-            &__name {
-                font-weight: 600;
-                line-height: 1;
-                color: $text-color-1;
-                vertical-align: bottom;
-                margin-bottom: 10px;
-                small {
-                    font-size: 14pt;
-                    color: $text-color-3;
+            align-items: center;
+            margin-bottom: 10px;
+            button.play--btn {
+                vertical-align: middle;
+                width: 50px;
+                height: 50px;
+                border: unset;
+                cursor: pointer;
+                color: $text-color-3;
+                padding:0;
+                outline: none !important;
+                vertical-align: middle;
+                margin-right: 15px;
+                svg {
+                    fill: $text-color-3;
+                    transition: fill .25s ease-in-out;
+                }
+
+            }
+
+            button.play--btn:hover {
+                svg {
+                    fill: $text-color-2;
                 }
             }
-            &__playback {
+
+            button.play--btn:active {
+                svg {
+                    fill: $secondary;
+                }
+            }
+
+            &__spectrum {
                 flex-grow: 1;
-                display: flex;
-                align-items: center;
-                margin-bottom: 10px;
-                button.play--btn {
-                    vertical-align: middle;
-                    width: 50px;
-                    height: 50px;
-                    border: unset;
-                    cursor: pointer;
-                    color: $text-color-3;
-                    padding:0;
-                    outline: none !important;
-                    vertical-align: middle;
-                    margin-right: 15px;
-                    svg {
-                        fill: $text-color-3;
-                        transition: fill .25s ease-in-out;
-                    }
-
-                }
-
-                button.play--btn:hover {
-                    svg {
-                        fill: $text-color-2;
-                    }
-                }
-
-                button.play--btn:active {
-                    svg {
-                        fill: $secondary;
-                    }
-                }
-
-                &__spectrum {
-                    flex-grow: 1;
-                    height: 100%;
-                    margin-right: 15px;
-                    cursor: pointer;
-                    wave {
-                        overflow: hidden !important;
-                    }
-                }
-
-                &__length {
-                    font-size: 12pt;
-                }
-            }
-            &__actions {
-                height: 25px;
-                width: 100%;
-                button {
-                    cursor: pointer;
-                    outline: none !important;
-                    color: $text-color-3;
-                    border: 1px solid $text-color-3;
-                    border-radius: 4px;
-                    height: 100%;
-                    width: auto;
-                    padding: 0px 7px;
-                    font-size: 10pt;
-                    box-sizing: border-box;
-                    margin-right: 5px;
-                }
-                button:hover {
-                    border-color: $text-color-2;
-                    color: $text-color-2;
-                }
-                button::before {
-                    margin-right: 5px;
+                height: 100%;
+                margin-right: 15px;
+                cursor: pointer;
+                wave {
+                    overflow: hidden !important;
                 }
             }
 
-            button.is--liked {
-                border-color: $secondary;
-                color: $secondary;
+            &__length {
+                font-size: 12pt;
             }
         }
-        button.song__more-btn {
-            position: absolute;
-            border: none;
-            right: 15px;
-            top: 15px;
-            color: $text-color-3;
-            font-size: 16pt;
-            cursor: pointer;
-            outline: none;
+        &__actions {
+            height: 25px;
+            width: 100%;
+            button {
+                cursor: pointer;
+                outline: none !important;
+                color: $text-color-3;
+                border: 1px solid $text-color-3;
+                border-radius: 4px;
+                height: 100%;
+                width: auto;
+                padding: 0px 7px;
+                font-size: 10pt;
+                box-sizing: border-box;
+                margin-right: 5px;
+            }
+            button:hover {
+                border-color: $text-color-2;
+                color: $text-color-2;
+            }
+            button::before {
+                margin-right: 5px;
+            }
         }
-        
-        button.song__more-btn:hover {
-            color: $text-color-2;
+
+        button.is--liked {
+            border-color: $secondary;
+            color: $secondary;
         }
     }
-
-    .card:last-child {
-        margin-bottom: 0px;
+    button.song__more-btn {
+        position: absolute;
+        border: none;
+        right: 15px;
+        top: 15px;
+        color: $text-color-3;
+        font-size: 16pt;
+        cursor: pointer;
+        outline: none;
     }
+    
+    button.song__more-btn:hover {
+        color: $text-color-2;
+    }
+}
+
+.card:last-child {
+    margin-bottom: 0px;
 }

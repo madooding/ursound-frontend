@@ -4,6 +4,7 @@ import MainPage from '@/pages/Main'
 import LoginSignupPage from '@/pages/LoginSignup'
 import ExplorePage from '@/pages/Explore'
 import StudioPage from '@/pages/Studio'
+import ProfilePage from '@/pages/Profile'
 import LocalStorage from 'vue-localstorage'
 
 import { AuthService } from '../services'
@@ -44,6 +45,15 @@ const router = new Router({
             name: 'ExplorePage',
             component: ExplorePage,
             meta: { requiredAuth: true }
+        },
+        {
+            path: '/profile/:user_id',
+            name: 'ProfilePage',
+            component: ProfilePage,
+            meta: { requiredAuth: true },
+            props: (route) => ({
+                user_id: route.params.user_id
+            })
         },
         {
             path: '/studio/:project_id?',

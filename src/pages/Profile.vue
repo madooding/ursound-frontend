@@ -59,7 +59,7 @@
 <script scoped>
 import _ from 'lodash'
 import Song from '../components/Song'
-import { UserService, StudioService } from '../services/'
+import { UserService, StudioService, ProjectsService } from '../services/'
 import { Observable } from 'rxjs'
 import { mapGetters } from 'vuex'
 

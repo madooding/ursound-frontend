@@ -30,7 +30,7 @@ export default {
         })
     },
     updated () {
-        
+        this.renderRegion()
     },
     methods: {
         renderRegion() {

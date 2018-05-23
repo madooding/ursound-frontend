@@ -6,7 +6,7 @@
                 <div class="chord-section">
                     <div class="topic">Suggested Chords</div>
                     <transition name="fade" mode="in-out">
-                        <div class="loading" v-if="!loading" :key="false"></div>
+                        <div class="loading" v-if="loading" :key="false"></div>
                         <div class="group-btn" v-if="!loading" :key="true">
                             <div class="chord" v-for="(chord, i) in suggestedChords" :key="i" @click="addChord(chord.chord_ID)">{{ mapChord(chord.chord_ID) }}</div>
                             <div class="chord" @click="addSilence()">Silence</div>

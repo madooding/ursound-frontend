@@ -7,7 +7,7 @@ import _ from 'lodash'
 import context from './context'
 import { ProjectsService } from '.';
 
-const API_URL = 'http://localhost:9000'
+const API_URL = ''
 
 let ac 
 

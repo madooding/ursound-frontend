@@ -4,7 +4,7 @@ import { Observable } from 'rxjs'
 import { studio } from '.';
 import _ from 'lodash'
 
-const API_URL = 'http://localhost:9000'
+const API_URL = ''
 
 const projectsModel = {
     project_id: Number,

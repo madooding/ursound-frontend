@@ -78,6 +78,7 @@
     }
 
     &__section--3 {
+        background-color: $dark-primary;
         padding:70px 100px;
         .main__section--3__slides{
             padding: 30px 0px;
@@ -194,6 +195,7 @@
     }
 
     &__section--6 {
+        background-color: $dark-primary;
         padding: 60px 100px;
         display: flex;
         justify-content: center;
